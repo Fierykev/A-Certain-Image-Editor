@@ -12,7 +12,12 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
-    private Tool currentTool;
+    private Tool tool;
+
+    void setTool(Tool tool)
+    {
+        this.tool = tool;
+    }
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig eglConfig) {

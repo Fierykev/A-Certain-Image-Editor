@@ -1,6 +1,8 @@
 package kevin_quang.acertainimageeditor;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 
 /**
@@ -18,15 +20,24 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
 
         setEGLContextClientVersion(Const.GL_VERSION);
         renderer = new EditDisplayRenderer();
+
+        // TMP
+        ScaleResizeTool tmp = new ScaleResizeTool();
+        Bitmap bMap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.sample);
+
+        tmp.load(bMap);
+        setTool(tmp);
+
         setRenderer(renderer);
     }
 
     public void setTool(Tool tool)
     {
         currentTool = tool;
+        renderer.setTool(currentTool);
 
         // swap touch listeners
-        setOnTouchListener(tool.getTouchListener());
+        //setOnTouchListener(tool.getTouchListener());
 
         // dismiss the other tool
     }
