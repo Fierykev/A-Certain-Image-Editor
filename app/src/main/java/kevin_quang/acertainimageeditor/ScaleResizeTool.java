@@ -4,6 +4,7 @@ package kevin_quang.acertainimageeditor;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLES30;
+import android.opengl.Matrix;
 import android.util.Pair;
 
 import org.opencv.android.Utils;
@@ -43,10 +44,11 @@ public class ScaleResizeTool extends Tool {
     private int vertBufferID[] = new int[1];
     private int indexBufferID[] = new int[1];
     private int program;
-    private int postionAttr, texCoordAttr, textureUnif;
+    private int postionAttr, texCoordAttr, textureUnif, worldUnif;
     private int textureID;
     private int indices[];
     private int vertID[] = new int[1];
+    private float world[] = new float[16];
 
     private Pair<Integer, Integer> meshDim
             = new Pair<>(10, 10);
@@ -80,11 +82,11 @@ public class ScaleResizeTool extends Tool {
             floatArray[index] = v.z;
             index++;
 
-            //floatArray[index] = v.u;
-            //index++;
+            floatArray[index] = v.u;
+            index++;
 
-            //floatArray[index] = v.v;
-            //index++;
+            floatArray[index] = v.v;
+            index++;
         }
 
         int size()
@@ -114,6 +116,7 @@ public class ScaleResizeTool extends Tool {
         postionAttr = GLES30.glGetAttribLocation(program, "position");
         texCoordAttr = GLES30.glGetAttribLocation(program, "texCoord");
         textureUnif = GLES30.glGetUniformLocation(program, "texture");
+        worldUnif = GLES30.glGetUniformLocation(program, "world");
     }
 
     void destroy()
@@ -147,6 +150,22 @@ public class ScaleResizeTool extends Tool {
 
         GLES30.glUseProgram(program);
 
+        // construct matrix
+        Matrix.setIdentityM(world, 0);
+
+        Matrix.scaleM(
+                world,
+                0,
+                -1.f / (float)origImage.rows() * 2.f,
+                -1.f / (float)origImage.cols() * 2.f,
+                1.f);
+        Matrix.translateM(
+                world,
+                0,
+                -(float)origImage.rows() / 2.f,
+                -(float)origImage.cols() / 2.f,
+                0.f);
+
         GLES30.glBindBuffer (GLES30.GL_ARRAY_BUFFER, vertBufferID[0]);
 
         GLES30.glEnableVertexAttribArray(postionAttr);
@@ -158,6 +177,8 @@ public class ScaleResizeTool extends Tool {
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureID);
         GLES30.glUniform1ui(textureUnif, textureID);
+
+        GLES30.glUniformMatrix4fv(worldUnif, 1, false, world, 0);
 
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, indexBufferID[0]);
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, indices.length, GLES30.GL_UNSIGNED_INT, 0);
@@ -209,8 +230,6 @@ public class ScaleResizeTool extends Tool {
 
         for (int y = 0; y < vertDim.second; y++) {
             for (int x = 0; x < vertDim.first; x++) {
-                int index = x + y * vertDim.first;
-
                 vertex.x =
                         Math.min(
                                 meshDim.first * x
@@ -257,25 +276,6 @@ public class ScaleResizeTool extends Tool {
                 indices[index + 3] = (x + 1) + y * vertDim.first;
                 indices[index + 4] = x + (y + 1) * vertDim.first;
                 indices[index + 5] = (x + 1) + (y + 1) * vertDim.first;
-
-                /*
-                // top left
-                indices[index] =
-                        x + (y + 1) * vertDim.first;
-
-                // top right
-                indices[index + 1] =
-                        x + 1 + (y + 1) * vertDim.first;
-
-                // bottom right
-                indices[index + 2] =
-                        x + 1 + y * vertDim.first;
-
-                // bottom left
-                indices[index + 3] =
-                        x + y * vertDim.first;*/
-
-
             }
         }
 

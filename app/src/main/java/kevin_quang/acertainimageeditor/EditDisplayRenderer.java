@@ -44,7 +44,7 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         // set viewport
-        GLES30.glViewport(0, 0, width, height);
+        //GLES30.glViewport(0, 0, width, height);
     }
 
     @Override
