@@ -56,7 +56,7 @@ public class ScaleResizeTool extends Tool {
     class Vertex
     {
         float x, y, z;
-        //float u, v;
+        float u, v;
     }
 
     class VertexArray
@@ -66,8 +66,8 @@ public class ScaleResizeTool extends Tool {
 
         VertexArray(int numEl)
         {
-            floatArray = new float[numEl * 3];
-        }// * 5
+            floatArray = new float[numEl * 5];
+        }
 
         void add(Vertex v)
         {
@@ -119,6 +119,8 @@ public class ScaleResizeTool extends Tool {
     void destroy()
     {
         GLES30.glDeleteProgram(program);
+        GLES30.glDeleteBuffers(1, vertBufferID, 0);
+        GLES30.glDeleteBuffers(1, indexBufferID, 0);
     }
 
     void load(Bitmap bitmap)
@@ -158,7 +160,7 @@ public class ScaleResizeTool extends Tool {
         GLES30.glUniform1ui(textureUnif, textureID);
 
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, indexBufferID[0]);
-        GLES30.glDrawElements(GLES30.GL_TRIANGLES, 3, GLES30.GL_UNSIGNED_INT, 0);
+        GLES30.glDrawElements(GLES30.GL_TRIANGLES, indices.length, GLES30.GL_UNSIGNED_INT, 0);
 
         GLES30.glDisableVertexAttribArray(postionAttr);
         GLES30.glDisableVertexAttribArray(texCoordAttr);
@@ -211,31 +213,31 @@ public class ScaleResizeTool extends Tool {
 
                 vertex.x =
                         Math.min(
-                                meshDim.first * y
+                                meshDim.first * x
                                         + Math.round(
-                                        (float) (overflowDim.first * y)
+                                        (float) (overflowDim.first * x)
                                                 / (float) (quadDim.first)
                                 ),
                                 actualDim.first
                         );
                 vertex.y =
                         Math.min(
-                                meshDim.second * x
+                                meshDim.second * y
                                         + Math.round(
-                                        (float) (overflowDim.second * x)
+                                        (float) (overflowDim.second * y)
                                                 / (float) (quadDim.second)
                                 ),
                                 actualDim.second
                         );
                 vertex.z = .1f;
-/*
+
                 vertex.u =
                     (float)(vertex.x)
                             / (float)(actualDim.first);
                 vertex.v =
                     (float)(vertex.y)
                             / (float)(actualDim.second);
-*/
+
                 verts.add(vertex);
             }
         }
@@ -277,63 +279,35 @@ public class ScaleResizeTool extends Tool {
             }
         }
 
-        // TMP
-        final float[] mVerticesData =
-                {
-                        0.0f, 0.5f, 0.0f,        // v0
-                        0.5f,  1.0f,
-                        -0.5f, -0.5f, 0.0f,        // v1
-                        0.0f, 0.0f,
-                        0.5f, -0.5f, 0.0f,        // v2
-                        0.0f, 1.0f
-                };
-
-        final int[] mIndicesData =
-                {
-                        0, 1, 2
-                };
-
         GLES30.glGenBuffers (1, vertBufferID, 0);
 
         GLES30.glBindBuffer (GLES30.GL_ARRAY_BUFFER, vertBufferID[0]);
-        GLES30.glBufferData (GLES30.GL_ARRAY_BUFFER, mVerticesData.length * 4,
+        GLES30.glBufferData (GLES30.GL_ARRAY_BUFFER, verts.size(),
                 null, GLES30.GL_STATIC_DRAW );
 
         vertexBuffer =
                 ((ByteBuffer) GLES30.glMapBufferRange (
-                    GLES30.GL_ARRAY_BUFFER, 0, mVerticesData.length * 4,
-                    GLES30.GL_MAP_WRITE_BIT | GLES30.GL_MAP_INVALIDATE_BUFFER_BIT )
+                    GLES30.GL_ARRAY_BUFFER, 0, verts.size(),
+                    GLES30.GL_MAP_WRITE_BIT | GLES30.GL_MAP_INVALIDATE_BUFFER_BIT)
                 ).order(ByteOrder.nativeOrder()).asFloatBuffer();
-        vertexBuffer.put(mVerticesData).position(0);
+        vertexBuffer.put(verts.getFloatArray()).position(0);
 
         GLES30.glUnmapBuffer(GLES30.GL_ARRAY_BUFFER);
 
         GLES30.glGenBuffers (1, indexBufferID, 0);
 
         GLES30.glBindBuffer (GLES30.GL_ELEMENT_ARRAY_BUFFER, indexBufferID[0]);
-        GLES30.glBufferData (GLES30.GL_ELEMENT_ARRAY_BUFFER, mIndicesData.length * 4,
+        GLES30.glBufferData (GLES30.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4,
                 null, GLES30.GL_STATIC_DRAW);
 
         indexBuffer =
                 ((ByteBuffer) GLES30.glMapBufferRange (
-                        GLES30.GL_ELEMENT_ARRAY_BUFFER, 0, mIndicesData.length * 4,
+                        GLES30.GL_ELEMENT_ARRAY_BUFFER, 0, indices.length * 4,
                         GLES30.GL_MAP_WRITE_BIT | GLES30.GL_MAP_INVALIDATE_BUFFER_BIT )
                 ).order(ByteOrder.nativeOrder()).asIntBuffer();
-        indexBuffer.put(mIndicesData).position(0);
+        indexBuffer.put(indices).position(0);
 
         GLES30.glUnmapBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER);
-/*
-        ByteBuffer vertBuffer = ByteBuffer.allocateDirect(verts.size());
-        vertBuffer.order(ByteOrder.nativeOrder());
-        vertexBuffer = vertBuffer.asFloatBuffer();
-        vertexBuffer.put(verts.getFloatArray());
-        vertexBuffer.position(0);
-
-        ByteBuffer indBuffer = ByteBuffer.allocateDirect(indices.length * 4);
-        indBuffer.order(ByteOrder.nativeOrder());
-        indexBuffer = indBuffer.asIntBuffer();
-        indexBuffer.put(indices);
-        indexBuffer.position(0);*/
     }
 
     private void createSignificanceMap(Mat image) {
