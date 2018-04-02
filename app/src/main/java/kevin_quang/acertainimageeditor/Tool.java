@@ -1,5 +1,7 @@
 package kevin_quang.acertainimageeditor;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 
 /**
@@ -9,6 +11,12 @@ import android.view.View;
 abstract class Tool {
 
     private View.OnTouchListener touchListener;
+
+    abstract void init(Context context);
+
+    abstract void destroy();
+
+    abstract void load(Bitmap bitmap);
 
     abstract void onDraw();
 

@@ -20,13 +20,15 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
 
         setEGLContextClientVersion(Const.GL_VERSION);
         renderer = new EditDisplayRenderer();
+        renderer.setContext(getContext());
 
         // TMP
         ScaleResizeTool tmp = new ScaleResizeTool();
         Bitmap bMap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.sample);
+        renderer.setBitmap(bMap);
 
-        tmp.load(bMap);
         setTool(tmp);
+
 
         setRenderer(renderer);
     }
@@ -40,5 +42,10 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
         //setOnTouchListener(tool.getTouchListener());
 
         // dismiss the other tool
+    }
+
+    public void setBitmap(Bitmap bitmap)
+    {
+        renderer.setBitmap(bitmap);
     }
 }
