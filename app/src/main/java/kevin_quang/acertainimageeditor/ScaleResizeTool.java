@@ -67,6 +67,19 @@ public class ScaleResizeTool extends Tool {
     private Pair<Integer, Integer> desiredDim
             = new Pair<>(300, 100);
 
+    public static final int RESIZE = 0;
+
+    public static class ResizeArgs
+    {
+        int width, height;
+
+        ResizeArgs(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+        }
+    }
+
     class Vertex
     {
         float x, y, z;
@@ -266,8 +279,30 @@ public class ScaleResizeTool extends Tool {
         convertImage.convertTo(convertImage, CV_32F);
         Imgproc.cvtColor(convertImage, convertImage, COLOR_BGRA2BGR);
 
-        // TMP
-        compute();
+        // setup display
+        Pair<Integer, Integer> actualDim =
+                new Pair<>(convertImage.rows(), convertImage.cols());
+        desiredDim = actualDim;
+
+        createMesh(meshDim, actualDim, desiredDim);
+        createGLMesh();
+    }
+
+    @Override
+    void setArgs(Args args)
+    {
+        switch (args.type)
+        {
+            case RESIZE:
+
+                desiredDim =
+                        new Pair<>(
+                                ((ResizeArgs) args.arg).height,
+                                ((ResizeArgs) args.arg).width);
+                compute();
+
+                break;
+        }
     }
 
     @Override
@@ -429,6 +464,12 @@ public class ScaleResizeTool extends Tool {
 
     private void createGLMesh()
     {
+        if (vertBufferID[0] != 0)
+            GLES30.glDeleteBuffers(1, vertBufferID, 0);
+
+        if (indexBufferID[0] != 0)
+            GLES30.glDeleteBuffers(1, indexBufferID, 0);
+
         GLES30.glGenBuffers (1, vertBufferID, 0);
 
         GLES30.glBindBuffer (GLES30.GL_ARRAY_BUFFER, vertBufferID[0]);
@@ -1014,6 +1055,16 @@ public class ScaleResizeTool extends Tool {
         boolean b = Imgcodecs.imwrite(file.getAbsolutePath(), sMat);
     }
 
+    void clampVerts(
+            Pair<Integer, Integer> desiredDim)
+    {
+        for (int i = 0; i < verts.numEls(); i++)
+        {
+            verts.put(i, 0, Math.min(Math.max(0.f, verts.get(i).x), desiredDim.first));
+            verts.put(i, 1, Math.min(Math.max(0.f, verts.get(i).y), desiredDim.second));
+        }
+    }
+
     void compute() {
         createMesh(
                 meshDim,
@@ -1026,6 +1077,9 @@ public class ScaleResizeTool extends Tool {
         createQuadMat(vertDim);
 
         solver(quadMat, vertDim, desiredDim);
+
+        // TODO: force triangles not to intersect with each other
+        clampVerts(desiredDim);
 
         createGLMesh();
     }

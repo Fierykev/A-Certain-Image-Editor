@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
@@ -34,6 +35,18 @@ public class MainActivity extends AppCompatActivity {
         final ConfigurationInfo configurationInfo =
                 activityManager.getDeviceConfigurationInfo();
 
+        // TODO: CHECK ANDROID VERSION HERE
+        int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+
         // wait for OpenCV to load
         openCVCallback = new BaseLoaderCallback(this) {
             @Override
@@ -42,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                     case LoaderCallbackInterface.SUCCESS:
                     {
                         Log.i("OpenCV", "OpenCV loaded successfully");
-                        setContentView(R.layout.activity_main);
+                        createDisplay();
                     } break;
                     default:
                     {
@@ -58,22 +71,20 @@ public class MainActivity extends AppCompatActivity {
             Log.d("OpenCV", "OpenCV library found inside package.");
             openCVCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
+    }
 
-        // TMP
-        int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    private void createDisplay()
+    {
+        setContentView(R.layout.activity_main);
 
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    this,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
-        }
+        EditDisplaySurfaceView editDisplaySurfaceView =
+                (EditDisplaySurfaceView)findViewById(R.id.mainEditor);
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(new MenuFragmentPagerAdapter(getSupportFragmentManager(),
+        viewPager.setAdapter(new MenuFragmentPagerAdapter(
+                getSupportFragmentManager(),
+                editDisplaySurfaceView,
                 MainActivity.this));
 
         // Give the TabLayout the ViewPager

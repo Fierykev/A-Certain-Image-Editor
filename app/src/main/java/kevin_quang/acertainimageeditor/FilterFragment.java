@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +11,14 @@ import android.widget.ImageButton;
 
 public class FilterFragment extends Fragment {
 
-    public static FilterFragment newInstance() {
+    private EditDisplaySurfaceView editDisplaySurfaceView;
+
+    public static FilterFragment newInstance(
+            EditDisplaySurfaceView editDisplaySurfaceView
+    ) {
         Bundle args = new Bundle();
         FilterFragment fragment = new FilterFragment();
+        fragment.editDisplaySurfaceView = editDisplaySurfaceView;
         fragment.setArguments(args);
         return fragment;
     }
@@ -43,7 +47,7 @@ public class FilterFragment extends Fragment {
                 ft.addToBackStack(null);
 
                 // Create and show the dialog.
-                DialogFragment newFragment = ScaleResizeDialog.newInstance();
+                DialogFragment newFragment = ScaleResizeDialog.newInstance(editDisplaySurfaceView);
                 newFragment.show(ft, "dialog");
             }
         });

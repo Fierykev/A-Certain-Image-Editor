@@ -38,6 +38,7 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
         currentTool = tool;
         renderer.setTool(currentTool);
 
+        // TODDO:
         // swap touch listeners
         //setOnTouchListener(tool.getTouchListener());
 
@@ -47,5 +48,10 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
     public void setBitmap(Bitmap bitmap)
     {
         renderer.setBitmap(bitmap);
+    }
+
+    public void passArgs(Tool.Args args)
+    {
+        renderer.setArgs(args);
     }
 }

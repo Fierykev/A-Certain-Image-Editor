@@ -1,7 +1,6 @@
 package kevin_quang.acertainimageeditor;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,16 +19,17 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Calendar;
 
 public class LoadFragment extends Fragment {
+    private Uri fileUri;
+    private EditDisplaySurfaceView editDisplaySurfaceView;
 
-    private Uri fileUri = null;
-
-    public static LoadFragment newInstance() {
+    public static LoadFragment newInstance(
+            EditDisplaySurfaceView editDisplaySurfaceView
+    ) {
         Bundle args = new Bundle();
         LoadFragment fragment = new LoadFragment();
+        fragment.editDisplaySurfaceView = editDisplaySurfaceView;
         fragment.setArguments(args);
         return fragment;
     }
@@ -104,7 +104,7 @@ public class LoadFragment extends Fragment {
             }
         }
         if(photo != null) {
-            // TODO: Set bitmap down here instead
+            editDisplaySurfaceView.setBitmap(photo);
         }
     }
 

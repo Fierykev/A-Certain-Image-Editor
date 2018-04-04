@@ -15,8 +15,9 @@ import javax.microedition.khronos.opengles.GL10;
 public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     private float aspectRatio = 1.f;
+    private Tool.Args args;
     private Tool tool;
-    private boolean toolUpdate = false;
+    private boolean toolInit = false, toolUpdate = false, argsUpdate = false;
     private Bitmap bitmap;
     private Context context;
 
@@ -25,15 +26,22 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         this.context = context;
     }
 
+    void setArgs(Tool.Args args)
+    {
+        this.args = args;
+        argsUpdate = true;
+    }
+
     void setBitmap(Bitmap bitmap)
     {
         this.bitmap = bitmap;
+        toolUpdate = true;
     }
 
     void setTool(Tool tool)
     {
         this.tool = tool;
-        toolUpdate = true;
+        toolInit = true;
     }
 
     @Override
@@ -51,12 +59,23 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 unused) {
-        // check for tool update
-        if (toolUpdate) {
+        // check for tool init
+        if (toolInit) {
             this.tool.init(context);
             this.tool.load(bitmap);
+            toolInit = false;
+        }
 
+        // check for tool update
+        if (toolUpdate) {
+            this.tool.load(bitmap);
             toolUpdate = false;
+        }
+
+        // pass args
+        if (argsUpdate) {
+            this.tool.setArgs(args);
+            argsUpdate = false;
         }
 
         // clear frame
