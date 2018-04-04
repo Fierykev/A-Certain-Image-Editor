@@ -2,6 +2,7 @@ package kevin_quang.acertainimageeditor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 
@@ -87,4 +88,11 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     public int getBitmapWidth() {return bitmap.getWidth();}
     public int getBitmapHeight() {return bitmap.getHeight();}
     public void save(String path) {}
+    public void rotate(int degrees) {
+        Matrix mat = new Matrix();
+        mat.postRotate(degrees);
+        setBitmap(Bitmap.createBitmap(
+                Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true),
+                0, 0, bitmap.getWidth(), bitmap.getHeight(), mat, true));
+    }
 }

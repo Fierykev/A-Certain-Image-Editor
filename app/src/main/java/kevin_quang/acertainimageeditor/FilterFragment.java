@@ -51,6 +51,23 @@ public class FilterFragment extends Fragment {
                 newFragment.show(ft, "dialog");
             }
         });
+
+        ImageButton rotateLeft = view.findViewById(R.id.rotate_left);
+        rotateLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editDisplaySurfaceView.rotate(-90);
+            }
+        });
+
+        ImageButton rotateRight = view.findViewById(R.id.rotate_right);
+        rotateRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editDisplaySurfaceView.rotate(90);
+            }
+        });
+
         return view;
     }
 

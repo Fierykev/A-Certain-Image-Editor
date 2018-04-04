@@ -71,12 +71,14 @@ public class ScaleResizeTool extends Tool {
 
     public static class ResizeArgs
     {
-        int width, height;
+        int width, height, meshWidth, meshHeight;
 
-        ResizeArgs(int width, int height)
+        ResizeArgs(int width, int height, int meshWidth, int meshHeight)
         {
             this.width = width;
             this.height = height;
+            this.meshWidth = meshWidth;
+            this.meshHeight = meshHeight;
         }
     }
 
@@ -299,6 +301,10 @@ public class ScaleResizeTool extends Tool {
                         new Pair<>(
                                 ((ResizeArgs) args.arg).height,
                                 ((ResizeArgs) args.arg).width);
+                meshDim =
+                        new Pair<>(
+                                ((ResizeArgs)args.arg).meshHeight,
+                                ((ResizeArgs)args.arg).meshWidth);
                 compute();
 
                 break;

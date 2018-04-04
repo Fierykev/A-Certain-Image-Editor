@@ -95,7 +95,7 @@ public class ScaleResizeDialog extends DialogFragment {
                         || meshWidth > srcWidth || meshHeight > srcHeight) return;
 
                 ScaleResizeTool.ResizeArgs resizeArgs
-                        = new ScaleResizeTool.ResizeArgs(width, height);
+                        = new ScaleResizeTool.ResizeArgs(width, height, meshWidth, meshHeight);
                 editDisplaySurfaceView.passArgs(new Tool.Args(
                         ScaleResizeTool.RESIZE, resizeArgs));
 

@@ -57,4 +57,5 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
     public int getBitmapWidth() {return renderer.getBitmapWidth();}
     public int getBitmapHeight() {return renderer.getBitmapHeight();}
     public void save(String path) {renderer.save(path);}
+    public void rotate(int degrees) {renderer.rotate(degrees);}
 }
