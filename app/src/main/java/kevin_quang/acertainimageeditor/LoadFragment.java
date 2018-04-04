@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -55,17 +56,14 @@ public class LoadFragment extends Fragment {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Set this and sharing is golden
-                Bitmap bitmap = null;
-
-                if(bitmap != null) {
-                    Uri uri = save(bitmap, "Image Title", "Image Description");
-
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("image/jpeg");
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                    startActivity(Intent.createChooser(intent, "Share Image"));
-                }
+                    //Uri uri = save(bitmap, "Image Title", "Image Description");
+                String filename = Environment.getExternalStorageDirectory().getPath() + "/output.jpg";
+                fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
+                editDisplaySurfaceView.save(filename);
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+                startActivity(Intent.createChooser(intent, "Share Image"));
             }
         });
 
@@ -97,6 +95,11 @@ public class LoadFragment extends Fragment {
                     fileUri = data.getData();
                 }
                 photo = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(fileUri), null, null);
+                if(requestCode == CAMERA_REQUEST) {
+                    Matrix mat = new Matrix();
+                    mat.postRotate(-90);
+                    photo = Bitmap.createBitmap(Bitmap.createScaledBitmap(photo, photo.getWidth(), photo.getHeight(), true), 0, 0,photo.getWidth(), photo.getHeight(), mat, true);
+                }
                 Log.d("Photo", String.valueOf(photo.getWidth()) + "," + String.valueOf(photo.getHeight()));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

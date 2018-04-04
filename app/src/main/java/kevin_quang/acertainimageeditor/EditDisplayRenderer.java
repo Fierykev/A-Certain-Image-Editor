@@ -83,4 +83,8 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
         tool.onDraw(aspectRatio);
     }
+
+    public int getBitmapWidth() {return bitmap.getWidth();}
+    public int getBitmapHeight() {return bitmap.getHeight();}
+    public void save(String path) {}
 }

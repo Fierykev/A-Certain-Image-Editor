@@ -60,26 +60,46 @@ public class ScaleResizeDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.scale_resize_dialog, container, false);
+        final int srcWidth = editDisplaySurfaceView.getBitmapWidth();
+        final int srcHeight = editDisplaySurfaceView.getBitmapHeight();
+
         final EditText widthField = v.findViewById(R.id.width);
         final EditText heightField = v.findViewById(R.id.height);
+        widthField.setHint(String.valueOf(srcWidth));
+        heightField.setHint(String.valueOf(srcHeight));
+
+        final EditText meshWidthField = v.findViewById(R.id.mesh_width);
+        final EditText meshHeightField = v.findViewById(R.id.mesh_height);
         Button submit = v.findViewById(R.id.resize);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int width = Integer.parseInt(widthField.getText().toString());
-                int height = Integer.parseInt(heightField.getText().toString());
-                if(width > 0 && height > 0) {
-                    // TODO: Resize here!
 
-                    ScaleResizeTool.ResizeArgs resizeArgs
-                            = new ScaleResizeTool.ResizeArgs(width, height);
-                    editDisplaySurfaceView.passArgs(new Tool.Args(
-                            ScaleResizeTool.RESIZE, resizeArgs));
+                // TODO SHOW A TOAST ON ERROR
 
-                    getFragmentManager().popBackStack();
-                } else {
-                    // TODO: Error Handling
-                }
+                String widthText = widthField.getText().toString();
+                String heightText = heightField.getText().toString();
+                if(widthText.length() == 0 || heightText.length() == 0) return;
+                int width = Integer.parseInt(widthText);
+                int height = Integer.parseInt(heightText);
+
+                if(width <= 0 || height <= 0) return;
+
+                String meshWidthText = meshWidthField.getText().toString();
+                String meshHeightText = meshHeightField.getText().toString();
+                if(meshWidthText.length() == 0 || meshHeightText.length() == 0) return;
+                int meshWidth = Integer.parseInt(meshWidthText);
+                int meshHeight = Integer.parseInt(meshHeightText);
+
+                if(meshWidth <= 0 || meshWidth <= 0
+                        || meshWidth > srcWidth || meshHeight > srcHeight) return;
+
+                ScaleResizeTool.ResizeArgs resizeArgs
+                        = new ScaleResizeTool.ResizeArgs(width, height);
+                editDisplaySurfaceView.passArgs(new Tool.Args(
+                        ScaleResizeTool.RESIZE, resizeArgs));
+
+                getFragmentManager().popBackStack();
             }
         });
         return v;
