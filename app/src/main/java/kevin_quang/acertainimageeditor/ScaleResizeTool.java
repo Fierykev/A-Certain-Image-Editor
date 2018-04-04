@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
-import android.os.Environment;
 import android.util.Log;
 import android.util.Pair;
 
@@ -34,7 +33,8 @@ import static org.opencv.core.CvType.CV_32FC1;
 import static org.opencv.core.CvType.CV_32FC2;
 import static org.opencv.core.CvType.CV_8UC3;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
-import static org.opencv.imgproc.Imgproc.COLOR_BGRA2BGR;
+import static org.opencv.imgproc.Imgproc.COLOR_RGBA2BGR;
+import static org.opencv.imgproc.Imgproc.COLOR_RGBA2BGRA;
 
 
 /**
@@ -278,10 +278,11 @@ public class ScaleResizeTool extends Tool {
 
         origImage = new Mat();
         Utils.bitmapToMat(bitmap, origImage);
+        Imgproc.cvtColor(origImage, origImage, COLOR_RGBA2BGRA);
 
         convertImage = origImage.clone();
         convertImage.convertTo(convertImage, CV_32F);
-        Imgproc.cvtColor(convertImage, convertImage, COLOR_BGRA2BGR);
+        Imgproc.cvtColor(convertImage, convertImage, COLOR_RGBA2BGR);
 /*
         Imgproc.resize(
                 convertImage,
@@ -1117,6 +1118,95 @@ public class ScaleResizeTool extends Tool {
             verts.put(i, 0, Math.min(Math.max(0.f, verts.get(i).x), desiredDim.first));
             verts.put(i, 1, Math.min(Math.max(0.f, verts.get(i).y), desiredDim.second));
         }
+    }
+
+    void renderMat()
+    {/*
+        GLES30.glGenFramebuffers(1, , );
+        GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, );
+
+        GLES30.glGenTextures(1, , );
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, );
+        GLES30.glTexImage2D(
+                GLES30.GL_TEXTURE_2D,
+                0,
+                GLES30.GL_RGBA32F,
+                w,
+                h,
+                0,
+                GLES30.GL_RGBA,
+                GLES30.GL_FLOAT,
+                null);
+
+        GLES30.glGenTextures(1, , );
+        GLES30.glBindTexture(
+                GLES30.GL_TEXTURE_2D,
+                depthBack
+        );
+        GLES30.glTexParameteri(
+                GLES30.GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_WRAP_S,
+                GLES30.GL_CLAMP_TO_EDGE
+        );
+        GLES30.glTexParameteri(
+                GLES30.GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_WRAP_T,
+                GLES30.GL_CLAMP_TO_EDGE
+        );
+        GLES30.glTexParameteri(
+                GLES30.GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_MIN_FILTER,
+                GLES30.GL_CLAMP_TO_EDGE
+        );
+        GLES30.glTexParameteri(
+                GLES30.GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_MAG_FILTER,
+                GLES30.GL_CLAMP_TO_EDGE
+        );
+
+        GLES30.glGenTextures(1, , );
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, );
+        GLES30.glTexParameteri(
+                GLES30.GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_WRAP_S,
+                GLES30.GL_CLAMP_TO_EDGE
+        );
+        GLES30.glTexParameteri(
+                GLES30.GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_WRAP_T,
+                GLES30.GL_CLAMP_TO_EDGE
+        );
+        GLES30.glTexParameteri(
+                GLES30.GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_MIN_FILTER,
+                GLES30.GL_CLAMP_TO_EDGE
+        );
+        GLES30.glTexParameteri(
+                GLES30.GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_MAG_FILTER,
+                GLES30.GL_CLAMP_TO_EDGE
+        );
+
+        GLES30.glTexImage2D(
+                GLES30.GL_TEXTURE_2D,
+                0,
+                GLES30.GL_RGBA32F,
+                w,
+                h,
+                0,
+                GLES30.GL_RGBA,
+                GLES30.GL_FLOAT,
+                null);
+        GLES30.glFramebufferTexture2D(
+                GLES30.GL_FRAMEBUFFER,
+                GLES30.GL_DEPTH_ATTACHMENT,
+                depth,
+                0,
+        );
+
+        GLES30.glFramebufferTex(
+
+        );*/
     }
 
     void compute() {
