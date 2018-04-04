@@ -14,6 +14,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
+    private float aspectRatio = 1.f;
     private Tool tool;
     private boolean toolUpdate = false;
     private Bitmap bitmap;
@@ -44,7 +45,8 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         // set viewport
-        //GLES30.glViewport(0, 0, width, height);
+        GLES30.glViewport(0, 0, width, height);
+        aspectRatio = (float)width / (float)height;
     }
 
     @Override
@@ -60,6 +62,6 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         // clear frame
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
 
-        tool.onDraw();
+        tool.onDraw(aspectRatio);
     }
 }

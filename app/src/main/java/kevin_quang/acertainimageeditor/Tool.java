@@ -18,7 +18,7 @@ abstract class Tool {
 
     abstract void load(Bitmap bitmap);
 
-    abstract void onDraw();
+    abstract void onDraw(float aspectRatio);
 
     abstract void getLeftMenu();
 

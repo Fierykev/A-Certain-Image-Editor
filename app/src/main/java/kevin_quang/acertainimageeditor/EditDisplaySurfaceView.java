@@ -22,13 +22,13 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
         renderer = new EditDisplayRenderer();
         renderer.setContext(getContext());
 
-        // TMP
+        // TMP FOR DEMO
         ScaleResizeTool tmp = new ScaleResizeTool();
-        Bitmap bMap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.sample);
+        Bitmap bMap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.runnerrunning);
+
         renderer.setBitmap(bMap);
 
         setTool(tmp);
-
 
         setRenderer(renderer);
     }
