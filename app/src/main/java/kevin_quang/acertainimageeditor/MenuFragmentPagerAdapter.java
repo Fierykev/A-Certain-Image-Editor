@@ -4,14 +4,18 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 
 public class MenuFragmentPagerAdapter extends FragmentPagerAdapter {
     final int PAGE_COUNT = 3;
+    private EditDisplaySurfaceView editDisplaySurfaceView;
     private Context context;
 
-    public MenuFragmentPagerAdapter(FragmentManager fm, Context context) {
+    public MenuFragmentPagerAdapter(
+            FragmentManager fm,
+            EditDisplaySurfaceView editDisplaySurfaceView,
+            Context context) {
         super(fm);
+        this.editDisplaySurfaceView = editDisplaySurfaceView;
         this.context = context;
     }
 
@@ -24,11 +28,11 @@ public class MenuFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch(position) {
             case 0:
-                return LoadFragment.newInstance();
+                return LoadFragment.newInstance(editDisplaySurfaceView);
             case 1:
-                return FilterFragment.newInstance();
+                return FilterFragment.newInstance(editDisplaySurfaceView);
             case 2:
-                return BrushFragment.newInstance();
+                return BrushFragment.newInstance(editDisplaySurfaceView);
             default:
                 return null;
         }

@@ -11,9 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 public class LoadFragment extends Fragment {
-    public static LoadFragment newInstance() {
+    private EditDisplaySurfaceView editDisplaySurfaceView;
+
+    public static LoadFragment newInstance(
+            EditDisplaySurfaceView editDisplaySurfaceView) {
         Bundle args = new Bundle();
         LoadFragment fragment = new LoadFragment();
+        fragment.editDisplaySurfaceView = editDisplaySurfaceView;
         fragment.setArguments(args);
         return fragment;
     }
@@ -43,6 +47,8 @@ public class LoadFragment extends Fragment {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             // TODO: Set Bitmap Here!
+
+            editDisplaySurfaceView.setBitmap(photo);
         }
     }
 

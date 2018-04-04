@@ -7,9 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class BrushFragment extends Fragment {
-    public static BrushFragment newInstance() {
+    private EditDisplaySurfaceView editDisplaySurfaceView;
+
+    public static BrushFragment newInstance(
+            EditDisplaySurfaceView editDisplaySurfaceView
+    ) {
         Bundle args = new Bundle();
         BrushFragment fragment = new BrushFragment();
+        fragment.editDisplaySurfaceView = editDisplaySurfaceView;
         fragment.setArguments(args);
         return fragment;
     }

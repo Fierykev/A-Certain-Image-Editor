@@ -10,6 +10,23 @@ import android.view.View;
 
 abstract class Tool {
 
+    public static class Args
+    {
+        int type;
+        Object arg;
+
+        Args()
+        {
+
+        }
+
+        Args(int type, Object arg)
+        {
+            this.type = type;
+            this.arg = arg;
+        }
+    }
+
     private View.OnTouchListener touchListener;
 
     abstract void init(Context context);
@@ -17,6 +34,8 @@ abstract class Tool {
     abstract void destroy();
 
     abstract void load(Bitmap bitmap);
+
+    void setArgs(Args args) { }
 
     abstract void onDraw(float aspectRatio);
 
