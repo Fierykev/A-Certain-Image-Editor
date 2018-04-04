@@ -87,7 +87,9 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     public int getBitmapWidth() {return bitmap.getWidth();}
     public int getBitmapHeight() {return bitmap.getHeight();}
-    public void save(String path) {}
+    public void save(String path) {
+        tool.save(path);
+    }
     public void rotate(int degrees) {
         Matrix mat = new Matrix();
         mat.postRotate(degrees);

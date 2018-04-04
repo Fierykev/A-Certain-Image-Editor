@@ -37,4 +37,9 @@ public class ImageDrawTool extends Tool {
     void getRightMenu() {
 
     }
+
+    @Override
+    void save(String path) {
+
+    }
 }

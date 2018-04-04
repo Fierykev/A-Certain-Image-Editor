@@ -72,9 +72,26 @@
             android:inputType="number"
             android:layout_height="wrap_content" />
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Iterations: "/>
+        <EditText
+            android:id="@+id/iterations"
+            android:layout_width="64dp"
+            android:text="35"
+            android:inputType="number"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
     <Button
         android:id="@+id/resize"
         android:text="Resize"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

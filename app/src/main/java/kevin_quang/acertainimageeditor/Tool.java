@@ -43,6 +43,8 @@ abstract class Tool {
 
     abstract void getRightMenu();
 
+    abstract void save(String path);
+
     View.OnTouchListener getTouchListener()
     {
         return touchListener;

@@ -70,6 +70,9 @@ public class ScaleResizeDialog extends DialogFragment {
 
         final EditText meshWidthField = v.findViewById(R.id.mesh_width);
         final EditText meshHeightField = v.findViewById(R.id.mesh_height);
+
+        final EditText iterationsField = v.findViewById(R.id.iterations);
+
         Button submit = v.findViewById(R.id.resize);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,8 +97,13 @@ public class ScaleResizeDialog extends DialogFragment {
                 if(meshWidth <= 0 || meshWidth <= 0
                         || meshWidth > srcWidth || meshHeight > srcHeight) return;
 
+                String iterationsText = iterationsField.getText().toString();
+                if(iterationsText.length() == 0) return;
+                int iterations = Integer.parseInt(iterationsText);
+                if(iterations > 0) return;
+
                 ScaleResizeTool.ResizeArgs resizeArgs
-                        = new ScaleResizeTool.ResizeArgs(width, height, meshWidth, meshHeight);
+                        = new ScaleResizeTool.ResizeArgs(width, height, meshWidth, meshHeight, iterations);
                 editDisplaySurfaceView.passArgs(new Tool.Args(
                         ScaleResizeTool.RESIZE, resizeArgs));
 

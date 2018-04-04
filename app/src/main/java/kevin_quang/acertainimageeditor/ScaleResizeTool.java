@@ -72,14 +72,15 @@ public class ScaleResizeTool extends Tool {
 
     public static class ResizeArgs
     {
-        int width, height, meshWidth, meshHeight;
+        int width, height, meshWidth, meshHeight, iterations;
 
-        ResizeArgs(int width, int height, int meshWidth, int meshHeight)
+        ResizeArgs(int width, int height, int meshWidth, int meshHeight, int iterations)
         {
             this.width = width;
             this.height = height;
             this.meshWidth = meshWidth;
             this.meshHeight = meshHeight;
+            this.iterations = iterations;
         }
     }
 
@@ -599,7 +600,6 @@ public class ScaleResizeTool extends Tool {
             significance = norm.mul(saliency);
         }
 
-        saveMat(significance);
     }
 
     private void createQuadMat(Pair<Integer, Integer> meshDim)
@@ -1091,15 +1091,13 @@ public class ScaleResizeTool extends Tool {
         }
     }
 
-    void saveMat(Mat mat) {
+    void saveMat(Mat mat, String path) {
         String[] permissions = {
                 "android.permission.READ_EXTERNAL_STORAGE",
                 "android.permission.WRITE_EXTERNAL_STORAGE"
         };
 
-        File file = new File(
-                Environment.getExternalStorageDirectory()
-                        + File.separator + "fame.png");
+        File file = new File(path);
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -1107,7 +1105,7 @@ public class ScaleResizeTool extends Tool {
         }
 
         Mat sMat = new Mat();
-        mat.convertTo(sMat, CV_8UC3, 255.0);
+        mat.convertTo(sMat, CV_8UC3, 1.0);
         boolean b = Imgcodecs.imwrite(file.getAbsolutePath(), sMat);
     }
 
@@ -1138,5 +1136,9 @@ public class ScaleResizeTool extends Tool {
         clampVerts(desiredDim);
 
         createGLMesh();
+    }
+
+    void save(String path) {
+        saveMat(origImage, path);
     }
 }
