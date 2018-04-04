@@ -14,7 +14,6 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Range;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.saliency.StaticSaliencySpectralResidual;
@@ -280,7 +279,7 @@ public class ScaleResizeTool extends Tool {
         convertImage = origImage.clone();
         convertImage.convertTo(convertImage, CV_32F);
         Imgproc.cvtColor(convertImage, convertImage, COLOR_BGRA2BGR);
-
+/*
         Imgproc.resize(
                 convertImage,
                 convertImage,
@@ -289,7 +288,7 @@ public class ScaleResizeTool extends Tool {
                         (float)convertImage.cols() / 4.f
                         )
         );
-
+*/
         // setup display
         Pair<Integer, Integer> actualDim =
                 new Pair<>(convertImage.rows(), convertImage.cols());
