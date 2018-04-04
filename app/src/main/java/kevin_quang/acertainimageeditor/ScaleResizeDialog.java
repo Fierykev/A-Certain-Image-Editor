@@ -100,7 +100,7 @@ public class ScaleResizeDialog extends DialogFragment {
                 String iterationsText = iterationsField.getText().toString();
                 if(iterationsText.length() == 0) return;
                 int iterations = Integer.parseInt(iterationsText);
-                if(iterations > 0) return;
+                if(iterations <= 0) return;
 
                 ScaleResizeTool.ResizeArgs resizeArgs
                         = new ScaleResizeTool.ResizeArgs(width, height, meshWidth, meshHeight, iterations);

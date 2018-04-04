@@ -43,9 +43,10 @@ import static org.opencv.imgproc.Imgproc.COLOR_RGBA2BGRA;
 
 public class ScaleResizeTool extends Tool {
 
-    private static final int MAX_ITR = 33;
+    private int MAX_ITR = 33;
     private static final float MIN_MOVEMENT = .05f;
     private static final float LAMBDA = .01f;
+    private static final int COMPUTE_FRAME = 1;
 
     private Mat convertImage, origImage, significance, quadMat;
     private Pair<Integer, Integer> vertDim;
@@ -61,6 +62,7 @@ public class ScaleResizeTool extends Tool {
     private int indices[];
     private int vertID[] = new int[1];
     private float world[] = new float[16];
+    private int needsCompute = COMPUTE_FRAME + 1;
 
     // Note: width and height are swapped
     private Pair<Integer, Integer> meshDim
@@ -255,6 +257,8 @@ public class ScaleResizeTool extends Tool {
 
     void init(Context context)
     {
+        needsCompute = COMPUTE_FRAME + 1;
+
         program = loadProgram(
                 "shaders/ScaleResizeTool/main.vs",
                 "shaders/ScaleResizeTool/main.fs",
@@ -267,6 +271,8 @@ public class ScaleResizeTool extends Tool {
 
     void destroy()
     {
+        needsCompute = COMPUTE_FRAME + 1;
+
         GLES30.glDeleteProgram(program);
         GLES30.glDeleteBuffers(1, vertBufferID, 0);
         GLES30.glDeleteBuffers(1, indexBufferID, 0);
@@ -274,6 +280,8 @@ public class ScaleResizeTool extends Tool {
 
     void load(Bitmap bitmap)
     {
+        needsCompute = COMPUTE_FRAME + 1;
+
         textureID = loadTexture(bitmap);
 
         origImage = new Mat();
@@ -317,7 +325,17 @@ public class ScaleResizeTool extends Tool {
                         new Pair<>(
                                 ((ResizeArgs)args.arg).meshHeight,
                                 ((ResizeArgs)args.arg).meshWidth);
-                compute();
+                MAX_ITR = ((ResizeArgs)args.arg).iterations;
+
+                // show bad resize for first frame
+                createMesh(
+                        meshDim,
+                        new Pair<>(convertImage.rows(), convertImage.cols()),
+                        desiredDim);
+                createGLMesh();
+
+                // init computation
+                needsCompute = 0;
 
                 break;
         }
@@ -325,6 +343,14 @@ public class ScaleResizeTool extends Tool {
 
     @Override
     void onDraw(float aspectRatio) {
+        if (needsCompute == COMPUTE_FRAME)
+        {
+            compute();
+        }
+
+        if (needsCompute <= COMPUTE_FRAME)
+            needsCompute++;
+
         GLES30.glEnable(GLES30.GL_TEXTURE_2D);
 
         GLES30.glUseProgram(program);
