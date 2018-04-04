@@ -12,7 +12,9 @@ import android.util.Pair;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Range;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.saliency.StaticSaliencySpectralResidual;
@@ -63,7 +65,7 @@ public class ScaleResizeTool extends Tool {
 
     // Note: width and height are swapped
     private Pair<Integer, Integer> meshDim
-            = new Pair<>(50, 25);
+            = new Pair<>(50, 50);
     private Pair<Integer, Integer> desiredDim
             = new Pair<>(300, 100);
 
@@ -280,6 +282,15 @@ public class ScaleResizeTool extends Tool {
         convertImage = origImage.clone();
         convertImage.convertTo(convertImage, CV_32F);
         Imgproc.cvtColor(convertImage, convertImage, COLOR_BGRA2BGR);
+
+        Imgproc.resize(
+                convertImage,
+                convertImage,
+                new Size(
+                        (float)convertImage.rows() / 4.f,
+                        (float)convertImage.cols() / 4.f
+                        )
+        );
 
         // setup display
         Pair<Integer, Integer> actualDim =
@@ -508,6 +519,30 @@ public class ScaleResizeTool extends Tool {
     }
 
     private void createSignificanceMap(Mat image) {
+        /*
+        int maxSize = 1000;
+
+        if (image.cols() < image.rows() &&
+                maxSize < (float)image.rows())
+        {
+            Imgproc.resize(
+                    image,
+                    image,
+                    new Size(
+                            maxSize,
+                            (int)((float)image.cols() * (float)maxSize / (float)image.rows()))
+            );
+        } else if (maxSize < (float)image.cols())
+        {
+            Imgproc.resize(
+                    image,
+                    image,
+                    new Size(
+                            (int)((float)image.rows() * (float)maxSize / (float)image.cols()),
+                            maxSize)
+            );
+        }
+*/
         // norm
         Mat norm;
         {
@@ -584,6 +619,21 @@ public class ScaleResizeTool extends Tool {
             {
                 sum = 0;
 
+                Mat subMatrix = new Mat(
+                        significance,
+                        new Range(
+                                (int) origVerts.get(w + h * meshDim.first).x,
+                                (int)Math.ceil(origVerts.get((w + 1) + h * meshDim.first).x)
+                        ),
+                        new Range(
+                                (int)origVerts.get(w + h * meshDim.first).y,
+                                (int)Math.ceil(origVerts.get(w + (h + 1) * meshDim.first).y)
+                        )
+                );
+
+                sum += Core.sumElems(subMatrix).val[0];
+
+            /*
                 for (int y = (int) origVerts.get(w + h * meshDim.first).y;
                      y < origVerts.get(w + (h + 1) * meshDim.first).y;
                      y++)
@@ -597,6 +647,7 @@ public class ScaleResizeTool extends Tool {
                         sum += v[0];
                     }
                 }
+                */
 
                 quadMat.put(w, h, sum);
             }
