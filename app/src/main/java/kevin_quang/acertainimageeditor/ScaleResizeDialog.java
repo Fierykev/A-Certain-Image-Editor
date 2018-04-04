@@ -2,7 +2,6 @@ package kevin_quang.acertainimageeditor;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +10,6 @@ import android.widget.EditText;
 
 public class ScaleResizeDialog extends DialogFragment {
 
-    /**
-     * Create a new instance of MyDialogFragment, providing "num"
-     * as an argument.
-     */
     public static ScaleResizeDialog newInstance() {
         ScaleResizeDialog f = new ScaleResizeDialog();
 

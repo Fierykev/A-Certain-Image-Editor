@@ -1,18 +1,31 @@
 package kevin_quang.acertainimageeditor;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Calendar;
 
 public class LoadFragment extends Fragment {
+
+    private Uri fileUri = null;
 
     public static LoadFragment newInstance() {
         Bundle args = new Bundle();
@@ -37,6 +50,7 @@ public class LoadFragment extends Fragment {
                 pictureButtonPressed(v);
             }
         });
+
         ImageButton share = view.findViewById(R.id.share);
         share.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,8 +59,7 @@ public class LoadFragment extends Fragment {
                 Bitmap bitmap = null;
 
                 if(bitmap != null) {
-                    String path = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap, "Image Description", null);
-                    Uri uri = Uri.parse(path);
+                    Uri uri = save(bitmap, "Image Title", "Image Description");
 
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.setType("image/jpeg");
@@ -55,22 +68,53 @@ public class LoadFragment extends Fragment {
                 }
             }
         });
+
+        ImageButton gallery = view.findViewById(R.id.photo_gallery);
+        gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
+            }
+        });
         return view;
     }
 
+    private Uri save(Bitmap bitmap, String title, String desc) {
+        String path = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap, title, desc);
+        return Uri.parse(path);
+    }
+
     private static final int CAMERA_REQUEST = 1888;
+    private static final int GALLERY_REQUEST = 1889;
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            // TODO: Set Bitmap Here!
+        Bitmap photo = null;
+        if ((requestCode == CAMERA_REQUEST || requestCode == GALLERY_REQUEST) && resultCode == Activity.RESULT_OK) {
+            try {
+                if(requestCode == GALLERY_REQUEST) {
+                    fileUri = data.getData();
+                }
+                photo = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(fileUri), null, null);
+                Log.d("Photo", String.valueOf(photo.getWidth()) + "," + String.valueOf(photo.getHeight()));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity(), "Failed to load image", Toast.LENGTH_LONG).show();
+            }
+        }
+        if(photo != null) {
+            // TODO: Set bitmap down here instead
         }
     }
 
     ////////////////////////////////////////////////////////////////////////////
 
     public void pictureButtonPressed(View view) {
-        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        String filename = Environment.getExternalStorageDirectory().getPath() + "/output.jpg";
+        fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
+        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, fileUri);
+        startActivityForResult(intent, CAMERA_REQUEST);
     }
 }
