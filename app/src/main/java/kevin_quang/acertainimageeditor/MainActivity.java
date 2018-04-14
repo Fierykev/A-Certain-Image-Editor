@@ -7,7 +7,6 @@ import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.transition.Visibility;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -52,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
             );
         }
 
+        progressBar.setVisibility(View.GONE);
+
         // wait for OpenCV to load
         openCVCallback = new BaseLoaderCallback(this) {
             @Override
@@ -60,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
                     case LoaderCallbackInterface.SUCCESS:
                     {
                         Log.i("OpenCV", "OpenCV loaded successfully");
+
+                        // load tensorflow
+                        System.loadLibrary("tensorflow_inference");
+
                         progressBar.setVisibility(View.GONE);
                     } break;
                     default:
