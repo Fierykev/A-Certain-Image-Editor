@@ -62,9 +62,6 @@ public class MainActivity extends AppCompatActivity {
                     {
                         Log.i("OpenCV", "OpenCV loaded successfully");
 
-                        // load tensorflow
-                        System.loadLibrary("tensorflow_inference");
-
                         progressBar.setVisibility(View.GONE);
                     } break;
                     default:
