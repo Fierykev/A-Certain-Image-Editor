@@ -5,7 +5,6 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES30;
-import android.opengl.GLES30;
 import android.opengl.GLUtils;
 import android.util.Log;
 
@@ -57,6 +56,11 @@ public class GLHelper {
             this.y = y;
         }
 
+        Point()
+        {
+
+        }
+
         protected Point<T> clone()
         {
             return new Point<T>(x, y);
@@ -70,6 +74,13 @@ public class GLHelper {
         Point sub(Point p)
         {
             return new Point(subNumbers(x, p.x), subNumbers(y, p.y));
+        }
+
+        double distance(Point p)
+        {
+            return Math.sqrt(
+                    (double)subNumbers(x, p.x) * (double)subNumbers(x, p.x)
+                            + (double)subNumbers(y, p.y) * (double)subNumbers(y, p.y));
         }
 
         float norm()
@@ -221,6 +232,15 @@ public class GLHelper {
                     floatArray[in * 5 + 4] = v;
                     break;
             }
+        }
+
+        void put(int in, Vertex v)
+        {
+            floatArray[in * 5] = v.x;
+            floatArray[in * 5 + 1] = v.y;
+            floatArray[in * 5 + 2] = v.z;
+            floatArray[in * 5 + 3] = v.u;
+            floatArray[in * 5 + 4] = v.v;
         }
     }
 

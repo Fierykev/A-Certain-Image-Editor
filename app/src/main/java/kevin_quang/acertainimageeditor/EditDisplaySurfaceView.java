@@ -64,4 +64,5 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
     public void rotate(int degrees) {renderer.rotate(degrees);}
     public void undo() {renderer.undo();}
     public void redo() {renderer.redo();}
+    public void addPoint(GLHelper.Point<Float> point) {renderer.addPoint(point);}
 }

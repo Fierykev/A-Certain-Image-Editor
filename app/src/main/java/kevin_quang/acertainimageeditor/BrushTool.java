@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -13,7 +14,8 @@ import java.util.ArrayList;
 
 public class BrushTool extends Tool {
 
-    private ArrayList<Point> points = new ArrayList<Point>();
+    private ArrayList<
+            Pair<GLHelper.Point<Float>, GLHelper.Point<Float>>> points = new ArrayList<>();
 
     public BrushTool(final EditDisplaySurfaceView editDisplaySurfaceView) {
         float width = editDisplaySurfaceView.getBitmapWidth();
@@ -41,11 +43,15 @@ public class BrushTool extends Tool {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() != MotionEvent.ACTION_UP) {
-                    Point point = new Point();
+                    GLHelper.Point<Float> point =
+                            new GLHelper.Point<>();
                     point.x = (event.getX()) / scale - xOffset;
                     point.y = (event.getY()) / scale - yOffset;
                     Log.d("Point", String.valueOf(point.x) + "," + String.valueOf(point.y));
-                    points.add(point);
+                    points.add(new Pair<>(point, new GLHelper.Point<Float>()));
+
+                    editDisplaySurfaceView.addPoint(point);
+
                     Path path = getPath();
 
                     Bitmap bitmap = Bitmap.createBitmap(image);
@@ -58,6 +64,8 @@ public class BrushTool extends Tool {
                     editDisplaySurfaceView.setBitmap(image);
                     return true;
                 } else {
+                    editDisplaySurfaceView.addPoint(
+                            EditDisplayRenderer.END_POINT);
                     points.clear();
                 }
                 return false;
@@ -71,31 +79,38 @@ public class BrushTool extends Tool {
             return path;
         }
         for(int i = 0; i < points.size(); i++) {
-            Point point = points.get(i);
+            Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> point =
+                    points.get(i);
             if(i == 0) {
-                Point next = points.get(i + 1);
-                point.dx = (next.x - point.x)/3;
-                point.dy = (next.y - point.y)/3;
+                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>>
+                        next = points.get(i + 1);
+                point.second.x = (next.first.x - point.first.x)/3;
+                point.second.y = (next.first.y - point.first.y)/3;
             } else if(i < points.size() - 1) {
-                Point prev = points.get(i - 1);
-                Point next = points.get(i + 1);
-                point.dx = (next.x - prev.x)/3;
-                point.dy = (next.y - prev.y)/3;
+                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> prev =
+                        points.get(i - 1);
+                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> next =
+                        points.get(i + 1);
+                point.second.x = (next.first.x - prev.first.x)/3;
+                point.second.y = (next.first.y - prev.first.y)/3;
             } else {
-                Point prev = points.get(i - 1);
-                point.dx = (point.x - prev.x)/3;
-                point.dy = (point.y - prev.y)/3;
+                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> prev =
+                        points.get(i - 1);
+                point.second.x = (point.first.x - prev.first.x)/3;
+                point.second.y = (point.first.y - prev.first.y)/3;
             }
         }
         for(int i = 0; i < points.size(); i++) {
-            Point point = points.get(i);
+            Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> point =
+                    points.get(i);
             if(i == 0) {
-                path.moveTo(point.x, point.y);
+                path.moveTo(point.first.x, point.first.y);
             } else {
-                Point prev = points.get(i - 1);
-                path.cubicTo(prev.x + prev.dx, prev.y + prev.dy,
-                             point.x - point.dx, point.y - point.dy,
-                             point.x, point.y);
+                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> prev =
+                        points.get(i - 1);
+                path.cubicTo(prev.first.x + prev.second.x, prev.first.y + prev.second.y,
+                             point.first.x - point.second.x, point.first.y - point.second.y,
+                             point.first.x, point.first.y);
             }
         }
         return path;

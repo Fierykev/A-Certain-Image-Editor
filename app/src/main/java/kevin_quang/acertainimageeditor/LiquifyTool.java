@@ -1,0 +1,261 @@
+package kevin_quang.acertainimageeditor;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.opengl.GLES30;
+import android.opengl.Matrix;
+import android.util.Pair;
+
+/**
+ * Created by Kevin on 5/6/2018.
+ */
+
+public class LiquifyTool extends Tool {
+    private static final float ENLARGE_FACTOR = .05f;
+
+    private Pair<Integer, Integer> vertDim;
+    private GLHelper.VertexArray verts;
+    private int indices[];
+    private GLHelper.DrawData data;
+
+    private Pair<Integer, Integer> meshDim
+            = new Pair<>(50, 50);
+
+    @Override
+    void init(Context context) {
+        super.init(context);
+    }
+
+    @Override
+    void destroy() {
+        super.destroy();
+    }
+
+    @Override
+    void load(Bitmap bitmap, boolean storeHistory) {
+        super.load(bitmap, storeHistory);
+
+        createMesh(
+                meshDim,
+                new Pair<Integer, Integer>(
+                        bitmap.getWidth(), bitmap.getWidth())
+        );
+
+        data =
+                GLHelper.createBuffers(
+                        verts,
+                        indices
+                );
+    }
+
+    @Override
+    void onDraw(float aspectRatio, int width, int height) {
+        //super.onDraw(aspectRatio, width, height);
+        renderMesh(aspectRatio, width, height);
+    }
+
+    @Override
+    void getLeftMenu() {
+
+    }
+
+    @Override
+    void getRightMenu() {
+
+    }
+
+    private void renderMesh(float aspectRatio, int width, int height)
+    {
+        GLES30.glClearColor(0.f, 0.f, 0.f, 1.f);
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
+        GLES30.glViewport(0, 0, width, height);
+
+        GLES30.glEnable(GLES30.GL_TEXTURE_2D);
+
+        GLES30.glUseProgram(program);
+
+        // construct matrix
+        Matrix.setIdentityM(world, 0);
+
+        // now plane fills screen
+        float currentAspectRatio =
+                (float)image.getWidth()  / (float)image.getHeight();
+        float hS = Math.min(aspectRatio / currentAspectRatio, 1.f);
+        float wS = Math.min(currentAspectRatio / aspectRatio, 1.f);
+
+        Matrix.scaleM(
+                world,
+                0,
+                wS,
+                hS,
+                1.f);
+        Matrix.rotateM(
+                world,
+                0,
+                90.f,
+                0.f,
+                0.f,
+                1.f
+        );
+        Matrix.scaleM(
+                world,
+                0,
+                1.f / (float)super.image.getWidth() * 2.f,
+                -1.f / (float)super.image.getHeight() * 2.f,
+                1.f);
+        Matrix.translateM(
+                world,
+                0,
+                -(float)super.image.getWidth() / 2.f,
+                -(float)super.image.getHeight() / 2.f,
+                0.f);
+
+        GLES30.glBindBuffer (GLES30.GL_ARRAY_BUFFER, data.vertBufferID[0]);
+
+        GLES30.glEnableVertexAttribArray(postionAttr);
+        GLES30.glVertexAttribPointer(postionAttr, 3, GLES30.GL_FLOAT, false, 4 * 5, 0);
+
+        GLES30.glEnableVertexAttribArray(texCoordAttr);
+        GLES30.glVertexAttribPointer(texCoordAttr, 2, GLES30.GL_FLOAT, false, 4 * 5, 4 * 3);
+
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureID);
+        GLES30.glUniform1ui(textureUnif, textureID);
+
+        GLES30.glUniformMatrix4fv(worldUnif, 1, false, world, 0);
+
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, data.indexBufferID[0]);
+        GLES30.glDrawElements(GLES30.GL_TRIANGLES, indices.length, GLES30.GL_UNSIGNED_INT, 0);
+
+        GLES30.glDisableVertexAttribArray(postionAttr);
+        GLES30.glDisableVertexAttribArray(texCoordAttr);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+
+
+    private void createMesh(
+            Pair<Integer, Integer> meshDim,
+            Pair<Integer, Integer> actualDim
+    ) {
+        // get quad number
+        Pair<Integer, Integer> quadDim =
+                new Pair<>(
+                        actualDim.first / meshDim.first,
+                        actualDim.second / meshDim.second);
+
+        // get overflow
+        Pair<Integer, Integer> overflowDim =
+                new Pair<>(
+                        actualDim.first - quadDim.first * meshDim.first,
+                        actualDim.second - quadDim.second * meshDim.second
+                );
+
+        // number of vertices
+        vertDim =
+                new Pair<>(
+                        quadDim.first + 1,
+                        quadDim.second + 1
+                );
+
+        // verts
+        GLHelper.Vertex vertex = new GLHelper.Vertex();
+        verts = new GLHelper.VertexArray(vertDim.first * vertDim.second);
+
+        for (int y = 0; y < vertDim.second; y++) {
+            for (int x = 0; x < vertDim.first; x++) {
+                vertex.x =
+                        (float)Math.min(
+                                meshDim.first * x
+                                        + Math.round(
+                                        (float) (overflowDim.first * x)
+                                                / (float) (quadDim.first)
+                                ),
+                                actualDim.first
+                        );
+                vertex.y =
+                        (float)Math.min(
+                                meshDim.second * y
+                                        + Math.round(
+                                        (float) (overflowDim.second * y)
+                                                / (float) (quadDim.second)
+                                ),
+                                actualDim.second
+                        );
+                vertex.z = .1f;
+
+                vertex.u =
+                        (float)(vertex.y)
+                                / (float)(actualDim.second);
+                vertex.v =
+                        1.f - (float)(vertex.x)
+                                / (float)(actualDim.first);
+
+                verts.add(vertex);
+            }
+        }
+
+        // indices
+        indices =
+                new int[vertDim.first * vertDim.second * 6];
+
+        for (int y = 0; y < quadDim.second; y++) {
+            for (int x = 0; x < quadDim.first; x++) {
+                int index = (x + y * vertDim.first) * 6;
+
+                indices[index] = x + y * vertDim.first;
+                indices[index + 1] = (x + 1) + y * vertDim.first;
+                indices[index + 2] = x + (y + 1) * vertDim.first;
+
+                indices[index + 3] = (x + 1) + y * vertDim.first;
+                indices[index + 4] = x + (y + 1) * vertDim.first;
+                indices[index + 5] = (x + 1) + (y + 1) * vertDim.first;
+            }
+        }
+    }
+
+    private void enlargeShrink(
+            GLHelper.Point<Integer> start,
+            GLHelper.Point<Integer> end,
+            boolean enlarge
+    )
+    {
+        GLHelper.Point<Integer> xBound =
+                new GLHelper.Point<Integer>(0, super.image.getWidth());
+        GLHelper.Point<Integer> yBound =
+                new GLHelper.Point<Integer>(0, super.image.getHeight());
+
+        float cross =
+                Math.min(
+                    Math.min(end.x - xBound.x, xBound.y - end.x),
+                    Math.min(end.y - yBound.x, yBound.y - end.y)
+                );
+
+        for (int i = 0; i < verts.numEls(); i++)
+        {
+            GLHelper.Vertex v = verts.get(i);
+
+            float dist =
+                    (float)new GLHelper.Point<Float>(v.x, v.y).distance(end);
+
+            float rad = dist / cross;
+
+            if (rad < 1.f && (.01f < rad || enlarge))
+            {
+                rad = (float)Math.pow(rad, ENLARGE_FACTOR);
+
+                if (enlarge) {
+                    v.x = end.x + (v.x - end.x) * rad;
+                    v.x = end.y + (v.y - end.y) * rad;
+                }
+                else {
+                    v.x = end.x + (v.x - end.x) / rad;
+                    v.x = end.y + (v.y - end.y) / rad;
+                }
+
+                verts.put(i, v);
+            }
+        }
+    }
+}

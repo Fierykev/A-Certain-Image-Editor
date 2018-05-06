@@ -6,6 +6,8 @@ import android.graphics.Matrix;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -14,6 +16,9 @@ import javax.microedition.khronos.opengles.GL10;
  */
 
 public class EditDisplayRenderer implements GLSurfaceView.Renderer {
+
+    public static final GLHelper.Point<Float> END_POINT =
+            new GLHelper.Point<>(-1f, -1f);
 
     private float aspectRatio = 1.f;
     private Tool.Args args;
@@ -27,6 +32,9 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     private Context context;
 
     private int width, height;
+
+    private ArrayList<GLHelper.Point<Float>> pointList =
+            new ArrayList<GLHelper.Point<Float>>();
 
     synchronized void setContext(Context context)
     {
@@ -71,9 +79,24 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     public synchronized void onDrawFrame(GL10 unused) {
         // check for tool init
         if (toolInit) {
+            pointList.clear();
+
+            if (this.tool != null)
+                this.tool.destroy();
+
             this.tool.init(context);
             this.tool.load(bitmap, false);
             toolInit = false;
+        }
+
+        // pass point changes
+        if (2 <= pointList.size()) {
+            while (2 <= pointList.size()) {
+                GLHelper.Point<Float> start = pointList.remove(0);;
+                GLHelper.Point<Float> end = pointList.get(0);
+
+                this.tool.processLine(start, end);
+            }
         }
 
         // check for tool update
@@ -131,5 +154,10 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     public synchronized void redo() {
         redoUpdate = true;
+    }
+
+    public synchronized void addPoint(GLHelper.Point<Float> point)
+    {
+        pointList.add(point);
     }
 }
