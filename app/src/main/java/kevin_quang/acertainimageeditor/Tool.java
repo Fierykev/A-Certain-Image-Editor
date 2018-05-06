@@ -49,7 +49,7 @@ abstract class Tool {
         }
     }
 
-    private View.OnTouchListener touchListener;
+    protected View.OnTouchListener touchListener;
 
     void init(Context context)
     {

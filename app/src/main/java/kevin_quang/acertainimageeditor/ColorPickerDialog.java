@@ -20,12 +20,6 @@ import com.larswerkman.holocolorpicker.ValueBar;
 
 public class ColorPickerDialog extends DialogFragment {
 
-    private EditDisplaySurfaceView editDisplaySurfaceView;
-
-    /**
-     * Create a new instance of MyDialogFragment, providing "num"
-     * as an argument.
-     */
     public static ColorPickerDialog newInstance() {
         ColorPickerDialog f = new ColorPickerDialog();
         Bundle args = new Bundle();

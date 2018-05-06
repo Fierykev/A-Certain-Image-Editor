@@ -33,6 +33,15 @@ public class BrushFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.brush, container, false);
 
+        ImageButton brush = view.findViewById(R.id.brush);
+        brush.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BrushTool brushTool = new BrushTool(editDisplaySurfaceView);
+                editDisplaySurfaceView.setTool(brushTool);
+            }
+        });
+
         ImageButton select_color = view.findViewById(R.id.select_color);
         select_color.setOnClickListener(new View.OnClickListener() {
             @Override

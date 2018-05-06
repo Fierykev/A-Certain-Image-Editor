@@ -9,8 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +23,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 public class LoadFragment extends Fragment {
     private Uri fileUri;
@@ -45,7 +49,6 @@ public class LoadFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.load, container, false);
 
-
         ImageButton camera = view.findViewById(R.id.camera);
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,12 +61,24 @@ public class LoadFragment extends Fragment {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Uri uri = save(bitmap, "Image Title", "Image Description");
-                String filename = Environment.getExternalStorageDirectory().getPath() + "/output.jpg";
-                fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
-                editDisplaySurfaceView.save(filename);
+                String dirname = Environment.getExternalStorageDirectory().getPath() + File.separator + getString(R.string.app_name);
+                String filename = dirname + File.separator + "share.jpg";
+                try {
+                    File file = new File(filename);
+                    file.mkdirs();
+                    if(file.exists()) {
+                        file.delete();
+                    }
+                    editDisplaySurfaceView.save(filename);
+                    Log.d("Picture", "Saved to share");
+                    fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Could not save file to share", Toast.LENGTH_SHORT);
+                    return;
+                }
                 Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("image/jpeg");
+                intent.setType("image/*");
                 intent.putExtra(Intent.EXTRA_STREAM, fileUri);
                 startActivity(Intent.createChooser(intent, "Share Image"));
             }
@@ -79,12 +94,24 @@ public class LoadFragment extends Fragment {
             }
         });
 
-        return view;
-    }
+        final ImageButton save = view.findViewById(R.id.save);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
 
-    private Uri save(Bitmap bitmap, String title, String desc) {
-        String path = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap, title, desc);
-        return Uri.parse(path);
+                // Create and show the dialog.
+                DialogFragment newFragment = SaveDialog.newInstance(editDisplaySurfaceView);
+                newFragment.show(ft, "dialog");
+            }
+        });
+
+        return view;
     }
 
     private static final int CAMERA_REQUEST = 1888;
@@ -94,22 +121,23 @@ public class LoadFragment extends Fragment {
         Bitmap photo = null;
         if ((requestCode == CAMERA_REQUEST || requestCode == GALLERY_REQUEST) && resultCode == Activity.RESULT_OK) {
             try {
-                if(requestCode == GALLERY_REQUEST) {
+                if (requestCode == GALLERY_REQUEST) {
                     fileUri = data.getData();
                 }
                 photo = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(fileUri), null, null);
-                if(requestCode == CAMERA_REQUEST) {
+                if (requestCode == CAMERA_REQUEST) {
                     Matrix mat = new Matrix();
                     mat.postRotate(-90);
-                    photo = Bitmap.createBitmap(Bitmap.createScaledBitmap(photo, photo.getWidth(), photo.getHeight(), true), 0, 0,photo.getWidth(), photo.getHeight(), mat, true);
+                    photo = Bitmap.createBitmap(Bitmap.createScaledBitmap(photo, photo.getWidth(), photo.getHeight(), true), 0, 0, photo.getWidth(), photo.getHeight(), mat, true);
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "Failed to load image", Toast.LENGTH_LONG).show();
             }
-        }
-        if(photo != null) {
-            editDisplaySurfaceView.setBitmap(photo);
+            if (photo != null) {
+                Log.d("Picture", "Setting picture");
+                editDisplaySurfaceView.setBitmap(photo);
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 
 /**
  * Created by Kevin on 3/24/2018.
@@ -40,7 +41,10 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
 
         // TODO:
         // swap touch listeners
-        //setOnTouchListener(tool.getTouchListener());
+        if(tool.getTouchListener() != null) {
+            Log.d("Point", "Set listener");
+            setOnTouchListener(tool.getTouchListener());
+        }
 
         // dismiss the other tool
     }
