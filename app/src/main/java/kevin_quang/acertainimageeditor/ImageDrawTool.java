@@ -19,8 +19,8 @@ public class ImageDrawTool extends Tool {
     }
 
     @Override
-    void load(Bitmap bitmap) {
-        super.load(bitmap);
+    void load(Bitmap bitmap, boolean storeHistory) {
+        super.load(bitmap, storeHistory);
     }
 
     @Override

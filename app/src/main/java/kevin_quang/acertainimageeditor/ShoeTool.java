@@ -55,8 +55,8 @@ public class ShoeTool extends Tool {
     }
 
     @Override
-    void load(Bitmap bitmap) {
-        super.load(bitmap);
+    void load(Bitmap bitmap, boolean storeHistory) {
+        super.load(bitmap, storeHistory);
 
         origImage = new Mat();
         Utils.bitmapToMat(bitmap, origImage);
@@ -229,6 +229,6 @@ public class ShoeTool extends Tool {
         Utils.matToBitmap(outImage, outBmp);
 
         GLHelper.standardizeBitamp(outBmp);
-        this.load(outBmp);
+        this.load(outBmp, true);
     }
 }

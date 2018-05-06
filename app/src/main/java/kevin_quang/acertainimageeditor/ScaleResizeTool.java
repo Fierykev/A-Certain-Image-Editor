@@ -100,9 +100,9 @@ public class ScaleResizeTool extends Tool {
         GLES30.glDeleteBuffers(1, indexBufferID, 0);
     }
 
-    void load(Bitmap bitmap)
+    void load(Bitmap bitmap, boolean storeHistory)
     {
-        super.load(bitmap);
+        super.load(bitmap, storeHistory);
 
         needsCompute = COMPUTE_FRAME + 1;
 
@@ -1064,6 +1064,6 @@ public class ScaleResizeTool extends Tool {
 
         createGLMesh();
 
-        this.load(renderToTex());
+        this.load(renderToTex(), true);
     }
 }

@@ -8,6 +8,7 @@ import android.view.View;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static kevin_quang.acertainimageeditor.GLHelper.loadProgram;
 import static kevin_quang.acertainimageeditor.GLHelper.loadTexture;
@@ -26,6 +27,10 @@ abstract class Tool {
     protected static int textureID;
 
     protected float world[] = new float[16];
+
+    public static final int HIST_LEN = 5;
+    protected static ArrayList<Bitmap> history = new ArrayList<>();
+    protected static ArrayList<Bitmap> redoHist = new ArrayList<>();
 
     public static class Args
     {
@@ -74,14 +79,49 @@ abstract class Tool {
             GLES30.glDeleteTextures(1, new int[] { textureID }, 0);
     }
 
-    void load(Bitmap bitmap)
+    void load(Bitmap bitmap, boolean storeHistory)
     {
+        // history buffer
+        if (storeHistory)
+        {
+            if (bitmap != null) {
+                redoHist.clear();
+
+                if (history.size() == HIST_LEN)
+                    history.remove(0);
+
+                history.add(bitmap.copy(bitmap.getConfig(), true));
+            }
+        }
+
         image = bitmap;
 
         if (textureID != 0)
             GLES30.glDeleteTextures(1, new int[] { textureID }, 0);
 
         textureID = loadTexture(bitmap);
+    }
+
+    void undo()
+    {
+        if (history.size() <= 1)
+            return;
+
+        Bitmap undo = history.remove(history.size() - 1);
+        redoHist.add(undo);
+
+        this.load(history.get(history.size() - 1), false);
+    }
+
+    void redo()
+    {
+        if (redoHist.size() == 0)
+            return;
+
+        Bitmap redo = redoHist.remove(redoHist.size() - 1);
+        history.add(redo);
+
+        this.load(redo, false);
     }
 
     void setArgs(Args args) { }

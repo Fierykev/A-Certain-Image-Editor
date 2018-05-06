@@ -37,7 +37,7 @@ public class FilterFragment extends Fragment {
         undo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Undo
+                editDisplaySurfaceView.undo();
             }
         });
 
@@ -45,7 +45,7 @@ public class FilterFragment extends Fragment {
         redo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Redo
+                editDisplaySurfaceView.redo();
             }
         });
 

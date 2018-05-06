@@ -18,7 +18,11 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     private float aspectRatio = 1.f;
     private Tool.Args args;
     private Tool tool;
-    private boolean toolInit = false, toolUpdate = false, argsUpdate = false;
+    private boolean toolInit = false,
+            toolUpdate = false,
+            argsUpdate = false,
+            undoUpdate = false,
+            redoUpdate = false;
     private Bitmap bitmap;
     private Context context;
 
@@ -68,13 +72,13 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         // check for tool init
         if (toolInit) {
             this.tool.init(context);
-            this.tool.load(bitmap);
+            this.tool.load(bitmap, false);
             toolInit = false;
         }
 
         // check for tool update
         if (toolUpdate) {
-            this.tool.load(bitmap);
+            this.tool.load(bitmap, true);
             toolUpdate = false;
         }
 
@@ -82,6 +86,18 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         if (argsUpdate) {
             this.tool.setArgs(args);
             argsUpdate = false;
+        }
+
+        // check for undo
+        if (undoUpdate) {
+            this.tool.undo();
+            undoUpdate = false;
+        }
+
+        // check for redo
+        if (redoUpdate) {
+            this.tool.redo();
+            redoUpdate = false;
         }
 
         // store current bitmap as bitmap
@@ -107,5 +123,13 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         setBitmap(Bitmap.createBitmap(
                 Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true),
                 0, 0, bitmap.getWidth(), bitmap.getHeight(), mat, true));
+    }
+
+    public synchronized void undo() {
+        undoUpdate = true;
+    }
+
+    public synchronized void redo() {
+        redoUpdate = true;
     }
 }
