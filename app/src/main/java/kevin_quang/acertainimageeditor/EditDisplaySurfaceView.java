@@ -23,7 +23,7 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
         renderer.setContext(getContext());
 
         // TMP FOR DEMO
-        ShoeTool tmp = new ShoeTool();
+        ImageDrawTool tmp = new ImageDrawTool();
         Bitmap bMap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.test);
 
         renderer.setBitmap(bMap);

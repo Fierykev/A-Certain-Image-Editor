@@ -35,7 +35,7 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     void setBitmap(Bitmap bitmap)
     {
-        this.bitmap = bitmap;
+        this.bitmap = GLHelper.standardizeBitamp(bitmap);
         toolUpdate = true;
     }
 

@@ -4,7 +4,6 @@ package kevin_quang.acertainimageeditor;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLES30;
-import android.opengl.Matrix;
 import android.util.Log;
 import android.util.Pair;
 
@@ -13,12 +12,9 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Range;
 import org.opencv.core.Scalar;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.saliency.StaticSaliencySpectralResidual;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -26,8 +22,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kevin_quang.acertainimageeditor.GLHelper.loadProgram;
-import static kevin_quang.acertainimageeditor.GLHelper.loadTexture;
 import static org.opencv.core.CvType.CV_32F;
 import static org.opencv.core.CvType.CV_32FC1;
 import static org.opencv.core.CvType.CV_32FC2;
@@ -50,18 +44,15 @@ public class ScaleResizeTool extends Tool {
 
     private Mat convertImage, origImage, significance, quadMat;
     private Pair<Integer, Integer> vertDim;
-    private VertexArray origVerts, verts;
+    private GLHelper.VertexArray origVerts, verts;
     private FloatBuffer vertexBuffer;
     private FloatBuffer uvBuffer;
     private IntBuffer indexBuffer;
     private int vertBufferID[] = new int[1];
     private int indexBufferID[] = new int[1];
-    private int program;
-    private int postionAttr, texCoordAttr, textureUnif, worldUnif;
-    private int textureID;
+
     private int indices[];
     private int vertID[] = new int[1];
-    private float world[] = new float[16];
     private int needsCompute = COMPUTE_FRAME + 1;
 
     // Note: width and height are swapped
@@ -86,169 +77,6 @@ public class ScaleResizeTool extends Tool {
         }
     }
 
-    class Vertex
-    {
-        float x, y, z;
-        float u, v;
-    }
-
-    class VertexArray
-    {
-        float[] floatArray;
-        int index = 0;
-
-        protected VertexArray clone()
-        {
-            VertexArray v = new VertexArray();
-
-            v.floatArray = floatArray.clone();
-            v.index = index;
-
-            return v;
-        }
-
-        private VertexArray()
-        {
-
-        }
-
-        VertexArray(int numEl)
-        {
-            floatArray = new float[numEl * 5];
-        }
-
-        void add(Vertex v)
-        {
-            floatArray[index] = v.x;
-            index++;
-
-            floatArray[index] = v.y;
-            index++;
-
-            floatArray[index] = v.z;
-            index++;
-
-            floatArray[index] = v.u;
-            index++;
-
-            floatArray[index] = v.v;
-            index++;
-        }
-
-        int size()
-        {
-            return floatArray.length * 4;
-        }
-
-        int numEls()
-        {
-            return floatArray.length / 5;
-        }
-
-        float[] getFloatArray()
-        {
-            return floatArray;
-        }
-
-        Vertex get(int in)
-        {
-            Vertex v = new Vertex();
-            v.x = floatArray[in * 5];
-            v.y = floatArray[in * 5 + 1];
-            v.z = floatArray[in * 5 + 2];
-            v.u = floatArray[in * 5 + 3];
-            v.v = floatArray[in * 5 + 4];
-
-            return v;
-        }
-
-        void put(int in, int ind, float v)
-        {
-            switch (ind) {
-                case 0:
-                    floatArray[in * 5] = v;
-                    break;
-                case 1:
-                    floatArray[in * 5 + 1] = v;
-                    break;
-                case 2:
-                    floatArray[in * 5 + 2] = v;
-                    break;
-                case 3:
-                    floatArray[in * 5 + 3] = v;
-                    break;
-                case 4:
-                    floatArray[in * 5 + 4] = v;
-                    break;
-            }
-        }
-    }
-
-    class Point<T extends Number>
-    {
-        T x, y;
-
-        Point(T x, T y)
-        {
-            this.x = x;
-            this.y = y;
-        }
-
-        protected Point<T> clone()
-        {
-            return new Point<T>(x, y);
-        }
-
-        Point add(Point p)
-        {
-            return new Point(addNumbers(x, p.x), addNumbers(y, p.y));
-        }
-
-        Point sub(Point p)
-        {
-            return new Point(subNumbers(x, p.x), subNumbers(y, p.y));
-        }
-
-        float norm()
-        {
-            return (float) Math.sqrt(x.floatValue() * x.floatValue() + y.floatValue() * y.floatValue());
-        }
-
-        Number addNumbers(Number a, Number b) {
-            if(a instanceof Double || b instanceof Double)
-            {
-                return new Double(a.doubleValue() + b.doubleValue());
-            }
-            else if(a instanceof Float || b instanceof Float) {
-                return new Float(a.floatValue() + b.floatValue());
-            }
-            else if(a instanceof Long || b instanceof Long) {
-                return new Long(a.longValue() + b.longValue());
-            }
-            else
-            {
-                return new Integer(a.intValue() + b.intValue());
-            }
-        }
-
-        Number subNumbers(Number a, Number b) {
-            if(a instanceof Double || b instanceof Double)
-            {
-                return new Double(a.doubleValue() - b.doubleValue());
-            }
-            else if(a instanceof Float || b instanceof Float) {
-                return new Float(a.floatValue() - b.floatValue());
-            }
-            else if(a instanceof Long || b instanceof Long) {
-                return new Long(a.longValue() - b.longValue());
-            }
-            else
-            {
-                return new Integer(a.intValue() - b.intValue());
-            }
-        }
-    }
-
     // TMP
     ScaleResizeTool()
     {
@@ -257,32 +85,25 @@ public class ScaleResizeTool extends Tool {
 
     void init(Context context)
     {
+        super.init(context);
         needsCompute = COMPUTE_FRAME + 1;
-
-        program = loadProgram(
-                "shaders/ScaleResizeTool/main.vs",
-                "shaders/ScaleResizeTool/main.fs",
-                context.getAssets());
-        postionAttr = GLES30.glGetAttribLocation(program, "position");
-        texCoordAttr = GLES30.glGetAttribLocation(program, "texCoord");
-        textureUnif = GLES30.glGetUniformLocation(program, "texture");
-        worldUnif = GLES30.glGetUniformLocation(program, "world");
     }
 
     void destroy()
     {
+        super.destroy();
+
         needsCompute = COMPUTE_FRAME + 1;
 
-        GLES30.glDeleteProgram(program);
         GLES30.glDeleteBuffers(1, vertBufferID, 0);
         GLES30.glDeleteBuffers(1, indexBufferID, 0);
     }
 
     void load(Bitmap bitmap)
     {
-        needsCompute = COMPUTE_FRAME + 1;
+        super.load(bitmap);
 
-        textureID = loadTexture(bitmap);
+        needsCompute = COMPUTE_FRAME + 1;
 
         origImage = new Mat();
         Utils.bitmapToMat(bitmap, origImage);
@@ -343,6 +164,8 @@ public class ScaleResizeTool extends Tool {
 
     @Override
     void onDraw(float aspectRatio) {
+        super.onDraw(aspectRatio);
+/*
         if (needsCompute == COMPUTE_FRAME)
         {
             compute();
@@ -406,7 +229,7 @@ public class ScaleResizeTool extends Tool {
         GLES30.glDisableVertexAttribArray(postionAttr);
         GLES30.glDisableVertexAttribArray(texCoordAttr);
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
-        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);*/
     }
 
     @Override
@@ -445,9 +268,9 @@ public class ScaleResizeTool extends Tool {
                 );
 
         // verts
-        Vertex vertex = new Vertex();
-        origVerts = new VertexArray(vertDim.first * vertDim.second);
-        verts = new VertexArray(vertDim.first * vertDim.second);
+        GLHelper.Vertex vertex = new GLHelper.Vertex();
+        origVerts = new GLHelper.VertexArray(vertDim.first * vertDim.second);
+        verts = new GLHelper.VertexArray(vertDim.first * vertDim.second);
 
         for (int y = 0; y < vertDim.second; y++) {
             for (int x = 0; x < vertDim.first; x++) {
@@ -690,7 +513,7 @@ public class ScaleResizeTool extends Tool {
             Pair<Integer, Integer> desiredDim
     ) {
         // clone verts
-        VertexArray lastVerts = verts.clone();
+        GLHelper.VertexArray lastVerts = verts.clone();
 
         Pair<Integer, Integer> quadDim =
                 new Pair<>(
@@ -702,11 +525,11 @@ public class ScaleResizeTool extends Tool {
         Mat sfCoeff =
                 new Mat(quadDim.first, quadDim.second, CV_32FC1, new Scalar(0, 0, 0));
         {
-            Point<Integer> edges[][] = new Point[][]{
-                    {new Point<>(0, 0), new Point<>(1, 0)},
-                    {new Point<>(1, 0), new Point<>(1, 1)},
-                    {new Point<>(1, 1), new Point<>(0, 1)},
-                    {new Point<>(0, 1), new Point<>(0, 0)}
+            GLHelper.Point<Integer> edges[][] = new GLHelper.Point[][]{
+                    {new GLHelper.Point<>(0, 0), new GLHelper.Point<>(1, 0)},
+                    {new GLHelper.Point<>(1, 0), new GLHelper.Point<>(1, 1)},
+                    {new GLHelper.Point<>(1, 1), new GLHelper.Point<>(0, 1)},
+                    {new GLHelper.Point<>(0, 1), new GLHelper.Point<>(0, 0)}
             };
 
             float val[] = new float[1];
@@ -717,17 +540,17 @@ public class ScaleResizeTool extends Tool {
 
                     // search quad
                     for (int i = 0; i < 4; i++) {
-                        Point<Integer> pX = (new Point<Integer>(w, h)).add(edges[i][0]);
-                        Point<Integer> pY = (new Point<Integer>(w, h)).add(edges[i][1]);
+                        GLHelper.Point<Integer> pX = (new GLHelper.Point<Integer>(w, h)).add(edges[i][0]);
+                        GLHelper.Point<Integer> pY = (new GLHelper.Point<Integer>(w, h)).add(edges[i][1]);
 
                         int indexX = pX.x + pX.y * meshDim.first;
                         int indexY = pY.x + pY.y * meshDim.first;
 
-                        Point<Float> origDelta = new Point<Float>(
+                        GLHelper.Point<Float> origDelta = new GLHelper.Point<Float>(
                                 origVerts.get(indexX).x - origVerts.get(indexY).x,
                                 origVerts.get(indexX).y - origVerts.get(indexY).y
                         );
-                        Point<Float> currentDelta = new Point<Float>(
+                        GLHelper.Point<Float> currentDelta = new GLHelper.Point<Float>(
                                 verts.get(indexX).x - verts.get(indexY).x,
                                 verts.get(indexX).y - verts.get(indexY).y
                         );
@@ -756,11 +579,11 @@ public class ScaleResizeTool extends Tool {
 
                     if (w < quadDim.first)
                     {
-                        Point<Float> origDelta = new Point<Float>(
+                        GLHelper.Point<Float> origDelta = new GLHelper.Point<Float>(
                                 origVerts.get(index).x - origVerts.get(nextIndexW).x,
                                 origVerts.get(index).y - origVerts.get(nextIndexW).y
                         );
-                        Point<Float> currentDelta = new Point<Float>(
+                        GLHelper.Point<Float> currentDelta = new GLHelper.Point<Float>(
                                 verts.get(index).x - verts.get(nextIndexW).x,
                                 verts.get(index).y - verts.get(nextIndexW).y
                         );
@@ -774,11 +597,11 @@ public class ScaleResizeTool extends Tool {
 
                     if (h < quadDim.second)
                     {
-                        Point<Float> origDelta = new Point<Float>(
+                        GLHelper.Point<Float> origDelta = new GLHelper.Point<Float>(
                                 origVerts.get(index).x - origVerts.get(nextIndexH).x,
                                 origVerts.get(index).y - origVerts.get(nextIndexH).y
                         );
-                        Point<Float> currentDelta = new Point<Float>(
+                        GLHelper.Point<Float> currentDelta = new GLHelper.Point<Float>(
                                 verts.get(index).x - verts.get(nextIndexH).x,
                                 verts.get(index).y - verts.get(nextIndexH).y
                         );
@@ -802,25 +625,25 @@ public class ScaleResizeTool extends Tool {
             float val[] = new float[2];
             float val1[] = new float[1];
 
-            Point<Integer> dir[] = new Point[]{
-                    new Point<Integer>(-1, -1),
-                    new Point<Integer>(-1, 0),
-                    new Point<Integer>(0, -1),
-                    new Point<Integer>(0, 0)
+            GLHelper.Point<Integer> dir[] = new GLHelper.Point[]{
+                    new GLHelper.Point<Integer>(-1, -1),
+                    new GLHelper.Point<Integer>(-1, 0),
+                    new GLHelper.Point<Integer>(0, -1),
+                    new GLHelper.Point<Integer>(0, 0)
             };
 
-            Point<Integer> quadDir[] = new Point[]{
-                    new Point<Integer>(-1, -1),
-                    new Point<Integer>(-1, 1),
-                    new Point<Integer>(1, -1),
-                    new Point<Integer>(1, 1)
+            GLHelper.Point<Integer> quadDir[] = new GLHelper.Point[]{
+                    new GLHelper.Point<Integer>(-1, -1),
+                    new GLHelper.Point<Integer>(-1, 1),
+                    new GLHelper.Point<Integer>(1, -1),
+                    new GLHelper.Point<Integer>(1, 1)
             };
 
-            Point<Integer> edgeDir[] = new Point[]{
-                    new Point<Integer>(0, -1),
-                    new Point<Integer>(-1, 0),
-                    new Point<Integer>(0, 1),
-                    new Point<Integer>(1, 0)
+            GLHelper.Point<Integer> edgeDir[] = new GLHelper.Point[]{
+                    new GLHelper.Point<Integer>(0, -1),
+                    new GLHelper.Point<Integer>(-1, 0),
+                    new GLHelper.Point<Integer>(0, 1),
+                    new GLHelper.Point<Integer>(1, 0)
             };
 
             for (int i = 0; i < 2; i++)
@@ -841,17 +664,17 @@ public class ScaleResizeTool extends Tool {
 
                 for (int h = 0; h < meshDim.second; h++) {
                     for (int w = 0; w < meshDim.first; w++) {
-                        Point<Integer> position =
-                                new Point<Integer>(w, h);
+                        GLHelper.Point<Integer> position =
+                                new GLHelper.Point<Integer>(w, h);
 
                         int location = w + h * meshDim.first;
 
                         for (int j = 0; j < 4; j++)
                         {
-                            Point<Integer> point =
+                            GLHelper.Point<Integer> point =
                                     position.add(dir[j]);
 
-                            Point<Integer> extreme =
+                            GLHelper.Point<Integer> extreme =
                                     position.add(quadDir[j]);
 
                             if (extreme.x < 0 ||
@@ -924,7 +747,7 @@ public class ScaleResizeTool extends Tool {
                         // bending
                         for (int j = 0; j < 4; j++) {
                             // copy point
-                            Point<Integer> pt = position.clone();
+                            GLHelper.Point<Integer> pt = position.clone();
 
                             if (edgeDir[j].x != 1)
                                 pt.x += edgeDir[j].x;
@@ -932,7 +755,7 @@ public class ScaleResizeTool extends Tool {
                             if (edgeDir[j].y != 1)
                                 pt.y += edgeDir[j].y;
 
-                            Point<Integer> extreme =
+                            GLHelper.Point<Integer> extreme =
                                     position.add(edgeDir[j]);
 
                             if (extreme.x < 0 ||
@@ -993,25 +816,25 @@ public class ScaleResizeTool extends Tool {
 
                 // constraints
                 {
-                    Point<Integer> boundW[][] = new Point[][]{
+                    GLHelper.Point<Integer> boundW[][] = new GLHelper.Point[][]{
                             {
-                                    new Point<Integer>(0, 1),
-                                    new Point<Integer>(quadDim.first, meshDim.first)
+                                    new GLHelper.Point<Integer>(0, 1),
+                                    new GLHelper.Point<Integer>(quadDim.first, meshDim.first)
                             },
                             {
-                                    new Point<Integer>(0, meshDim.first),
-                                    new Point<Integer>(0, meshDim.first)
+                                    new GLHelper.Point<Integer>(0, meshDim.first),
+                                    new GLHelper.Point<Integer>(0, meshDim.first)
                             }
                     };
 
-                    Point<Integer> boundH[][] = new Point[][]{
+                    GLHelper.Point<Integer> boundH[][] = new GLHelper.Point[][]{
                             {
-                                    new Point<Integer>(0, meshDim.second),
-                                    new Point<Integer>(0, meshDim.second)
+                                    new GLHelper.Point<Integer>(0, meshDim.second),
+                                    new GLHelper.Point<Integer>(0, meshDim.second)
                             },
                             {
-                                    new Point<Integer>(0, 1),
-                                    new Point<Integer>(quadDim.second, meshDim.second)
+                                    new GLHelper.Point<Integer>(0, 1),
+                                    new GLHelper.Point<Integer>(quadDim.second, meshDim.second)
                             }
                     };
 
@@ -1116,24 +939,6 @@ public class ScaleResizeTool extends Tool {
 
             Log.d("Scale Resize Tool", "Movement " + movement);
         }
-    }
-
-    void saveMat(Mat mat, String path) {
-        String[] permissions = {
-                "android.permission.READ_EXTERNAL_STORAGE",
-                "android.permission.WRITE_EXTERNAL_STORAGE"
-        };
-
-        File file = new File(path);
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Mat sMat = new Mat();
-        mat.convertTo(sMat, CV_8UC3, 1.0);
-        boolean b = Imgcodecs.imwrite(file.getAbsolutePath(), sMat);
     }
 
     void clampVerts(
@@ -1252,9 +1057,5 @@ public class ScaleResizeTool extends Tool {
         clampVerts(desiredDim);
 
         createGLMesh();
-    }
-
-    void save(String path) {
-        saveMat(origImage, path);
     }
 }

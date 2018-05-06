@@ -57,7 +57,7 @@ public class LoadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                     //Uri uri = save(bitmap, "Image Title", "Image Description");
-                String filename = Environment.getExternalStorageDirectory().getPath() + "/output.jpg";
+                String filename = Environment.getExternalStorageDirectory().getPath() + "/output.png";
                 fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
                 editDisplaySurfaceView.save(filename);
                 Intent intent = new Intent(Intent.ACTION_SEND);
@@ -115,7 +115,7 @@ public class LoadFragment extends Fragment {
 
     public void pictureButtonPressed(View view) {
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        String filename = Environment.getExternalStorageDirectory().getPath() + "/output.jpg";
+        String filename = Environment.getExternalStorageDirectory().getPath() + "/output.png";
         fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, fileUri);
         startActivityForResult(intent, CAMERA_REQUEST);

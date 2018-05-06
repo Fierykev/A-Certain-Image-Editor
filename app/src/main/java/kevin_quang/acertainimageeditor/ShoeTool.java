@@ -46,16 +46,21 @@ public class ShoeTool extends Tool {
 
     @Override
     void init(Context context) {
+        super.init(context);
         tf = new TensorFlowInferenceInterface(context.getAssets(), MODEL);
     }
 
     @Override
     void destroy() {
+        super.destroy();
+
         tf = null;
     }
 
     @Override
     void load(Bitmap bitmap) {
+        super.load(bitmap);
+
         origImage = new Mat();
         Utils.bitmapToMat(bitmap, origImage);
         Imgproc.cvtColor(origImage, origImage, COLOR_RGBA2BGRA);
@@ -81,7 +86,8 @@ public class ShoeTool extends Tool {
 
     @Override
     void onDraw(float aspectRatio) {
-        compute();
+        super.onDraw(aspectRatio);
+        //compute();
     }
 
     @Override
