@@ -23,8 +23,8 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
         renderer.setContext(getContext());
 
         // TMP FOR DEMO
-        ScaleResizeTool tmp = new ScaleResizeTool();
-        Bitmap bMap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.runnerrunning);
+        ImageDrawTool tmp = new ImageDrawTool();
+        Bitmap bMap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.test);
 
         renderer.setBitmap(bMap);
 
@@ -38,7 +38,7 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
         currentTool = tool;
         renderer.setTool(currentTool);
 
-        // TODDO:
+        // TODO:
         // swap touch listeners
         //setOnTouchListener(tool.getTouchListener());
 

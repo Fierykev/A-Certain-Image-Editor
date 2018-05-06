@@ -10,22 +10,22 @@ import android.graphics.Bitmap;
 public class ImageDrawTool extends Tool {
     @Override
     void init(Context context) {
-
+        super.init(context);
     }
 
     @Override
     void destroy() {
-
+        super.destroy();
     }
 
     @Override
     void load(Bitmap bitmap) {
-
+        super.load(bitmap);
     }
 
     @Override
     void onDraw(float aspectRatio) {
-
+        super.onDraw(aspectRatio);
     }
 
     @Override
@@ -35,11 +35,6 @@ public class ImageDrawTool extends Tool {
 
     @Override
     void getRightMenu() {
-
-    }
-
-    @Override
-    void save(String path) {
 
     }
 }
