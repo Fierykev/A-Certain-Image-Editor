@@ -6,6 +6,8 @@ import android.graphics.Matrix;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 
+import java.util.concurrent.Semaphore;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -22,39 +24,50 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     private Bitmap bitmap;
     private Context context;
 
+    private Semaphore mutex = new Semaphore(1);
+
     private int width, height;
 
-    void setContext(Context context)
+    synchronized void setContext(Context context)
     {
         this.context = context;
     }
 
-    void setArgs(Tool.Args args)
+    synchronized void setArgs(Tool.Args args)
     {
         this.args = args;
         argsUpdate = true;
     }
 
-    void setBitmap(Bitmap bitmap)
+    synchronized void setBitmap(Bitmap bitmap)
     {
+        try {
+            mutex.acquire();
+        } catch (InterruptedException e) {
+            // TODO: do something with error
+            e.printStackTrace();
+        }
+
         this.bitmap = GLHelper.standardizeBitamp(bitmap);
         toolUpdate = true;
+
+        mutex.release();
     }
 
-    void setTool(Tool tool)
+    synchronized void  setTool(Tool tool)
     {
         this.tool = tool;
         toolInit = true;
     }
 
     @Override
-    public void onSurfaceCreated(GL10 unused, EGLConfig eglConfig) {
+    public synchronized void onSurfaceCreated(GL10 unused, EGLConfig eglConfig) {
         // background
         GLES30.glClearColor(0.f, 0.f, 0.f, 1.f);
     }
 
     @Override
-    public void onSurfaceChanged(GL10 unused, int width, int height) {
+    public synchronized void onSurfaceChanged(GL10 unused, int width, int height) {
         // set viewport
         GLES30.glViewport(0, 0, width, height);
         aspectRatio = (float)width / (float)height;
@@ -64,7 +77,7 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     }
 
     @Override
-    public void onDrawFrame(GL10 unused) {
+    public synchronized void onDrawFrame(GL10 unused) {
         // check for tool init
         if (toolInit) {
             this.tool.init(context);
@@ -84,18 +97,24 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
             argsUpdate = false;
         }
 
+        // store current bitmap as bitmap
+        bitmap = this.tool.image;
+
         // clear frame
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
 
         tool.onDraw(aspectRatio, width, height);
     }
 
-    public int getBitmapWidth() {return bitmap.getWidth();}
-    public int getBitmapHeight() {return bitmap.getHeight();}
-    public void save(String path) {
+    public synchronized int getBitmapWidth() {return bitmap.getWidth();}
+
+    public synchronized int getBitmapHeight() {return bitmap.getHeight();}
+
+    public synchronized void save(String path) {
         tool.save(path);
     }
-    public void rotate(int degrees) {
+
+    synchronized public void rotate(int degrees) {
         Matrix mat = new Matrix();
         mat.postRotate(degrees);
         setBitmap(Bitmap.createBitmap(
