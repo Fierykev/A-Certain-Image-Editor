@@ -9,10 +9,18 @@
     android:layout_gravity="center"
     >
     <ImageButton
-        android:id="@+id/border_color"
+        android:id="@+id/brush"
         android:padding="8dp"
         android:background="?android:selectableItemBackground"
-        android:src="@drawable/ic_border_color_black_48dp"
+        android:src="@drawable/ic_border_color_white_48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageButton
+        android:id="@+id/select_color"
+        android:padding="8dp"
+        android:background="?android:selectableItemBackground"
+        android:src="@drawable/ic_color_lens_white_48dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
