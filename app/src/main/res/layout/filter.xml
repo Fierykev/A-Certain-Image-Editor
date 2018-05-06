@@ -9,6 +9,21 @@
     android:layout_gravity="center"
     >
     <ImageButton
+        android:id="@+id/undo"
+        android:padding="8dp"
+        android:background="?android:selectableItemBackground"
+        android:src="@drawable/ic_undo_white_48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    >
+    <ImageButton
+        android:id="@+id/redo"
+        android:padding="8dp"
+        android:background="?android:selectableItemBackground"
+        android:src="@drawable/ic_redo_white_48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageButton
         android:id="@+id/resize"
         android:padding="8dp"
         android:background="?android:selectableItemBackground"

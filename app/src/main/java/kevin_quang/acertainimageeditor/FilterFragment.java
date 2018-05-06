@@ -33,6 +33,22 @@ public class FilterFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.filter, container, false);
 
+        ImageButton undo = view.findViewById(R.id.undo);
+        undo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Undo
+            }
+        });
+
+        ImageButton redo = view.findViewById(R.id.redo);
+        redo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Redo
+            }
+        });
+
         ImageButton resize = view.findViewById(R.id.resize);
         resize.setOnClickListener(new View.OnClickListener() {
             @Override
