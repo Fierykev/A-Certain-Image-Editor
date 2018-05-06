@@ -879,7 +879,7 @@ public class ScaleResizeTool extends Tool {
         return (float)Math.sqrt(maxMoveSq);
     }
 
-    void solver(
+    private void solver(
             Mat quadSig,
             Pair<Integer, Integer> meshDim,
             Pair<Integer, Integer> desiredDim
@@ -897,7 +897,7 @@ public class ScaleResizeTool extends Tool {
         }
     }
 
-    void clampVerts(
+    private void clampVerts(
             Pair<Integer, Integer> desiredDim)
     {
         for (int i = 0; i < verts.numEls(); i++)
@@ -907,7 +907,7 @@ public class ScaleResizeTool extends Tool {
         }
     }
 
-    void renderMesh()
+    private void renderMesh()
     {
         GLES30.glEnable(GLES30.GL_TEXTURE_2D);
 
@@ -1046,7 +1046,7 @@ public class ScaleResizeTool extends Tool {
         return bitmap;
     }
 
-    void compute() {
+    private void compute() {
         createMesh(
                 meshDim,
                 new Pair<>(convertImage.rows(), convertImage.cols()),
