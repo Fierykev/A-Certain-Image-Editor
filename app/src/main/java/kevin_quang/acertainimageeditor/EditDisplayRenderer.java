@@ -6,8 +6,6 @@ import android.graphics.Matrix;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 
-import java.util.concurrent.Semaphore;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -24,8 +22,6 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     private Bitmap bitmap;
     private Context context;
 
-    private Semaphore mutex = new Semaphore(1);
-
     private int width, height;
 
     synchronized void setContext(Context context)
@@ -41,17 +37,8 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     synchronized void setBitmap(Bitmap bitmap)
     {
-        try {
-            mutex.acquire();
-        } catch (InterruptedException e) {
-            // TODO: do something with error
-            e.printStackTrace();
-        }
-
         this.bitmap = GLHelper.standardizeBitamp(bitmap);
         toolUpdate = true;
-
-        mutex.release();
     }
 
     synchronized void  setTool(Tool tool)
@@ -114,7 +101,7 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         tool.save(path);
     }
 
-    synchronized public void rotate(int degrees) {
+    public synchronized void rotate(int degrees) {
         Matrix mat = new Matrix();
         mat.postRotate(degrees);
         setBitmap(Bitmap.createBitmap(

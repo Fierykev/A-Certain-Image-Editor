@@ -2,20 +2,16 @@ package kevin_quang.acertainimageeditor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Environment;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.photo.Photo;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +20,7 @@ import static org.opencv.core.CvType.CV_32FC1;
 import static org.opencv.core.CvType.CV_32FC3;
 import static org.opencv.core.CvType.CV_8UC3;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
-import static org.opencv.imgproc.Imgproc.COLOR_RGBA2BGR;
-import static org.opencv.imgproc.Imgproc.COLOR_RGBA2BGRA;
+import static org.opencv.imgproc.Imgproc.COLOR_RGBA2RGB;
 import static org.opencv.imgproc.Imgproc.THRESH_BINARY;
 
 //import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
@@ -43,6 +38,8 @@ public class ShoeTool extends Tool {
 
     private Mat convertImage, origImage, outImage;
     private int textureID;
+
+    public static final int RUN = 0;
 
     @Override
     void init(Context context) {
@@ -63,13 +60,12 @@ public class ShoeTool extends Tool {
 
         origImage = new Mat();
         Utils.bitmapToMat(bitmap, origImage);
-        Imgproc.cvtColor(origImage, origImage, COLOR_RGBA2BGRA);
 
         // TODO: add warning
 
         convertImage = origImage.clone();
         convertImage.convertTo(convertImage, CV_32F, 1.0 / 255.0);
-        Imgproc.cvtColor(convertImage, convertImage, COLOR_RGBA2BGR);
+        Imgproc.cvtColor(convertImage, convertImage, COLOR_RGBA2RGB);
 
         Imgproc.resize(convertImage, convertImage, new Size(CROP_SIZE, CROP_SIZE));
     }
@@ -81,13 +77,19 @@ public class ShoeTool extends Tool {
 
     @Override
     void setArgs(Args args) {
+        switch (args.type)
+        {
+            case RUN:
 
+                compute();
+
+                break;
+        }
     }
 
     @Override
     void onDraw(float aspectRatio, int width, int height) {
         super.onDraw(aspectRatio, width, height);
-        //compute();
     }
 
     @Override
@@ -98,25 +100,6 @@ public class ShoeTool extends Tool {
     @Override
     void getRightMenu() {
 
-    }
-
-    @Override
-    void save(String path) {
-
-    }
-
-    // TMP
-    void saveMat(Mat mat, String path) {
-        File file = new File(path);
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Mat sMat = new Mat();
-        mat.convertTo(sMat, CV_8UC3, 1.0);
-        boolean b = Imgcodecs.imwrite(file.getAbsolutePath(), sMat);
     }
 
     Mat clamp(Mat img)
@@ -238,10 +221,14 @@ public class ShoeTool extends Tool {
         outImage.put(0, 0, data);
 
         outImage.convertTo(outImage, CV_8UC3, 255.0);
-        outImage = denoise(outImage);
+        //outImage = denoise(outImage);
 
-        //Imgproc.cvtColor(outImage, outImage, COLOR_RGB2BGR);
+        Imgproc.resize(outImage, outImage, new Size(origImage.cols(), origImage.rows()));
 
-        saveMat(outImage, Environment.getExternalStorageDirectory() + "/TEST.png");
+        Bitmap outBmp = Bitmap.createBitmap(outImage.cols(), outImage.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(outImage, outBmp);
+
+        GLHelper.standardizeBitamp(outBmp);
+        this.load(outBmp);
     }
 }

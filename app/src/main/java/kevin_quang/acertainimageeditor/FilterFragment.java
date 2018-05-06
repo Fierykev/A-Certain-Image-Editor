@@ -57,7 +57,13 @@ public class FilterFragment extends Fragment {
         shoe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Shoe Tool Here
+                ShoeTool shoeTool = new ShoeTool();
+                editDisplaySurfaceView.setTool(shoeTool);
+
+                Tool.Args args = new Tool.Args();
+                args.type = ShoeTool.RUN;
+
+                editDisplaySurfaceView.passArgs(args);
             }
         });
 
