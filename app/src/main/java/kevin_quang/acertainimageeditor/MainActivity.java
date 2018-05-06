@@ -100,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Icons
         int[] imageResId = {
-                R.drawable.ic_insert_photo_black_24dp,
-                R.drawable.ic_photo_filter_black_24dp,
-                R.drawable.ic_brush_black_24dp
+                R.drawable.ic_insert_photo_white_48dp,
+                R.drawable.ic_photo_filter_white_48dp,
+                R.drawable.ic_brush_white_48dp
         };
 
         for (int i = 0; i < imageResId.length; i++) {

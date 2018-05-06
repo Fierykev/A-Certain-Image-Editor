@@ -44,6 +44,8 @@ public class LoadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.load, container, false);
+
+
         ImageButton camera = view.findViewById(R.id.camera);
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,8 +58,8 @@ public class LoadFragment extends Fragment {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    //Uri uri = save(bitmap, "Image Title", "Image Description");
-                String filename = Environment.getExternalStorageDirectory().getPath() + "/output.png";
+                //Uri uri = save(bitmap, "Image Title", "Image Description");
+                String filename = Environment.getExternalStorageDirectory().getPath() + "/output.jpg";
                 fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
                 editDisplaySurfaceView.save(filename);
                 Intent intent = new Intent(Intent.ACTION_SEND);
@@ -76,6 +78,7 @@ public class LoadFragment extends Fragment {
                 startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
             }
         });
+
         return view;
     }
 
@@ -100,7 +103,6 @@ public class LoadFragment extends Fragment {
                     mat.postRotate(-90);
                     photo = Bitmap.createBitmap(Bitmap.createScaledBitmap(photo, photo.getWidth(), photo.getHeight(), true), 0, 0,photo.getWidth(), photo.getHeight(), mat, true);
                 }
-                Log.d("Photo", String.valueOf(photo.getWidth()) + "," + String.valueOf(photo.getHeight()));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "Failed to load image", Toast.LENGTH_LONG).show();

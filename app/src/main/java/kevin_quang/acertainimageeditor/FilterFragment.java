@@ -32,6 +32,7 @@ public class FilterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.filter, container, false);
+
         ImageButton resize = view.findViewById(R.id.resize);
         resize.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +50,14 @@ public class FilterFragment extends Fragment {
                 // Create and show the dialog.
                 DialogFragment newFragment = ScaleResizeDialog.newInstance(editDisplaySurfaceView);
                 newFragment.show(ft, "dialog");
+            }
+        });
+
+        ImageButton shoe = view.findViewById(R.id.shoe);
+        shoe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Shoe Tool Here
             }
         });
 
