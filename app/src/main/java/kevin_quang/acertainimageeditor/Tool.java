@@ -22,10 +22,10 @@ abstract class Tool {
 
     protected static int program;
     protected static int postionAttr, texCoordAttr, textureUnif, worldUnif;
+    protected static GLHelper.DrawData data;
+    protected static int textureID;
 
-    protected GLHelper.DrawData data;
     protected float world[] = new float[16];
-    protected int textureID;
 
     public static class Args
     {
@@ -86,8 +86,12 @@ abstract class Tool {
 
     void setArgs(Args args) { }
 
-    void onDraw(float aspectRatio)
+    void onDraw(float aspectRatio, int width, int height)
     {
+        GLES30.glClearColor(0.f, 0.f, 0.f, 1.f);
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
+        GLES30.glViewport(0, 0, width, height);
+
         GLES30.glUseProgram(program);
 
         // construct matrix

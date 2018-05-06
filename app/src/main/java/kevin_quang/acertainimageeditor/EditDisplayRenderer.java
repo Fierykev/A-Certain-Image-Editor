@@ -22,6 +22,8 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     private Bitmap bitmap;
     private Context context;
 
+    private int width, height;
+
     void setContext(Context context)
     {
         this.context = context;
@@ -56,6 +58,9 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         // set viewport
         GLES30.glViewport(0, 0, width, height);
         aspectRatio = (float)width / (float)height;
+
+        this.width = width;
+        this.height = height;
     }
 
     @Override
@@ -82,7 +87,7 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         // clear frame
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
 
-        tool.onDraw(aspectRatio);
+        tool.onDraw(aspectRatio, width, height);
     }
 
     public int getBitmapWidth() {return bitmap.getWidth();}

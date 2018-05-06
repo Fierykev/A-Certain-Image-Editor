@@ -24,8 +24,8 @@ public class ImageDrawTool extends Tool {
     }
 
     @Override
-    void onDraw(float aspectRatio) {
-        super.onDraw(aspectRatio);
+    void onDraw(float aspectRatio, int width, int height) {
+        super.onDraw(aspectRatio, width, height);
     }
 
     @Override

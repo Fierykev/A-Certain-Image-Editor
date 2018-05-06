@@ -102,6 +102,10 @@ public class ScaleResizeDialog extends DialogFragment {
                 int iterations = Integer.parseInt(iterationsText);
                 if(iterations <= 0) return;
 
+                editDisplaySurfaceView.setTool(
+                        new ScaleResizeTool()
+                );
+
                 ScaleResizeTool.ResizeArgs resizeArgs
                         = new ScaleResizeTool.ResizeArgs(width, height, meshWidth, meshHeight, iterations);
                 editDisplaySurfaceView.passArgs(new Tool.Args(
