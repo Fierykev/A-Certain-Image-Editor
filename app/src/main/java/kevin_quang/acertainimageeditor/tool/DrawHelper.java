@@ -95,6 +95,9 @@ public abstract class DrawHelper extends Tool {
         {
             point = points.remove(0);
 
+            if(point == null)
+                continue;
+
             if (point.first.x == END_POINT.x
                     && point.first.y == END_POINT.y)
             {

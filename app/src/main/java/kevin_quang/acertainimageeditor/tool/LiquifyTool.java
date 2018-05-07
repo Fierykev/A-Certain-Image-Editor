@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
+import android.os.Environment;
 import android.util.Log;
 import android.util.Pair;
 
@@ -142,7 +143,7 @@ public class LiquifyTool extends DrawHelper {
                         verts,
                         indices
                 );
-
+        image = renderToTex();
         this.load(renderToTex(), true);
     }
 

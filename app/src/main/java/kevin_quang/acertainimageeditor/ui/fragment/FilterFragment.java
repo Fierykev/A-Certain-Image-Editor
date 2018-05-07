@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import kevin_quang.acertainimageeditor.tool.LiquifyTool;
 import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
 import kevin_quang.acertainimageeditor.R;
 import kevin_quang.acertainimageeditor.tool.ShoeTool;
@@ -67,6 +68,12 @@ public class FilterFragment extends Fragment {
             args.type = ShoeTool.RUN;
 
             editDisplaySurfaceView.passArgs(args);
+        });
+
+        ImageButton liquify = view.findViewById(R.id.liquify);
+        liquify.setOnClickListener(v -> {
+            LiquifyTool liquifyTool = new LiquifyTool();
+            editDisplaySurfaceView.setTool(liquifyTool);
         });
 
         ImageButton rotateLeft = view.findViewById(R.id.rotate_left);
