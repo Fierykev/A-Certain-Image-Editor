@@ -164,53 +164,45 @@ public abstract class DrawHelper extends Tool {
         if(points.size() == 1) {
             return path;
         }
-        for(int i = 0; i < points.size(); i++) {
-            Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> point =
-                    points.get(i);
+        try {
+            for (int i = 0; i < points.size(); i++) {
+                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> point =
+                        points.get(i);
 
-            if(i == 0) {
-                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>>
-                        next = points.get(i + 1);
-                if(point == null || next == null) {
-                    continue;
+                if (i == 0) {
+                    Pair<GLHelper.Point<Float>, GLHelper.Point<Float>>
+                            next = points.get(i + 1);
+                    point.second.x = (next.first.x - point.first.x) / 3;
+                    point.second.y = (next.first.y - point.first.y) / 3;
+                } else if (i < points.size() - 1) {
+                    Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> prev =
+                            points.get(i - 1);
+                    Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> next =
+                            points.get(i + 1);
+                    point.second.x = (next.first.x - prev.first.x) / 3;
+                    point.second.y = (next.first.y - prev.first.y) / 3;
+                } else {
+                    Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> prev =
+                            points.get(i - 1);
+                    point.second.x = (point.first.x - prev.first.x) / 3;
+                    point.second.y = (point.first.y - prev.first.y) / 3;
                 }
-                point.second.x = (next.first.x - point.first.x)/3;
-                point.second.y = (next.first.y - point.first.y)/3;
-            } else if(i < points.size() - 1) {
-                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> prev =
-                        points.get(i - 1);
-                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> next =
-                        points.get(i + 1);
-                if(point == null || prev == null || next == null) {
-                    continue;
-                }
-                point.second.x = (next.first.x - prev.first.x)/3;
-                point.second.y = (next.first.y - prev.first.y)/3;
-            } else {
-                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> prev =
-                        points.get(i - 1);
-                if(point == null || prev == null) {
-                    continue;
-                }
-                point.second.x = (point.first.x - prev.first.x)/3;
-                point.second.y = (point.first.y - prev.first.y)/3;
             }
-        }
-        for(int i = 0; i < points.size(); i++) {
-            Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> point =
-                    points.get(i);
-            if(i == 0) {
-                path.moveTo(point.first.x, point.first.y);
-            } else {
-                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> prev =
-                        points.get(i - 1);
-                if(point == null || prev == null) {
-                    continue;
+            for (int i = 0; i < points.size(); i++) {
+                Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> point =
+                        points.get(i);
+                if (i == 0) {
+                    path.moveTo(point.first.x, point.first.y);
+                } else {
+                    Pair<GLHelper.Point<Float>, GLHelper.Point<Float>> prev =
+                            points.get(i - 1);
+                    path.cubicTo(prev.first.x + prev.second.x, prev.first.y + prev.second.y,
+                            point.first.x - point.second.x, point.first.y - point.second.y,
+                            point.first.x, point.first.y);
                 }
-                path.cubicTo(prev.first.x + prev.second.x, prev.first.y + prev.second.y,
-                        point.first.x - point.second.x, point.first.y - point.second.y,
-                        point.first.x, point.first.y);
             }
+        } catch (Exception e) {
+            
         }
         return path;
     }
