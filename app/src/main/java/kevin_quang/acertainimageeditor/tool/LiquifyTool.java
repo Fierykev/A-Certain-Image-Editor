@@ -1,10 +1,13 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.tool;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
 import android.util.Pair;
+
+import kevin_quang.acertainimageeditor.tool.GLHelper;
+import kevin_quang.acertainimageeditor.tool.Tool;
 
 /**
  * Created by Kevin on 5/6/2018.
@@ -22,17 +25,17 @@ public class LiquifyTool extends Tool {
             = new Pair<>(50, 50);
 
     @Override
-    void init(Context context) {
+    public void init(Context context) {
         super.init(context);
     }
 
     @Override
-    void destroy() {
+    public void destroy() {
         super.destroy();
     }
 
     @Override
-    void load(Bitmap bitmap, boolean storeHistory) {
+    public void load(Bitmap bitmap, boolean storeHistory) {
         super.load(bitmap, storeHistory);
 
         createMesh(
@@ -49,19 +52,9 @@ public class LiquifyTool extends Tool {
     }
 
     @Override
-    void onDraw(float aspectRatio, int width, int height) {
+    public void onDraw(float aspectRatio, int width, int height) {
         //super.onDraw(aspectRatio, width, height);
         renderMesh(aspectRatio, width, height);
-    }
-
-    @Override
-    void getLeftMenu() {
-
-    }
-
-    @Override
-    void getRightMenu() {
-
     }
 
     private void renderMesh(float aspectRatio, int width, int height)
@@ -134,7 +127,7 @@ public class LiquifyTool extends Tool {
     }
 
     @Override
-    void processLine(
+    public void processLine(
             GLHelper.Point<Float> start,
             GLHelper.Point<Float> end)
     {

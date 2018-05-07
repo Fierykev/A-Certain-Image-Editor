@@ -8,13 +8,13 @@
     <LinearLayout android:theme="@style/NoTitle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="kevin_quang.acertainimageeditor.MainActivity"
+        tools:context="kevin_quang.acertainimageeditor.ui.MainActivity"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical">
 
         <fragment
             android:id="@+id/mainEditor"
-            android:name="kevin_quang.acertainimageeditor.EditFragment"
+            android:name="kevin_quang.acertainimageeditor.ui.fragment.EditFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="8"
@@ -33,7 +33,7 @@
                 app:tabMode="fixed"
                 android:background="#020204"/>
 
-            <kevin_quang.acertainimageeditor.StaticViewPager
+            <kevin_quang.acertainimageeditor.ui.tab.StaticViewPager
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

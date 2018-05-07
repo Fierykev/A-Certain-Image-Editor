@@ -1,4 +1,4 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.ui.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,12 +8,10 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +21,11 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+
+import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
+import kevin_quang.acertainimageeditor.R;
+import kevin_quang.acertainimageeditor.ui.dialog.BlankDialog;
+import kevin_quang.acertainimageeditor.ui.dialog.SaveDialog;
 
 public class LoadFragment extends Fragment {
     private Uri fileUri;
@@ -49,61 +51,60 @@ public class LoadFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.load, container, false);
 
-        ImageButton camera = view.findViewById(R.id.camera);
-        camera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pictureButtonPressed(v);
+        ImageButton blank = view.findViewById(R.id.blank);
+        blank.setOnClickListener(v -> {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+            if (prev != null) {
+                ft.remove(prev);
             }
+            ft.addToBackStack(null);
+
+            // Create and show the dialog.
+            DialogFragment newFragment = BlankDialog.newInstance(editDisplaySurfaceView);
+            newFragment.show(ft, "dialog");
         });
 
+        ImageButton camera = view.findViewById(R.id.camera);
+        camera.setOnClickListener(v -> pictureButtonPressed(v));
+
         ImageButton share = view.findViewById(R.id.share);
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String dirname = Environment.getExternalStorageDirectory().getPath() + File.separator + getString(R.string.app_name);
-                String filename = dirname + File.separator + "share.jpg";
-                File file = new File(filename);
-                file.mkdirs();
-                if(file.exists()) {
-                    file.delete();
-                }
-                editDisplaySurfaceView.save(filename);
-                Log.d("Picture", "Saved to share");
-                fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_STREAM, fileUri);
-                startActivity(Intent.createChooser(intent, "Share Image"));
+        share.setOnClickListener(v -> {
+            String dirname = Environment.getExternalStorageDirectory().getPath() + File.separator + getString(R.string.app_name);
+            String filename = dirname + File.separator + "share.jpg";
+            File file = new File(filename);
+            file.mkdirs();
+            if(file.exists()) {
+                file.delete();
             }
+            editDisplaySurfaceView.save(filename);
+            Log.d("Picture", "Saved to share");
+            fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+            startActivity(Intent.createChooser(intent, "Share Image"));
         });
 
         ImageButton gallery = view.findViewById(R.id.photo_gallery);
-        gallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                photoPickerIntent.setType("image/*");
-                startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
-            }
+        gallery.setOnClickListener(v -> {
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
         });
 
         final ImageButton save = view.findViewById(R.id.save);
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
-
-                // Create and show the dialog.
-                DialogFragment newFragment = SaveDialog.newInstance(editDisplaySurfaceView);
-                newFragment.show(ft, "dialog");
-                ft.commit();
+        save.setOnClickListener(v -> {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+            if (prev != null) {
+                ft.remove(prev);
             }
+            ft.addToBackStack(null);
+
+            // Create and show the dialog.
+            DialogFragment newFragment = SaveDialog.newInstance(editDisplaySurfaceView);
+            newFragment.show(ft, "dialog");
         });
 
         return view;

@@ -1,12 +1,14 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.tool;
 
 import android.graphics.Bitmap;
 import android.graphics.Path;
-import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
+
+import kevin_quang.acertainimageeditor.tool.GLHelper;
+import kevin_quang.acertainimageeditor.tool.Tool;
 
 public abstract class DrawHelper extends Tool {
 
@@ -17,14 +19,13 @@ public abstract class DrawHelper extends Tool {
             Pair<GLHelper.Point<Float>, GLHelper.Point<Float>>> points = new ArrayList<>();
 
     @Override
-    void load(Bitmap bitmap, boolean storeHistory) {
+    public void load(Bitmap bitmap, boolean storeHistory) {
         super.load(bitmap, storeHistory);
 
         float width = super.image.getWidth();
         float height = super.image.getHeight();
         float vWidth = super.screenWidth;
         float vHeight = super.screenHeight;
-        Log.d("Point", String.valueOf(width) + "," + String.valueOf(height) + " " + String.valueOf(vWidth) + "," + String.valueOf(vHeight));
         final float scale;
         if(width > vWidth || height > vHeight) {
             if(width / vWidth < height / vHeight) {
@@ -47,7 +48,6 @@ public abstract class DrawHelper extends Tool {
                             new GLHelper.Point<>();
                     point.x = (event.getX()) / scale - xOffset;
                     point.y = (event.getY()) / scale - yOffset;
-                    Log.d("Point", String.valueOf(point.x) + "," + String.valueOf(point.y));
                     points.add(new Pair<>(point, new GLHelper.Point<Float>()));
 
                     point.add(point);
@@ -60,7 +60,7 @@ public abstract class DrawHelper extends Tool {
         );
     }
 
-    abstract void processPoints(Path path);
+    public abstract void processPoints(Path path);
 
     synchronized void processPointList()
     {
@@ -100,7 +100,7 @@ public abstract class DrawHelper extends Tool {
     }
 
     @Override
-    void onDraw(float aspectRatio, int width, int height)
+    public void onDraw(float aspectRatio, int width, int height)
     {
         processPointList();
 

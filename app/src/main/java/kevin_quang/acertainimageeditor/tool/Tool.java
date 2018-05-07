@@ -1,7 +1,8 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.tool;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
 import android.view.MotionEvent;
@@ -11,18 +12,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static kevin_quang.acertainimageeditor.GLHelper.loadProgram;
-import static kevin_quang.acertainimageeditor.GLHelper.loadTexture;
+import static kevin_quang.acertainimageeditor.tool.GLHelper.loadProgram;
+import static kevin_quang.acertainimageeditor.tool.GLHelper.loadTexture;
 
 /**
  * Created by Kevin on 3/24/2018.
  */
 
-abstract class Tool {
+public abstract class Tool {
 
-    static int screenWidth, screenHeight;
+    public static int screenWidth, screenHeight;
 
-    protected Bitmap image;
+    public Bitmap image;
 
     protected static int program;
     protected static int positionAttr, texCoordAttr, textureUnif, worldUnif;
@@ -34,12 +35,15 @@ abstract class Tool {
     public static final int HIST_LEN = 5;
     protected static ArrayList<Bitmap> history = new ArrayList<>();
     protected static ArrayList<Bitmap> redoHist = new ArrayList<>();
+
+    protected int color = Color.BLACK;
+
     public interface IHistoryUpdate {
         void updateUI();
     }
     public static IHistoryUpdate historyUpdate = null;
 
-    interface TouchLambda {
+    public interface TouchLambda {
         public boolean onTouch(View view, MotionEvent motionEvent);
     }
 
@@ -61,26 +65,26 @@ abstract class Tool {
         }
     }
 
-    static ToolTouch onTouch = new ToolTouch();
+    public static ToolTouch onTouch = new ToolTouch();
 
     public static class Args
     {
-        int type;
-        Object arg;
+        public int type;
+        public Object arg;
 
-        Args()
+        public Args()
         {
 
         }
 
-        Args(int type, Object arg)
+        public Args(int type, Object arg)
         {
             this.type = type;
             this.arg = arg;
         }
     }
 
-    void init(Context context)
+    public void init(Context context)
     {
         if (program == 0) {
             program = loadProgram(
@@ -100,7 +104,7 @@ abstract class Tool {
         }
     }
 
-    void destroy()
+    public void destroy()
     {
         GLES30.glDeleteProgram(program);
 
@@ -108,7 +112,7 @@ abstract class Tool {
             GLES30.glDeleteTextures(1, new int[] { textureID }, 0);
     }
 
-    void load(Bitmap bitmap, boolean storeHistory)
+    public void load(Bitmap bitmap, boolean storeHistory)
     {
         // clear listener
         setTouchLambda(null);
@@ -137,15 +141,15 @@ abstract class Tool {
         textureID = loadTexture(bitmap);
     }
 
-    boolean canUndo() {
+    public boolean canUndo() {
         return history.size() > 1;
     }
 
-    boolean canRedo() {
+    public boolean canRedo() {
         return redoHist.size() > 0;
     }
 
-    void undo()
+    public void undo()
     {
         if (history.size() <= 1)
             return;
@@ -159,7 +163,7 @@ abstract class Tool {
         }
     }
 
-    void redo()
+    public void redo()
     {
         if (redoHist.size() == 0)
             return;
@@ -173,9 +177,9 @@ abstract class Tool {
         }
     }
 
-    void setArgs(Args args) { }
+    public void setArgs(Args args) { }
 
-    void onDraw(float aspectRatio, int width, int height)
+    public void onDraw(float aspectRatio, int width, int height)
     {
         GLES30.glClearColor(0.f, 0.f, 0.f, 1.f);
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
@@ -221,11 +225,7 @@ abstract class Tool {
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    abstract void getLeftMenu();
-
-    abstract void getRightMenu();
-
-    void save(String path)
+    public void save(String path)
     {
         FileOutputStream ostream = null;
         try
@@ -251,20 +251,18 @@ abstract class Tool {
         }
     }
 
-    void dismissMenu()
-    {
-
-    }
-
-    void processLine(
+    public void processLine(
             GLHelper.Point<Float> start,
             GLHelper.Point<Float> end)
     {
         // Do nothing
     }
 
-    void setTouchLambda(TouchLambda lambda)
+    public void setTouchLambda(TouchLambda lambda)
     {
         onTouch.setTouchMethod(lambda);
     }
+
+    public void setColor(int color) {this.color = color;}
+    public int getColor() {return color;}
 }

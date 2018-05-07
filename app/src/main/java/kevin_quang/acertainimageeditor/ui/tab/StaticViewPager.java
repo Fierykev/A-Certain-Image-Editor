@@ -1,4 +1,4 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.ui.tab;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

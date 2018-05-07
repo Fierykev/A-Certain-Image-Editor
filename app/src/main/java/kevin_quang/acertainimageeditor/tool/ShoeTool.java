@@ -1,4 +1,4 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.tool;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,6 +14,9 @@ import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kevin_quang.acertainimageeditor.tool.GLHelper;
+import kevin_quang.acertainimageeditor.tool.Tool;
 
 import static org.opencv.core.CvType.CV_32F;
 import static org.opencv.core.CvType.CV_32FC1;
@@ -42,20 +45,20 @@ public class ShoeTool extends Tool {
     public static final int RUN = 0;
 
     @Override
-    void init(Context context) {
+    public void init(Context context) {
         super.init(context);
         tf = new TensorFlowInferenceInterface(context.getAssets(), MODEL);
     }
 
     @Override
-    void destroy() {
+    public void destroy() {
         super.destroy();
 
         tf = null;
     }
 
     @Override
-    void load(Bitmap bitmap, boolean storeHistory) {
+    public void load(Bitmap bitmap, boolean storeHistory) {
         super.load(bitmap, storeHistory);
 
         origImage = new Mat();
@@ -76,7 +79,7 @@ public class ShoeTool extends Tool {
     }
 
     @Override
-    void setArgs(Args args) {
+    public void setArgs(Args args) {
         switch (args.type)
         {
             case RUN:
@@ -88,18 +91,8 @@ public class ShoeTool extends Tool {
     }
 
     @Override
-    void onDraw(float aspectRatio, int width, int height) {
+    public void onDraw(float aspectRatio, int width, int height) {
         super.onDraw(aspectRatio, width, height);
-    }
-
-    @Override
-    void getLeftMenu() {
-
-    }
-
-    @Override
-    void getRightMenu() {
-
     }
 
     Mat clamp(Mat img)

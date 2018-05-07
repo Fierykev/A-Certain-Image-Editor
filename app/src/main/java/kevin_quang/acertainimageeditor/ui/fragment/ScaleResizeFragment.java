@@ -1,15 +1,18 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.ui.fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
+import kevin_quang.acertainimageeditor.R;
+import kevin_quang.acertainimageeditor.tool.ScaleResizeTool;
+import kevin_quang.acertainimageeditor.tool.Tool;
 
 public class ScaleResizeFragment extends Fragment {
 

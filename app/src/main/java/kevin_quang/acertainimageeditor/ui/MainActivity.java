@@ -1,4 +1,4 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.ui;
 
 import android.Manifest;
 import android.app.ActivityManager;
@@ -17,6 +17,10 @@ import android.widget.ProgressBar;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+
+import kevin_quang.acertainimageeditor.R;
+import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
+import kevin_quang.acertainimageeditor.ui.tab.MenuFragmentPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 

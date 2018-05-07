@@ -1,4 +1,4 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -8,6 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+
+import kevin_quang.acertainimageeditor.tool.BrushTool;
+import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
+import kevin_quang.acertainimageeditor.R;
+import kevin_quang.acertainimageeditor.ui.dialog.ColorPickerDialog;
 
 public class BrushFragment extends Fragment {
     private EditDisplaySurfaceView editDisplaySurfaceView;
@@ -33,29 +38,23 @@ public class BrushFragment extends Fragment {
         View view = inflater.inflate(R.layout.brush, container, false);
 
         ImageButton brush = view.findViewById(R.id.brush);
-        brush.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BrushTool brushTool = new BrushTool();
-                editDisplaySurfaceView.setTool(brushTool);
-            }
+        brush.setOnClickListener(v -> {
+            BrushTool brushTool = new BrushTool();
+            editDisplaySurfaceView.setTool(brushTool);
         });
 
         ImageButton select_color = view.findViewById(R.id.select_color);
-        select_color.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
-
-                // Create and show the dialog.
-                DialogFragment newFragment = ColorPickerDialog.newInstance();
-                newFragment.show(ft, "dialog");
+        select_color.setOnClickListener(v -> {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+            if (prev != null) {
+                ft.remove(prev);
             }
+            ft.addToBackStack(null);
+
+            // Create and show the dialog.
+            DialogFragment newFragment = ColorPickerDialog.newInstance(editDisplaySurfaceView);
+            newFragment.show(ft, "dialog");
         });
 
         return view;

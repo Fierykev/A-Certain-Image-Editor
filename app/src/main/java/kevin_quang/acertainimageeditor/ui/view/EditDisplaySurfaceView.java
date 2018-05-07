@@ -1,9 +1,15 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.ui.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
+
+import kevin_quang.acertainimageeditor.R;
+import kevin_quang.acertainimageeditor.tool.Const;
+import kevin_quang.acertainimageeditor.tool.LiquifyTool;
+import kevin_quang.acertainimageeditor.tool.Tool;
+import kevin_quang.acertainimageeditor.ui.renderer.EditDisplayRenderer;
 
 /**
  * Created by Kevin on 3/24/2018.
@@ -61,4 +67,6 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
     public void redo() {renderer.redo();}
     public boolean canUndo() {return renderer.canUndo();}
     public boolean canRedo() {return renderer.canRedo();}
+    public void setToolColor(int color) {currentTool.setColor(color);}
+    public int getToolColor() {return currentTool.getColor();}
 }

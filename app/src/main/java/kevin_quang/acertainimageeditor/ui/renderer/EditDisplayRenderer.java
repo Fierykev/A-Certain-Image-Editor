@@ -1,4 +1,4 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.ui.renderer;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,6 +10,10 @@ import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import kevin_quang.acertainimageeditor.tool.GLHelper;
+import kevin_quang.acertainimageeditor.tool.Tool;
+
 
 /**
  * Created by Kevin on 3/24/2018.
@@ -32,24 +36,24 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     private ArrayList<GLHelper.Point<Float>> pointList =
             new ArrayList<GLHelper.Point<Float>>();
 
-    synchronized void setContext(Context context)
+    public synchronized void setContext(Context context)
     {
         this.context = context;
     }
 
-    synchronized void setArgs(Tool.Args args)
+    public synchronized void setArgs(Tool.Args args)
     {
         this.args = args;
         argsUpdate = true;
     }
 
-    synchronized void setBitmap(Bitmap bitmap)
+    public synchronized void setBitmap(Bitmap bitmap)
     {
         this.bitmap = GLHelper.standardizeBitamp(bitmap);
         toolUpdate = true;
     }
 
-    synchronized void  setTool(Tool tool)
+    public synchronized void setTool(Tool tool)
     {
         this.tool = tool;
         toolInit = true;

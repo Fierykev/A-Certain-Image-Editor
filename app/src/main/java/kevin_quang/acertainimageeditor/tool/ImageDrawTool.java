@@ -1,7 +1,9 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.tool;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+
+import kevin_quang.acertainimageeditor.tool.Tool;
 
 /**
  * Created by Kevin on 3/24/2018.
@@ -9,32 +11,22 @@ import android.graphics.Bitmap;
 
 public class ImageDrawTool extends Tool {
     @Override
-    void init(Context context) {
+    public void init(Context context) {
         super.init(context);
     }
 
     @Override
-    void destroy() {
+    public void destroy() {
         super.destroy();
     }
 
     @Override
-    void load(Bitmap bitmap, boolean storeHistory) {
+    public void load(Bitmap bitmap, boolean storeHistory) {
         super.load(bitmap, storeHistory);
     }
 
     @Override
-    void onDraw(float aspectRatio, int width, int height) {
+    public void onDraw(float aspectRatio, int width, int height) {
         super.onDraw(aspectRatio, width, height);
-    }
-
-    @Override
-    void getLeftMenu() {
-
-    }
-
-    @Override
-    void getRightMenu() {
-
     }
 }

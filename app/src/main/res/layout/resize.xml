@@ -30,6 +30,7 @@
             android:inputType="number"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:backgroundTint="#FFF"
             android:textColorHint="#FFFFFF"/>
         <TextView
             android:text="H:"
@@ -44,6 +45,7 @@
             android:inputType="number"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:backgroundTint="#FFF"
             android:textColorHint="#FFFFFF"/>
         <ImageButton
             android:id="@+id/brush"

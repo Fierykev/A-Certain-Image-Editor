@@ -1,4 +1,4 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.tool;
 
 
 import android.content.Context;
@@ -22,6 +22,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import kevin_quang.acertainimageeditor.tool.GLHelper;
+import kevin_quang.acertainimageeditor.tool.Tool;
 
 import static org.opencv.core.CvType.CV_32F;
 import static org.opencv.core.CvType.CV_32FC1;
@@ -68,7 +71,7 @@ public class ScaleResizeTool extends Tool {
     {
         int width, height, meshWidth, meshHeight, iterations;
 
-        ResizeArgs(int width, int height, int meshWidth, int meshHeight, int iterations)
+        public ResizeArgs(int width, int height, int meshWidth, int meshHeight, int iterations)
         {
             this.width = width;
             this.height = height;
@@ -79,18 +82,18 @@ public class ScaleResizeTool extends Tool {
     }
 
     // TMP
-    ScaleResizeTool()
+    public ScaleResizeTool()
     {
 
     }
 
-    void init(Context context)
+    public void init(Context context)
     {
         super.init(context);
         needsCompute = COMPUTE_FRAME + 1;
     }
 
-    void destroy()
+    public void destroy()
     {
         super.destroy();
 
@@ -100,7 +103,7 @@ public class ScaleResizeTool extends Tool {
         GLES30.glDeleteBuffers(1, indexBufferID, 0);
     }
 
-    void load(Bitmap bitmap, boolean storeHistory)
+    public void load(Bitmap bitmap, boolean storeHistory)
     {
         super.load(bitmap, storeHistory);
 
@@ -130,7 +133,7 @@ public class ScaleResizeTool extends Tool {
     }
 
     @Override
-    void setArgs(Args args)
+    public void setArgs(Args args)
     {
         switch (args.type)
         {
@@ -161,7 +164,7 @@ public class ScaleResizeTool extends Tool {
     }
 
     @Override
-    void onDraw(float aspectRatio, int width, int height) {
+    public void onDraw(float aspectRatio, int width, int height) {
         if (needsCompute == COMPUTE_FRAME)
         {
             compute();
@@ -186,16 +189,6 @@ public class ScaleResizeTool extends Tool {
         {
             super.onDraw(aspectRatio, width, height);
         }
-    }
-
-    @Override
-    void getLeftMenu() {
-
-    }
-
-    @Override
-    void getRightMenu() {
-
     }
 
     private void createMesh(

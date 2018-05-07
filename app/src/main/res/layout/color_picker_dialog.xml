@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
+    android:background="#223"
     android:padding="16dp">
 
     <TextView
@@ -12,7 +13,8 @@
         android:layout_height="wrap_content"
         android:textSize="24dp"
         android:textStyle="bold"
-        android:text="Select a Color"/>
+        android:text="Select a Color"
+        android:textColor="#FFF"/>
 
     <com.larswerkman.holocolorpicker.ColorPicker
         android:id="@+id/picker"
@@ -33,4 +35,32 @@
         android:id="@+id/valuebar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+        <Button
+            android:id="@+id/select"
+            android:text="Select"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_done_white_24dp"
+            android:layout_width="wrap_content"
+            android:paddingLeft="8dp"
+            android:background="#445"
+            android:textColor="#FFF"
+            android:layout_marginRight="8dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/cancel"
+            android:text="Cancel"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:background="#445"
+            android:textColor="#FFF"
+            android:drawableLeft="@drawable/ic_close_white_24dp"/>
+    </LinearLayout>
 </LinearLayout>

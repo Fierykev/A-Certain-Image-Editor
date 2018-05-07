@@ -1,16 +1,13 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.ui.dialog;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.provider.DocumentFile;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.larswerkman.holocolorpicker.ColorPicker;
-import com.larswerkman.holocolorpicker.OpacityBar;
-import com.larswerkman.holocolorpicker.SaturationBar;
-import com.larswerkman.holocolorpicker.ValueBar;
-
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.OutputStream;
+
+import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
+import kevin_quang.acertainimageeditor.R;
 
 public class SaveDialog extends DialogFragment {
 

@@ -1,4 +1,4 @@
-package kevin_quang.acertainimageeditor;
+package kevin_quang.acertainimageeditor.tool;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -29,14 +29,14 @@ import static org.opencv.core.CvType.CV_8UC3;
 
 public class GLHelper {
 
-    static class Vertex
+    public static class Vertex
     {
         float x, y, z;
         float u, v;
 
-        Vertex() {}
+        public Vertex() {}
 
-        Vertex(float x, float y, float z, float u, float v)
+        public Vertex(float x, float y, float z, float u, float v)
         {
             this.x = x;
             this.y = y;
@@ -46,17 +46,17 @@ public class GLHelper {
         }
     }
 
-    static class Point<T extends Number>
+    public static class Point<T extends Number>
     {
-        T x, y;
+        public T x, y;
 
-        Point(T x, T y)
+        public Point(T x, T y)
         {
             this.x = x;
             this.y = y;
         }
 
-        Point()
+        public Point()
         {
 
         }
@@ -123,7 +123,7 @@ public class GLHelper {
         }
     }
 
-    static class VertexArray
+    public static class VertexArray
     {
         float[] floatArray;
         int index = 0;
