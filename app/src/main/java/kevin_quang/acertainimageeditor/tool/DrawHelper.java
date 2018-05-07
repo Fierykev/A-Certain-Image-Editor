@@ -7,9 +7,6 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
-import kevin_quang.acertainimageeditor.tool.GLHelper;
-import kevin_quang.acertainimageeditor.tool.Tool;
-
 public abstract class DrawHelper extends Tool {
 
     public static final GLHelper.Point<Float> END_POINT =

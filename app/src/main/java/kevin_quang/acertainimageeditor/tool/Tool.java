@@ -106,13 +106,13 @@ public abstract class Tool {
 
     public void destroy()
     {
-        GLES30.glDeleteProgram(program);
+//        GLES30.glDeleteProgram(program);
 
-        if (textureID != 0)
-            GLES30.glDeleteTextures(1, new int[] { textureID }, 0);
+//        if (textureID != 0)
+//            GLES30.glDeleteTextures(1, new int[] { textureID }, 0);
 
-        if (data != null)
-            data.destroy();
+//        if (data != null)
+//            data.destroy();
     }
 
     public void load(Bitmap bitmap, boolean storeHistory)

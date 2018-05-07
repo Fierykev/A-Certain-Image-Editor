@@ -7,7 +7,7 @@ import android.opengl.GLSurfaceView;
 
 import kevin_quang.acertainimageeditor.R;
 import kevin_quang.acertainimageeditor.tool.Const;
-import kevin_quang.acertainimageeditor.tool.LiquifyTool;
+import kevin_quang.acertainimageeditor.tool.ImageDrawTool;
 import kevin_quang.acertainimageeditor.tool.Tool;
 import kevin_quang.acertainimageeditor.ui.renderer.EditDisplayRenderer;
 
@@ -31,10 +31,10 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
         // set listener to tool
         setOnTouchListener(Tool.onTouch);
 
-        //ImageDrawTool tmp = new ImageDrawTool();
+        ImageDrawTool tmp = new ImageDrawTool();
 
         // TODO: revert
-        LiquifyTool tmp = new LiquifyTool();
+        //LiquifyTool tmp = new LiquifyTool();
         Bitmap bMap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.test);
 
         renderer.setBitmap(bMap);
