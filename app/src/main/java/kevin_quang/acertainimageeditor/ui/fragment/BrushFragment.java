@@ -1,6 +1,5 @@
 package kevin_quang.acertainimageeditor.ui.fragment;
 
-import android.icu.text.UnicodeSetSpanner;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -12,6 +11,7 @@ import android.widget.ImageButton;
 
 import kevin_quang.acertainimageeditor.tool.BrushTool;
 import kevin_quang.acertainimageeditor.tool.ImageDrawTool;
+import kevin_quang.acertainimageeditor.tool.TextTool;
 import kevin_quang.acertainimageeditor.ui.toggle.Toggler;
 import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
 import kevin_quang.acertainimageeditor.R;
@@ -20,8 +20,9 @@ import kevin_quang.acertainimageeditor.ui.dialog.ColorPickerDialog;
 public class BrushFragment extends Fragment {
 
     private EditDisplaySurfaceView editDisplaySurfaceView;
-    private ImageButton brush;
+    private ImageButton brush, text;
     private String brushTag = "brush_brush";
+    private String textTag = "brush_text";
 
     public static BrushFragment newInstance(
             EditDisplaySurfaceView editDisplaySurfaceView
@@ -45,9 +46,19 @@ public class BrushFragment extends Fragment {
 
         brush = view.findViewById(R.id.brush);
         Toggler.add(brushTag, brush);
+        text = view.findViewById(R.id.text);
+        Toggler.add(textTag, text);
         brush.setOnClickListener(v -> {
             if(!Toggler.toggle(brushTag)) {
                 editDisplaySurfaceView.setTool(new BrushTool());
+            } else {
+                editDisplaySurfaceView.setTool(new ImageDrawTool());
+            }
+        });
+
+        text.setOnClickListener(v -> {
+            if(!Toggler.toggle(textTag)) {
+                editDisplaySurfaceView.setTool(new TextTool(getActivity()));
             } else {
                 editDisplaySurfaceView.setTool(new ImageDrawTool());
             }
@@ -74,5 +85,6 @@ public class BrushFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Toggler.remove(brushTag);
+        Toggler.remove(textTag);
     }
 }

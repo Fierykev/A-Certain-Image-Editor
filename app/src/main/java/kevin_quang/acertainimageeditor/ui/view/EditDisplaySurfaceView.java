@@ -76,6 +76,6 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
     }
     public void restore(Bundle state) {
         Tool.restoreHistory(state);
-        setBitmap(state.getParcelable("image"));
+        currentTool.load(state.getParcelable("image"), false);
     }
 }

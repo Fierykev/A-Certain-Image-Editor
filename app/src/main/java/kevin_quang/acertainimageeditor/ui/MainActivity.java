@@ -12,12 +12,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+
 
 import kevin_quang.acertainimageeditor.R;
 import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
@@ -27,7 +29,12 @@ public class MainActivity extends AppCompatActivity {
 
     BaseLoaderCallback openCVCallback;
 
+    public interface KeyListener {
+        void onKeyUp(int keyCode, KeyEvent event);
+    }
+
     private EditDisplaySurfaceView editDisplaySurfaceView;
+    private KeyListener keyListener;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -91,9 +98,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         editDisplaySurfaceView = findViewById(R.id.mainEditor);
-        if(savedInstanceState != null) {
-            editDisplaySurfaceView.restore(savedInstanceState);
-        }
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         ViewPager viewPager = findViewById(R.id.viewpager);
         viewPager.setAdapter(new MenuFragmentPagerAdapter(
@@ -115,11 +119,30 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < imageResId.length; i++) {
             tabLayout.getTabAt(i).setIcon(imageResId[i]);
         }
+        if(savedInstanceState != null) {
+            editDisplaySurfaceView.restore(savedInstanceState);
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         editDisplaySurfaceView.save(outState);
+    }
+
+    public void setKeyListener(KeyListener keyListener) {
+        this.keyListener = keyListener;
+    }
+
+    public void clearKeyListener() {
+        this.keyListener = null;
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if(keyListener != null) {
+            keyListener.onKeyUp(keyCode, event);
+        }
+        return super.onKeyUp(keyCode, event);
     }
 }

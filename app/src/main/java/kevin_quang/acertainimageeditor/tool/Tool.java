@@ -6,13 +6,16 @@ import android.graphics.Color;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static kevin_quang.acertainimageeditor.tool.GLHelper.loadProgram;
 import static kevin_quang.acertainimageeditor.tool.GLHelper.loadTexture;
@@ -39,6 +42,7 @@ public abstract class Tool {
     protected static ArrayList<Bitmap> redoHist = new ArrayList<>();
 
     protected int color = Color.BLACK;
+    private ReentrantLock renderLock = new ReentrantLock();
 
     public interface IHistoryUpdate {
         void updateUI();
@@ -191,6 +195,7 @@ public abstract class Tool {
 
     public void onDraw(float aspectRatio, int width, int height)
     {
+        renderLock.lock();
         GLES30.glClearColor(0.f, 0.f, 0.f, 1.f);
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
         GLES30.glViewport(0, 0, width, height);
@@ -233,6 +238,7 @@ public abstract class Tool {
         GLES30.glDisableVertexAttribArray(texCoordAttr);
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
+        renderLock.unlock();
     }
 
     public void save(String path)
@@ -266,7 +272,11 @@ public abstract class Tool {
         onTouch.setTouchMethod(lambda);
     }
 
-    public void setColor(int color) {this.color = color;}
+    public void setColor(int color) {
+        renderLock.lock();
+        this.color = color;
+        renderLock.unlock();
+    }
     public int getColor() {return color;}
     public static void saveHistory(Bundle state) {
         state.putParcelableArrayList("undo", history);

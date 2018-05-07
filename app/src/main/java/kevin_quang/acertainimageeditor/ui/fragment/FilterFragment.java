@@ -46,10 +46,14 @@ public class FilterFragment extends Fragment {
         redo.setColorFilter(editDisplaySurfaceView.canRedo() ? Color.WHITE : Color.DKGRAY);
         redo.setOnClickListener(v -> editDisplaySurfaceView.redo());
 
-        Tool.historyUpdate = () -> getActivity().runOnUiThread(() -> {
-            undo.setColorFilter(editDisplaySurfaceView.canUndo() ? Color.WHITE : Color.DKGRAY);
-            redo.setColorFilter(editDisplaySurfaceView.canRedo() ? Color.WHITE : Color.DKGRAY);
-        });
+        Tool.historyUpdate = () -> {
+            if(getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    undo.setColorFilter(editDisplaySurfaceView.canUndo() ? Color.WHITE : Color.DKGRAY);
+                    redo.setColorFilter(editDisplaySurfaceView.canRedo() ? Color.WHITE : Color.DKGRAY);
+                });
+            }
+        };
 
         ImageButton resize = view.findViewById(R.id.resize);
         resize.setOnClickListener(v -> getFragmentManager().beginTransaction()
