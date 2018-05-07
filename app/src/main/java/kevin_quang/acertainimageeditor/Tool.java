@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.FileOutputStream;
@@ -18,6 +19,8 @@ import static kevin_quang.acertainimageeditor.GLHelper.loadTexture;
  */
 
 abstract class Tool {
+
+    static int screenWidth, screenHeight;
 
     protected Bitmap image;
 
@@ -36,6 +39,30 @@ abstract class Tool {
     }
     public static IHistoryUpdate historyUpdate = null;
 
+    interface TouchLambda {
+        public boolean onTouch(View view, MotionEvent motionEvent);
+    }
+
+    static class ToolTouch implements View.OnTouchListener
+    {
+        protected TouchLambda touchMethod = null;
+
+        @Override
+        public synchronized boolean onTouch(View view, MotionEvent motionEvent) {
+            if (touchMethod == null)
+                return false;
+
+            return touchMethod.onTouch(view, motionEvent);
+        }
+
+        public synchronized void setTouchMethod(TouchLambda lambda)
+        {
+            touchMethod = lambda;
+        }
+    }
+
+    static ToolTouch onTouch = new ToolTouch();
+
     public static class Args
     {
         int type;
@@ -52,8 +79,6 @@ abstract class Tool {
             this.arg = arg;
         }
     }
-
-    protected View.OnTouchListener touchListener;
 
     void init(Context context)
     {
@@ -85,6 +110,9 @@ abstract class Tool {
 
     void load(Bitmap bitmap, boolean storeHistory)
     {
+        // clear listener
+        setTouchLambda(null);
+
         // history buffer
         if (storeHistory)
         {
@@ -223,13 +251,20 @@ abstract class Tool {
         }
     }
 
-    View.OnTouchListener getTouchListener()
-    {
-        return touchListener;
-    }
-
     void dismissMenu()
     {
 
+    }
+
+    void processLine(
+            GLHelper.Point<Float> start,
+            GLHelper.Point<Float> end)
+    {
+        // Do nothing
+    }
+
+    void setTouchLambda(TouchLambda lambda)
+    {
+        onTouch.setTouchMethod(lambda);
     }
 }

@@ -6,6 +6,8 @@ import android.graphics.Matrix;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -14,7 +16,6 @@ import javax.microedition.khronos.opengles.GL10;
  */
 
 public class EditDisplayRenderer implements GLSurfaceView.Renderer {
-
     private float aspectRatio = 1.f;
     private Tool.Args args;
     private Tool tool;
@@ -27,6 +28,9 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     private Context context;
 
     private int width, height;
+
+    private ArrayList<GLHelper.Point<Float>> pointList =
+            new ArrayList<GLHelper.Point<Float>>();
 
     synchronized void setContext(Context context)
     {
@@ -71,6 +75,14 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     public synchronized void onDrawFrame(GL10 unused) {
         // check for tool init
         if (toolInit) {
+            pointList.clear();
+
+            if (this.tool != null)
+                this.tool.destroy();
+
+            this.tool.screenWidth = width;
+            this.tool.screenHeight = height;
+
             this.tool.init(context);
             this.tool.load(bitmap, false);
             toolInit = false;

@@ -85,7 +85,7 @@ public class ScaleResizeFragment extends Fragment {
                     Toast.makeText(getContext(), "Specified size same as current size", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                
+
                 /*
                 String meshWidthText = meshWidthField.getText().toString();
                 String meshHeightText = meshHeightField.getText().toString();
