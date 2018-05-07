@@ -136,7 +136,7 @@ public abstract class Tool {
             }
         }
 
-        image = bitmap;
+        image = bitmap.copy(bitmap.getConfig(), true);
 
         if (textureID != 0)
             GLES30.glDeleteTextures(1, new int[] { textureID }, 0);
