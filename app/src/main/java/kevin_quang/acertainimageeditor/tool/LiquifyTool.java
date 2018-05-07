@@ -17,7 +17,7 @@ public class LiquifyTool extends DrawHelper {
     private static final float ENLARGE_FACTOR = .05f;
 
     private Pair<Integer, Integer> vertDim;
-    private GLHelper.VertexArray verts;
+    private GLHelper.VertexArray verts, origVerts;
     private int indices[];
     private GLHelper.DrawData data;
 
@@ -42,15 +42,8 @@ public class LiquifyTool extends DrawHelper {
     public void destroy() {
         super.destroy();
 
-        this.forceTexLoad(renderToTex());
-
         if (data != null)
             data.destroy();
-    }
-
-    public void save(String path)
-    {
-        save(path, renderToTex());
     }
 
     @Override
@@ -63,26 +56,14 @@ public class LiquifyTool extends DrawHelper {
                         bitmap.getHeight(), bitmap.getWidth())
         );
 
-        data =
-                GLHelper.createBuffers(
-                        verts,
-                        indices
-                );
+        origVerts = verts.clone();
     }
 
-    @Override
-    public void onDraw(float aspectRatio, int width, int height)
-    {
-        processPointList();
-
-        renderMesh(aspectRatio, width, height, false);
-    }
-
-    private void renderMesh(float aspectRatio, int width, int height, boolean renderTex)
+    private void renderMesh()
     {
         GLES30.glClearColor(0.f, 0.f, 0.f, 1.f);
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
-        GLES30.glViewport(0, 0, width, height);
+        GLES30.glViewport(0, 0, super.image.getWidth(), super.image.getHeight());
 
         GLES30.glEnable(GLES30.GL_TEXTURE_2D);
 
@@ -91,44 +72,14 @@ public class LiquifyTool extends DrawHelper {
         // construct matrix
         Matrix.setIdentityM(world, 0);
 
-        float currentAspectRatio =
-                (float)image.getWidth()  / (float)image.getHeight();
-        float hS = Math.min(aspectRatio / currentAspectRatio, 1.f);
-        float wS = Math.min(currentAspectRatio / aspectRatio, 1.f);
-
-        Matrix.scaleM(
+        Matrix.rotateM(
                 world,
                 0,
-                wS,
-                hS,
-                1.f);
-
-        if (renderTex)
-            Matrix.rotateM(
-                    world,
-                    0,
-                    90.f,
-                    0.f,
-                    0.f,
-                    1.f
-            );
-        else {
-            Matrix.rotateM(
-                    world,
-                    0,
-                    -90.f,
-                    0.f,
-                    0.f,
-                    1.f
-            );
-            Matrix.scaleM(
-                    world,
-                    0,
-                    1.f,
-                    -1.f,
-                    1.f);
-        }
-
+                90.f,
+                0.f,
+                0.f,
+                1.f
+        );
         Matrix.scaleM(
                 world,
                 0,
@@ -193,16 +144,17 @@ public class LiquifyTool extends DrawHelper {
 
         // solidify mesh
         if (update) {
-            if (data != null)
-                data.destroy();
-
             data =
                     GLHelper.createBuffers(
                             verts,
                             indices
                     );
 
-//            this.forceTexLoad(renderToTex());
+            this.forceTexLoad(renderToTex());
+
+            // throw out deform data and reset verts
+            data.destroy();
+            verts = origVerts.clone();
         }
 
         update = false;
@@ -333,7 +285,7 @@ public class LiquifyTool extends DrawHelper {
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
         GLES30.glViewport(0, 0, super.image.getWidth(), super.image.getHeight());
 
-        renderMesh(1.f, super.image.getWidth(), super.image.getHeight(), true);
+        renderMesh();
 
         GLES30.glPixelStorei(GLES30.GL_PACK_ALIGNMENT, 1);
         GLES30.glPixelStorei(GLES30.GL_PACK_ROW_LENGTH, super.image.getWidth());
