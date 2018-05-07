@@ -22,7 +22,7 @@ import kevin_quang.acertainimageeditor.tool.Tool;
 public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     private float aspectRatio = 1.f;
     private Tool.Args args;
-    private Tool tool;
+    private Tool tool = null, newTool = null;
     private boolean toolInit = false,
             toolUpdate = false,
             argsUpdate = false,
@@ -55,7 +55,7 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     public synchronized void setTool(Tool tool)
     {
-        this.tool = tool;
+        this.newTool = tool;
         toolInit = true;
     }
 
@@ -81,14 +81,20 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         if (toolInit) {
             pointList.clear();
 
-            if (this.tool != null)
+            Bitmap lastMap = bitmap;
+
+            if (this.tool != null) {
                 this.tool.destroy();
+                lastMap = this.tool.image;
+            }
+
+            this.tool = newTool;
 
             this.tool.screenWidth = width;
             this.tool.screenHeight = height;
 
             this.tool.init(context);
-            this.tool.load(bitmap, false);
+            this.tool.load(lastMap, false);
             toolInit = false;
         }
 
@@ -149,6 +155,16 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         redoUpdate = true;
     }
 
-    public synchronized boolean canUndo() {return tool.canUndo();}
-    public synchronized boolean canRedo() {return tool.canRedo();}
+    public synchronized boolean canUndo() {
+        if (tool == null)
+            return false;
+
+        return tool.canUndo();
+    }
+    public synchronized boolean canRedo() {
+        if (tool == null)
+            return false;
+
+        return tool.canRedo();
+    }
 }

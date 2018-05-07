@@ -233,13 +233,13 @@ public abstract class Tool {
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    public void save(String path)
+    protected void save(String path, Bitmap saveImg)
     {
         FileOutputStream ostream = null;
         try
         {
             ostream = new FileOutputStream(path);
-            image.compress(Bitmap.CompressFormat.PNG, 100, ostream);
+            saveImg.compress(Bitmap.CompressFormat.PNG, 100, ostream);
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -257,6 +257,11 @@ public abstract class Tool {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void save(String path)
+    {
+        save(path, image);
     }
 
     synchronized void setTouchLambda(TouchLambda lambda)
