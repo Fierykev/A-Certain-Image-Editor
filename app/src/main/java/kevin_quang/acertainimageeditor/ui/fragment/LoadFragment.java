@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Calendar;
 
 import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
 import kevin_quang.acertainimageeditor.R;
@@ -70,15 +71,14 @@ public class LoadFragment extends Fragment {
 
         ImageButton share = view.findViewById(R.id.share);
         share.setOnClickListener(v -> {
-            String dirname = Environment.getExternalStorageDirectory().getPath() + File.separator + getString(R.string.app_name);
-            String filename = dirname + File.separator + "share.jpg";
+            String dirname = Environment.getExternalStorageDirectory().getPath() + File.separator + getString(R.string.app_name) + File.separator + "share";
+            String filename = dirname + File.separator + Calendar.getInstance().getTime() + ".jpg";
             File file = new File(filename);
             file.mkdirs();
             if(file.exists()) {
                 file.delete();
             }
             editDisplaySurfaceView.save(filename);
-            Log.d("Picture", "Saved to share");
             fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("image/*");
