@@ -69,9 +69,9 @@ public class ScaleResizeFragment extends Fragment {
         });
         erase.setOnClickListener(v -> {
             if(Toggler.toggle(eraseTag)) {
-                // TODO: Brush disabled
+                // TODO: Eraser disabled
             } else {
-                // TODO: Brush enabled
+                // TODO: Eraser enabled
             }
         });
 
