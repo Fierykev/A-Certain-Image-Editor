@@ -79,8 +79,8 @@ public class GLHelper {
         double distance(Point p)
         {
             return Math.sqrt(
-                    (double)subNumbers(x, p.x) * (double)subNumbers(x, p.x)
-                            + (double)subNumbers(y, p.y) * (double)subNumbers(y, p.y));
+                    subNumbers(x, p.x).doubleValue() * subNumbers(x, p.x).doubleValue()
+                            + subNumbers(y, p.y).doubleValue() * subNumbers(y, p.y).doubleValue());
         }
 
         float norm()
@@ -268,6 +268,15 @@ public class GLHelper {
         int[] indexBufferID;
 
         int numIndices;
+
+        void destroy()
+        {
+            if (vertBufferID[0] != 0)
+                GLES30.glDeleteBuffers(1, vertBufferID, 0);
+
+            if (indexBufferID[0] != 0)
+                GLES30.glDeleteBuffers(1, indexBufferID, 0);
+        }
     }
 
     public static String loadFile(String file, AssetManager ag)

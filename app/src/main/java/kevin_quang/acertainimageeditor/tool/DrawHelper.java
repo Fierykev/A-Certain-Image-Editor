@@ -18,6 +18,8 @@ public abstract class DrawHelper extends Tool {
     private ArrayList<
             Pair<GLHelper.Point<Float>, GLHelper.Point<Float>>> points = new ArrayList<>();
 
+    protected GLHelper.Point<Float> cursor = END_POINT;
+
     @Override
     public void load(Bitmap bitmap, boolean storeHistory) {
         super.load(bitmap, storeHistory);
@@ -51,8 +53,13 @@ public abstract class DrawHelper extends Tool {
                     points.add(new Pair<>(point, new GLHelper.Point<Float>()));
 
                     point.add(point);
+
+                    cursor = point;
+
                     return true;
                 } else {
+                    cursor = END_POINT;
+
                     points.add(new Pair<>(END_POINT, new GLHelper.Point<Float>()));
                 }
                 return false;
@@ -60,7 +67,22 @@ public abstract class DrawHelper extends Tool {
         );
     }
 
-    public abstract void processPoints(Path path);
+    synchronized void processPoints(Path path)
+    {
+
+    }
+
+    synchronized void processLine(
+            GLHelper.Point<Float> start,
+            GLHelper.Point<Float> end)
+    {
+
+    }
+
+    synchronized void finishedPointProcess()
+    {
+
+    }
 
     synchronized void processPointList()
     {
@@ -77,7 +99,22 @@ public abstract class DrawHelper extends Tool {
                     && point.first.y == END_POINT.y)
             {
                 if (!subList.isEmpty()) {
+                    // lines
+                    /*
+                    for(int i = 1; i < subList.size(); i++) {
+                        processLine(
+                                subList.get(i - 1).first,
+                                subList.get(i).first);
+                    }*/
+
+                    if (1 < subList.size())
+                        processLine(
+                                subList.get(0).first,
+                                subList.get(subList.size() - 1).first);
+
+                    // strokes
                     processPoints(getPath(subList));
+
                     subList.clear();
                 }
             } else
@@ -88,6 +125,19 @@ public abstract class DrawHelper extends Tool {
 
         // force process
         if (!subList.isEmpty()) {
+            // lines
+            /*
+            for(int i = 1; i < subList.size(); i++) {
+                processLine(
+                        subList.get(i - 1).first,
+                        subList.get(i).first);
+            }*/
+            if (1 < subList.size())
+                processLine(
+                        subList.get(0).first,
+                        subList.get(subList.size() - 1).first);
+
+            // strokes
             processPoints(getPath(subList));
             subList.clear();
         }
@@ -97,6 +147,8 @@ public abstract class DrawHelper extends Tool {
             // add back last point
             points.add(0, point);
         }
+
+        finishedPointProcess();
     }
 
     @Override

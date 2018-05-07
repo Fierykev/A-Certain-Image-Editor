@@ -110,6 +110,9 @@ public abstract class Tool {
 
         if (textureID != 0)
             GLES30.glDeleteTextures(1, new int[] { textureID }, 0);
+
+        if (data != null)
+            data.destroy();
     }
 
     public void load(Bitmap bitmap, boolean storeHistory)
@@ -251,14 +254,7 @@ public abstract class Tool {
         }
     }
 
-    public void processLine(
-            GLHelper.Point<Float> start,
-            GLHelper.Point<Float> end)
-    {
-        // Do nothing
-    }
-
-    public void setTouchLambda(TouchLambda lambda)
+    void setTouchLambda(TouchLambda lambda)
     {
         onTouch.setTouchMethod(lambda);
     }

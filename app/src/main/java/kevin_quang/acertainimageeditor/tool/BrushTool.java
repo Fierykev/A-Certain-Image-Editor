@@ -7,7 +7,8 @@ import android.graphics.Path;
 
 public class BrushTool extends DrawHelper {
 
-    public void processPoints(Path path)
+    @Override
+    void processPoints(Path path)
     {
         Canvas canvas = new Canvas(super.image);
         Paint paint = new Paint();
