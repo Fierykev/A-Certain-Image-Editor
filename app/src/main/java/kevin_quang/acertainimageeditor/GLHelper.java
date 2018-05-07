@@ -268,6 +268,15 @@ public class GLHelper {
         int[] indexBufferID;
 
         int numIndices;
+
+        void destroy()
+        {
+            if (vertBufferID[0] != 0)
+                GLES30.glDeleteBuffers(1, vertBufferID, 0);
+
+            if (indexBufferID[0] != 0)
+                GLES30.glDeleteBuffers(1, indexBufferID, 0);
+        }
     }
 
     public static String loadFile(String file, AssetManager ag)

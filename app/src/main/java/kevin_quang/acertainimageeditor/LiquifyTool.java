@@ -39,6 +39,9 @@ public class LiquifyTool extends DrawHelper {
     @Override
     void destroy() {
         super.destroy();
+
+        if (data != null)
+            data.destroy();
     }
 
     @Override
@@ -141,6 +144,9 @@ public class LiquifyTool extends DrawHelper {
 //            enlargeShrink(super.cursor, true);
 
         // solidify mesh
+        if (data != null)
+            data.destroy();
+
         data =
                 GLHelper.createBuffers(
                         verts,

@@ -102,6 +102,9 @@ abstract class Tool {
 
         if (textureID != 0)
             GLES30.glDeleteTextures(1, new int[] { textureID }, 0);
+
+        if (data != null)
+            data.destroy();
     }
 
     void load(Bitmap bitmap, boolean storeHistory)
