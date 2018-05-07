@@ -5,9 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
-import android.os.Bundle;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -23,7 +25,7 @@ import kevin_quang.acertainimageeditor.tool.Tool;
 public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     private float aspectRatio = 1.f;
     private Tool.Args args;
-    private Tool tool;
+    private Tool tool = null, newTool = null;
     private boolean toolInit = false,
             toolUpdate = false,
             argsUpdate = false,
@@ -36,6 +38,10 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     private ArrayList<GLHelper.Point<Float>> pointList =
             new ArrayList<GLHelper.Point<Float>>();
+
+    private Semaphore saveLock = new Semaphore(0);
+    private AtomicInteger requestSave = new AtomicInteger(0);
+    private AtomicReference<String> savePath = new AtomicReference<>();
 
     public synchronized void setContext(Context context)
     {
@@ -56,7 +62,7 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     public synchronized void setTool(Tool tool)
     {
-        this.tool = tool;
+        this.newTool = tool;
         toolInit = true;
     }
 
@@ -82,14 +88,20 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         if (toolInit) {
             pointList.clear();
 
-            if (this.tool != null)
+            Bitmap lastMap = bitmap;
+
+            if (this.tool != null) {
                 this.tool.destroy();
+                lastMap = this.tool.image;
+            }
+
+            this.tool = newTool;
 
             this.tool.screenWidth = width;
             this.tool.screenHeight = height;
 
             this.tool.init(context);
-            this.tool.load(bitmap, false);
+            this.tool.load(lastMap, false);
             toolInit = false;
         }
 
@@ -120,6 +132,14 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         // store current bitmap as bitmap
         bitmap = this.tool.image;
 
+        // request save
+        if (requestSave.get() != 0)
+        {
+            tool.save(savePath.get());
+
+            saveLock.release(requestSave.getAndSet(0));
+        }
+
         // clear frame
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
 
@@ -130,8 +150,18 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     public synchronized int getBitmapHeight() {return bitmap.getHeight();}
 
-    public synchronized void save(String path) {
-        tool.save(path);
+    public void save(String path, GLSurfaceView view) {
+        requestSave.addAndGet(1);
+        savePath.set(path);
+
+        view.requestRender();
+
+        try {
+            saveLock.acquire();
+        } catch (InterruptedException e) {
+            // TODO: deal with exception with message
+            e.printStackTrace();
+        }
     }
 
     public synchronized void rotate(int degrees) {
@@ -150,6 +180,16 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         redoUpdate = true;
     }
 
-    public synchronized boolean canUndo() {return tool.canUndo();}
-    public synchronized boolean canRedo() {return tool.canRedo();}
+    public synchronized boolean canUndo() {
+        if (tool == null)
+            return false;
+
+        return tool.canUndo();
+    }
+    public synchronized boolean canRedo() {
+        if (tool == null)
+            return false;
+
+        return tool.canRedo();
+    }
 }

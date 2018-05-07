@@ -241,13 +241,13 @@ public abstract class Tool {
         renderLock.unlock();
     }
 
-    public void save(String path)
+    protected void save(String path, Bitmap saveImg)
     {
         FileOutputStream ostream = null;
         try
         {
             ostream = new FileOutputStream(path);
-            image.compress(Bitmap.CompressFormat.PNG, 100, ostream);
+            saveImg.compress(Bitmap.CompressFormat.PNG, 100, ostream);
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -267,6 +267,11 @@ public abstract class Tool {
         }
     }
 
+    public void save(String path)
+    {
+        save(path, image);
+    }
+
     synchronized void setTouchLambda(TouchLambda lambda)
     {
         onTouch.setTouchMethod(lambda);
@@ -283,7 +288,7 @@ public abstract class Tool {
         state.putParcelableArrayList("redo", redoHist);
     }
     public void save(Bundle state) {
-        state.putParcelable("image",image);
+        state.putParcelable("image", image);
     }
     public static void restoreHistory(Bundle state) {
         history = state.getParcelableArrayList("undo");
