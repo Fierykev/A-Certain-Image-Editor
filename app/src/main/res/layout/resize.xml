@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/load_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        >
+        <ImageButton
+            android:id="@+id/back"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_arrow_back_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:text="W:"
+            android:textColor="#FFFFFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/width"
+            android:layout_marginHorizontal="8dp"
+            android:layout_width="64dp"
+            android:textColor="#FFFFFF"
+            android:inputType="number"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColorHint="#FFFFFF"/>
+        <TextView
+            android:text="H:"
+            android:textColor="#FFFFFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/height"
+            android:layout_marginHorizontal="8dp"
+            android:textColor="#FFFFFF"
+            android:layout_width="64dp"
+            android:inputType="number"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColorHint="#FFFFFF"/>
+        <ImageButton
+            android:id="@+id/brush"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_brush_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/erase"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_erase_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/settings"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_settings_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/done"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_done_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</HorizontalScrollView>
