@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     BaseLoaderCallback openCVCallback;
 
+    private EditDisplaySurfaceView editDisplaySurfaceView;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        createDisplay();
+        createDisplay(savedInstanceState);
         final ProgressBar progressBar = findViewById(R.id.progressBar);
 
         final ActivityManager activityManager =
@@ -84,22 +86,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void createDisplay()
+    private void createDisplay(Bundle savedInstanceState)
     {
         setContentView(R.layout.activity_main);
 
-        EditDisplaySurfaceView editDisplaySurfaceView =
-                (EditDisplaySurfaceView)findViewById(R.id.mainEditor);
-
+        editDisplaySurfaceView = findViewById(R.id.mainEditor);
+        if(savedInstanceState != null) {
+            editDisplaySurfaceView.restore(savedInstanceState);
+        }
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ViewPager viewPager = findViewById(R.id.viewpager);
         viewPager.setAdapter(new MenuFragmentPagerAdapter(
                 getSupportFragmentManager(),
                 editDisplaySurfaceView,
                 MainActivity.this));
 
         // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        TabLayout tabLayout = findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         // Icons
@@ -112,5 +115,11 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < imageResId.length; i++) {
             tabLayout.getTabAt(i).setIcon(imageResId[i]);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        editDisplaySurfaceView.save(outState);
     }
 }

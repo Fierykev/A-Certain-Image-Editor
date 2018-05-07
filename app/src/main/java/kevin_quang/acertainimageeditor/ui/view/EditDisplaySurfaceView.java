@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
+import android.os.Bundle;
 
 import kevin_quang.acertainimageeditor.R;
 import kevin_quang.acertainimageeditor.tool.Const;
@@ -69,4 +70,12 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
     public boolean canRedo() {return renderer.canRedo();}
     public void setToolColor(int color) {currentTool.setColor(color);}
     public int getToolColor() {return currentTool.getColor();}
+    public void save(Bundle state) {
+        Tool.saveHistory(state);
+        currentTool.save(state);
+    }
+    public void restore(Bundle state) {
+        Tool.restoreHistory(state);
+        setBitmap(state.getParcelable("image"));
+    }
 }

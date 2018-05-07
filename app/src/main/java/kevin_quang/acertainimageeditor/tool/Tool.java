@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -266,4 +268,15 @@ public abstract class Tool {
 
     public void setColor(int color) {this.color = color;}
     public int getColor() {return color;}
+    public static void saveHistory(Bundle state) {
+        state.putParcelableArrayList("undo", history);
+        state.putParcelableArrayList("redo", redoHist);
+    }
+    public void save(Bundle state) {
+        state.putParcelable("image",image);
+    }
+    public static void restoreHistory(Bundle state) {
+        history = state.getParcelableArrayList("undo");
+        redoHist = state.getParcelableArrayList("redo");
+    }
 }
