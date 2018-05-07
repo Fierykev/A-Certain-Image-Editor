@@ -28,6 +28,13 @@ public class Toggler {
     }
 
     public static synchronized boolean toggle(String name) {
+        if(name == null) {
+            if(active != null) {
+                toggleables.get(active).setColorFilter(Color.WHITE);
+                active = null;
+            }
+            return false;
+        }
         ImageButton button = toggleables.get(name);
         if(name.equals(active)) {
             button.setColorFilter(Color.WHITE);

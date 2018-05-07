@@ -23,6 +23,7 @@ import org.opencv.android.OpenCVLoader;
 
 
 import kevin_quang.acertainimageeditor.R;
+import kevin_quang.acertainimageeditor.ui.toggle.Toggler;
 import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
 import kevin_quang.acertainimageeditor.ui.tab.MenuFragmentPagerAdapter;
 
@@ -147,6 +148,22 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < imageResId.length; i++) {
             tabLayout.getTabAt(i).setIcon(imageResId[i]);
         }
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Toggler.toggle(null);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
         /*
         if(savedInstanceState != null) {
             editDisplaySurfaceView.restore(savedInstanceState);

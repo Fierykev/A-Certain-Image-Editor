@@ -52,7 +52,6 @@ public abstract class DrawHelper extends Tool {
                     point.add(point);
 
                     cursor = point;
-
                     return true;
                 } else {
                     cursor = END_POINT;
@@ -202,7 +201,7 @@ public abstract class DrawHelper extends Tool {
                 }
             }
         } catch (Exception e) {
-            
+
         }
         return path;
     }

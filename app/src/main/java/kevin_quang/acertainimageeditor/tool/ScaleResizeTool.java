@@ -1001,7 +1001,7 @@ public class ScaleResizeTool extends Tool {
         }
 
         // setup viewport
-        GLES31.glClearColor(0, 0, 1, 1);
+        GLES31.glClearColor(0, 0, 0, 1);
         GLES31.glClear(GLES31.GL_COLOR_BUFFER_BIT);
         GLES31.glViewport(0, 0, desiredDim.second, desiredDim.first);
 

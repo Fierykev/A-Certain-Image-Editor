@@ -56,7 +56,7 @@ public class ScaleResizeFragment extends Fragment {
         widthField.setHint(String.valueOf(editDisplaySurfaceView.getBitmapWidth()));
         final EditText heightField = view.findViewById(R.id.height);
         heightField.setBackgroundColor(0x55FFFFFF);
-        heightField.setHint(String.valueOf(editDisplaySurfaceView.getBitmapHeight()));
+        heightField.setHint(String.valueOf(editDisplaySurfaceView.getHeight()));
 
         ImageButton done = view.findViewById(R.id.done);
         done.setOnClickListener(v -> {
@@ -76,8 +76,8 @@ public class ScaleResizeFragment extends Fragment {
             if(heightText.length() != 0) {
                 height = Integer.parseInt(heightText);
             }
-            if(width <= 0 || height <= 0) {
-                Toast.makeText(getContext(), "Width/Height cannot be negative", Toast.LENGTH_SHORT).show();
+            if(width <= 50 || height <= 50) {
+                Toast.makeText(getContext(), "Min Image Size 50x50", Toast.LENGTH_SHORT).show();
                 return;
             }
 

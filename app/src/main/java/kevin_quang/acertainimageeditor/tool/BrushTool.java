@@ -1,10 +1,8 @@
 package kevin_quang.acertainimageeditor.tool;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.util.Pair;
 
 import java.util.ArrayList;
 
