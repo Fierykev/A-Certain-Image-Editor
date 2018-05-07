@@ -1,5 +1,7 @@
 package kevin_quang.acertainimageeditor.ui.fragment;
 
+import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import kevin_quang.acertainimageeditor.ui.toggle.Toggler;
 import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
 import kevin_quang.acertainimageeditor.R;
 import kevin_quang.acertainimageeditor.tool.ScaleResizeTool;
@@ -17,6 +20,9 @@ import kevin_quang.acertainimageeditor.tool.Tool;
 public class ScaleResizeFragment extends Fragment {
 
     private EditDisplaySurfaceView editDisplaySurfaceView;
+    private ImageButton brush, erase;
+    private String brushTag = "resize_brush";
+    private String eraseTag = "resize_erase";
 
     public static ScaleResizeFragment newInstance(
             EditDisplaySurfaceView editDisplaySurfaceView
@@ -49,6 +55,25 @@ public class ScaleResizeFragment extends Fragment {
 
         ImageButton back = view.findViewById(R.id.back);
         back.setOnClickListener(v -> getFragmentManager().popBackStack());
+
+        brush = view.findViewById(R.id.brush);
+        Toggler.add(brushTag, brush);
+        erase = view.findViewById(R.id.erase);
+        Toggler.add(eraseTag, erase);
+        brush.setOnClickListener(v -> {
+            if(Toggler.toggle(brushTag)) {
+                // TODO: Brush disabled
+            } else {
+                // TODO: Brush enabled
+            }
+        });
+        erase.setOnClickListener(v -> {
+            if(Toggler.toggle(eraseTag)) {
+                // TODO: Brush disabled
+            } else {
+                // TODO: Brush enabled
+            }
+        });
 
         final EditText widthField = view.findViewById(R.id.width);
         widthField.setBackgroundColor(0x55FFFFFF);
@@ -109,5 +134,12 @@ public class ScaleResizeFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Toggler.remove(brushTag);
+        Toggler.remove(eraseTag);
     }
 }

@@ -1,5 +1,6 @@
 package kevin_quang.acertainimageeditor.ui.fragment;
 
+import android.icu.text.UnicodeSetSpanner;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -10,12 +11,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import kevin_quang.acertainimageeditor.tool.BrushTool;
+import kevin_quang.acertainimageeditor.tool.ImageDrawTool;
+import kevin_quang.acertainimageeditor.ui.toggle.Toggler;
 import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
 import kevin_quang.acertainimageeditor.R;
 import kevin_quang.acertainimageeditor.ui.dialog.ColorPickerDialog;
 
 public class BrushFragment extends Fragment {
+
     private EditDisplaySurfaceView editDisplaySurfaceView;
+    private ImageButton brush;
+    private String brushTag = "brush_brush";
 
     public static BrushFragment newInstance(
             EditDisplaySurfaceView editDisplaySurfaceView
@@ -37,10 +43,14 @@ public class BrushFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.brush, container, false);
 
-        ImageButton brush = view.findViewById(R.id.brush);
+        brush = view.findViewById(R.id.brush);
+        Toggler.add(brushTag, brush);
         brush.setOnClickListener(v -> {
-            BrushTool brushTool = new BrushTool();
-            editDisplaySurfaceView.setTool(brushTool);
+            if(!Toggler.toggle(brushTag)) {
+                editDisplaySurfaceView.setTool(new BrushTool());
+            } else {
+                editDisplaySurfaceView.setTool(new ImageDrawTool());
+            }
         });
 
         ImageButton select_color = view.findViewById(R.id.select_color);
@@ -58,5 +68,11 @@ public class BrushFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Toggler.remove(brushTag);
     }
 }

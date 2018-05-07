@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import kevin_quang.acertainimageeditor.ui.toggle.Toggler;
 import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
 import kevin_quang.acertainimageeditor.R;
 import kevin_quang.acertainimageeditor.tool.LiquifyTool;
@@ -18,6 +19,10 @@ import kevin_quang.acertainimageeditor.tool.Tool;
 public class LiquifyFragment extends Fragment {
 
     private EditDisplaySurfaceView editDisplaySurfaceView;
+    private ImageButton shrink, grow, smudge;
+    private String shrinkTag = "liquify_shrink";
+    private String growTag = "liquify_grow";
+    private String smudgeTag = "liquify_smudge";
 
     public static LiquifyFragment newInstance(
             EditDisplaySurfaceView editDisplaySurfaceView
@@ -50,34 +55,42 @@ public class LiquifyFragment extends Fragment {
         ImageButton shrink = view.findViewById(R.id.shrink);
         ImageButton grow = view.findViewById(R.id.grow);
         ImageButton smudge = view.findViewById(R.id.smudge);
+        Toggler.add(shrinkTag, shrink);
+        Toggler.add(growTag, grow);
+        Toggler.add(smudgeTag, smudge);
         shrink.setOnClickListener(v -> {
             editDisplaySurfaceView.setTool(new LiquifyTool());
-            LiquifyTool.LiquifyArgs args = new LiquifyTool.LiquifyArgs(LiquifyTool.Mode.SHRINK);
-            editDisplaySurfaceView.passArgs(new Tool.Args(LiquifyTool.LIQUIFY, args));
-            shrink.setColorFilter(getActivity().getColor(R.color.highlight));
-            grow.setColorFilter(Color.WHITE);
-            smudge.setColorFilter(Color.WHITE);
+            if(!Toggler.toggle(shrinkTag)) {
+                LiquifyTool.LiquifyArgs args = new LiquifyTool.LiquifyArgs(LiquifyTool.Mode.SHRINK);
+                editDisplaySurfaceView.passArgs(new Tool.Args(LiquifyTool.LIQUIFY, args));
+            }
         });
 
 
         grow.setOnClickListener(v -> {
             editDisplaySurfaceView.setTool(new LiquifyTool());
-            LiquifyTool.LiquifyArgs args = new LiquifyTool.LiquifyArgs(LiquifyTool.Mode.ENLARGE);
-            editDisplaySurfaceView.passArgs(new Tool.Args(LiquifyTool.LIQUIFY, args));
-            shrink.setColorFilter(Color.WHITE);
-            grow.setColorFilter(getActivity().getColor(R.color.highlight));
-            smudge.setColorFilter(Color.WHITE);
+            if(!Toggler.toggle(growTag)) {
+                LiquifyTool.LiquifyArgs args = new LiquifyTool.LiquifyArgs(LiquifyTool.Mode.ENLARGE);
+                editDisplaySurfaceView.passArgs(new Tool.Args(LiquifyTool.LIQUIFY, args));
+            }
         });
 
         smudge.setOnClickListener(v -> {
             editDisplaySurfaceView.setTool(new LiquifyTool());
-            LiquifyTool.LiquifyArgs args = new LiquifyTool.LiquifyArgs(LiquifyTool.Mode.SMUDGE);
-            editDisplaySurfaceView.passArgs(new Tool.Args(LiquifyTool.LIQUIFY, args));
-            shrink.setColorFilter(Color.WHITE);
-            grow.setColorFilter(Color.WHITE);
-            smudge.setColorFilter(getActivity().getColor(R.color.highlight));
+            if(!Toggler.toggle(smudgeTag)) {
+                LiquifyTool.LiquifyArgs args = new LiquifyTool.LiquifyArgs(LiquifyTool.Mode.SMUDGE);
+                editDisplaySurfaceView.passArgs(new Tool.Args(LiquifyTool.LIQUIFY, args));
+            }
         });
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Toggler.remove(shrinkTag);
+        Toggler.remove(growTag);
+        Toggler.remove(smudgeTag);
     }
 }
