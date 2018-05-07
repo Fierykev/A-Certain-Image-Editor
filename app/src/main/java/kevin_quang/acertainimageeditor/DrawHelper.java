@@ -99,11 +99,17 @@ public abstract class DrawHelper extends Tool {
             {
                 if (!subList.isEmpty()) {
                     // lines
+                    /*
                     for(int i = 1; i < subList.size(); i++) {
                         processLine(
                                 subList.get(i - 1).first,
                                 subList.get(i).first);
-                    }
+                    }*/
+
+                    if (1 < subList.size())
+                        processLine(
+                                subList.get(0).first,
+                                subList.get(subList.size() - 1).first);
 
                     // strokes
                     processPoints(getPath(subList));
@@ -118,6 +124,19 @@ public abstract class DrawHelper extends Tool {
 
         // force process
         if (!subList.isEmpty()) {
+            // lines
+            /*
+            for(int i = 1; i < subList.size(); i++) {
+                processLine(
+                        subList.get(i - 1).first,
+                        subList.get(i).first);
+            }*/
+            if (1 < subList.size())
+                processLine(
+                        subList.get(0).first,
+                        subList.get(subList.size() - 1).first);
+
+            // strokes
             processPoints(getPath(subList));
             subList.clear();
         }

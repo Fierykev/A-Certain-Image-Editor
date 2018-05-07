@@ -48,7 +48,7 @@ public class LiquifyTool extends DrawHelper {
         createMesh(
                 meshDim,
                 new Pair<Integer, Integer>(
-                        bitmap.getWidth(), bitmap.getHeight())
+                        bitmap.getHeight(), bitmap.getWidth())
         );
     }
 
@@ -86,14 +86,14 @@ public class LiquifyTool extends DrawHelper {
         Matrix.scaleM(
                 world,
                 0,
-                1.f / (float)super.image.getWidth() * 2.f,
-                -1.f / (float)super.image.getHeight() * 2.f,
+                1.f / (float)super.image.getHeight() * 2.f,
+                -1.f / (float)super.image.getWidth() * 2.f,
                 1.f);
         Matrix.translateM(
                 world,
                 0,
-                -(float)super.image.getWidth() / 2.f,
                 -(float)super.image.getHeight() / 2.f,
+                -(float)super.image.getWidth() / 2.f,
                 0.f);
 
         GLES30.glBindBuffer (GLES30.GL_ARRAY_BUFFER, data.vertBufferID[0]);
@@ -124,16 +124,21 @@ public class LiquifyTool extends DrawHelper {
             GLHelper.Point<Float> start,
             GLHelper.Point<Float> end)
     {
-
+        if (start.x != END_POINT.x
+                && start.y != END_POINT.y
+                || end.y != END_POINT.y
+                && end.y != END_POINT.y)
+            smudge(start, end);
     }
 
     @Override
     void finishedPointProcess()
     {
         // enlarge / shrink
-        if (super.cursor.x != END_POINT.x
-                && super.cursor.y != END_POINT.y)
-            enlargeShrink(super.cursor, true);
+        // TODO: check MODE
+//        if (super.cursor.x != END_POINT.x
+//                && super.cursor.y != END_POINT.y)
+//            enlargeShrink(super.cursor, true);
 
         // solidify mesh
         data =
@@ -303,6 +308,68 @@ public class LiquifyTool extends DrawHelper {
         return bitmap;
     }
 
+    private void smudge(
+            GLHelper.Point<Float> pStart,
+            GLHelper.Point<Float> pEnd
+    )
+    {
+        if (pStart.x < 0.f || pStart.y < 0.f || (float)super.image.getWidth() <= pStart.x || (float)super.image.getHeight() <= pStart.y)
+            return;
+
+        if (pEnd.x < 0.f || pEnd.y < 0.f || (float)super.image.getWidth() <= pEnd.x || (float)super.image.getHeight() <= pEnd.y)
+            return;
+/*
+        pStart.x /= super.image.getWidth();
+        pStart.y /= super.image.getHeight();
+
+        pEnd.x /= super.image.getWidth();
+        pEnd.y /= super.image.getHeight();*/
+
+        GLHelper.Point<Float> start =
+                new GLHelper.Point<>(pStart.y, pStart.x);
+
+        GLHelper.Point<Float> end =
+                new GLHelper.Point<>(pEnd.y, pEnd.x);
+
+        GLHelper.Point<Float> delta =
+                start.sub(end);
+
+        GLHelper.Point<Float> xBound =
+                new GLHelper.Point<>(0.f, (float)super.image.getHeight());
+        GLHelper.Point<Float> yBound =
+                new GLHelper.Point<>(0.f, (float)super.image.getWidth());
+
+        float cross =
+                Math.min(
+                        Math.max(start.x - xBound.x, xBound.y - start.x),
+                        Math.max(start.y - yBound.x, yBound.y - start.y)
+                );
+
+        for (int i = 0; i < verts.numEls(); i++)
+        {
+            GLHelper.Vertex v = verts.get(i);
+
+//            v.x /= super.image.getWidth();
+//            v.y /= super.image.getHeight();
+
+            float dist =
+                    (float)new GLHelper.Point<Float>(v.x, v.y).distance(start);
+
+            float smudgeDist = dist / cross - 1.f;
+
+            if (smudgeDist < 0.f)
+            {
+                v.x += delta.x * smudgeDist;
+                v.y += delta.y * smudgeDist;
+
+//                v.x *= super.image.getWidth();
+//                v.y *= super.image.getHeight();
+
+                verts.put(i, v);
+            }
+        }
+    }
+
     private void enlargeShrink(
             GLHelper.Point<Float> pt,
             boolean enlarge
@@ -311,16 +378,16 @@ public class LiquifyTool extends DrawHelper {
         if (pt.x < 0.f || pt.y < 0.f || (float)super.image.getWidth() <= pt.x || (float)super.image.getHeight() <= pt.y)
             return;
 
-        pt.x /= super.image.getWidth();
-        pt.y /= super.image.getHeight();
+//        pt.x /= super.image.getWidth();
+//        pt.y /= super.image.getHeight();
 
         GLHelper.Point<Float> curPt =
                 new GLHelper.Point<>(pt.y, pt.x);
 
         GLHelper.Point<Float> xBound =
-                new GLHelper.Point<Float>(0.f, 1.f);
+                new GLHelper.Point<>(0.f, (float)super.image.getHeight());
         GLHelper.Point<Float> yBound =
-                new GLHelper.Point<Float>(0.f, 1.f);
+                new GLHelper.Point<>(0.f, (float)super.image.getWidth());
 
         float cross =
                 Math.min(
@@ -332,8 +399,8 @@ public class LiquifyTool extends DrawHelper {
         {
             GLHelper.Vertex v = verts.get(i);
 
-            v.x /= super.image.getWidth();
-            v.y /= super.image.getHeight();
+//            v.x /= super.image.getWidth();
+//            v.y /= super.image.getHeight();
 
             float dist =
                     (float)new GLHelper.Point<Float>(v.x, v.y).distance(curPt);
@@ -353,8 +420,8 @@ public class LiquifyTool extends DrawHelper {
                     v.y = curPt.y + (v.y - curPt.y) * rad;
                 }
 
-                v.x *= super.image.getWidth();
-                v.y *= super.image.getHeight();
+//                v.x *= super.image.getWidth();
+//                v.y *= super.image.getHeight();
 
                 verts.put(i, v);
             }
