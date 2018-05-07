@@ -44,8 +44,6 @@ public class ScaleResizeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.resize, container, false);
 
-        final int srcWidth = editDisplaySurfaceView.getBitmapWidth();
-        final int srcHeight = editDisplaySurfaceView.getBitmapHeight();
         final int meshWidth = 50;
         final int meshHeight = 50;
         final int iterations = 35;
@@ -55,13 +53,15 @@ public class ScaleResizeFragment extends Fragment {
 
         final EditText widthField = view.findViewById(R.id.width);
         widthField.setBackgroundColor(0x55FFFFFF);
-        widthField.setHint(String.valueOf(srcWidth));
+        widthField.setHint(String.valueOf(editDisplaySurfaceView.getBitmapWidth()));
         final EditText heightField = view.findViewById(R.id.height);
         heightField.setBackgroundColor(0x55FFFFFF);
-        heightField.setHint(String.valueOf(srcHeight));
+        heightField.setHint(String.valueOf(editDisplaySurfaceView.getBitmapHeight()));
 
         ImageButton done = view.findViewById(R.id.done);
         done.setOnClickListener(v -> {
+            int srcWidth = editDisplaySurfaceView.getBitmapWidth();
+            int srcHeight = editDisplaySurfaceView.getBitmapHeight();
             String widthText = widthField.getText().toString();
             String heightText = heightField.getText().toString();
             if(widthText.length() == 0 && heightText.length() == 0) {
@@ -99,6 +99,8 @@ public class ScaleResizeFragment extends Fragment {
                     = new ScaleResizeTool.ResizeArgs(width, height, meshWidth, meshHeight, iterations);
             editDisplaySurfaceView.passArgs(new Tool.Args(
                     ScaleResizeTool.RESIZE, resizeArgs));
+            widthField.setHint(String.valueOf(width));
+            heightField.setHint(String.valueOf(height));
         });
 
         return view;

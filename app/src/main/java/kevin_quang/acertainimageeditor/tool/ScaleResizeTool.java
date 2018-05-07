@@ -24,6 +24,8 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import kevin_quang.acertainimageeditor.ui.MainActivity;
+
 import static org.opencv.core.CvType.CV_32F;
 import static org.opencv.core.CvType.CV_32FC1;
 import static org.opencv.core.CvType.CV_32FC2;
@@ -1038,6 +1040,7 @@ public class ScaleResizeTool extends Tool {
     }
 
     private void compute() {
+        MainActivity.singleton.progress();
         createMesh(
                 meshDim,
                 new Pair<>(convertImage.rows(), convertImage.cols()),
@@ -1056,5 +1059,6 @@ public class ScaleResizeTool extends Tool {
         createGLMesh();
 
         this.load(renderToTex(), true);
+        MainActivity.singleton.finished();
     }
 }

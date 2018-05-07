@@ -136,7 +136,7 @@ public class LoadFragment extends Fragment {
                     if(photo.getWidth() / 1920.0f > photo.getHeight() / 1080.0f) {
                         photo = Bitmap.createScaledBitmap(photo, 1920, (int)(photo.getHeight() * 1920.0f / photo.getWidth()), false);
                     } else {
-                        photo = Bitmap.createScaledBitmap(photo, (int)(photo.getWidth() * 1020.0f / photo.getHeight()), 1020, false);
+                        photo = Bitmap.createScaledBitmap(photo, (int)(photo.getWidth() * 1080.0f / photo.getHeight()), 1080, false);
                     }
                 }
                 editDisplaySurfaceView.setBitmap(photo);

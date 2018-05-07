@@ -164,4 +164,9 @@ public class TextTool extends Tool {
         super.onDraw(aspectRatio, width, height);
     }
 
+    @Override
+    public void destroy() {
+        super.destroy();
+        ((MainActivity)activity).clearKeyListener();
+    }
 }

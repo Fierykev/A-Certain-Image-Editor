@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -29,12 +30,16 @@ public class MainActivity extends AppCompatActivity {
 
     BaseLoaderCallback openCVCallback;
 
+    public static MainActivity singleton;
+
     public interface KeyListener {
         void onKeyUp(int keyCode, KeyEvent event);
     }
 
     private EditDisplaySurfaceView editDisplaySurfaceView;
+    private boolean canTouch = true;
     private KeyListener keyListener;
+    private ProgressBar progressBar;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -44,8 +49,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        singleton = this;
         createDisplay(savedInstanceState);
-        final ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar);
 
         final ActivityManager activityManager =
                 (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -91,6 +97,28 @@ public class MainActivity extends AppCompatActivity {
             Log.d("OpenCV", "OpenCV library found inside package.");
             openCVCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
+    }
+
+    public void progress() {
+        runOnUiThread(() -> {
+            progressBar.setVisibility(View.VISIBLE);
+            canTouch = true;
+        });
+    }
+
+    public void finished() {
+        runOnUiThread(() -> {
+            progressBar.setVisibility(View.GONE);
+            canTouch = false;
+        });
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if(canTouch) {
+            super.onTouchEvent(event);
+        }
+        return false;
     }
 
     private void createDisplay(Bundle savedInstanceState)

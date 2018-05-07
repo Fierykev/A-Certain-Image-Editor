@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import kevin_quang.acertainimageeditor.tool.ImageDrawTool;
 import kevin_quang.acertainimageeditor.ui.toggle.Toggler;
 import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
 import kevin_quang.acertainimageeditor.R;
@@ -49,6 +50,7 @@ public class LiquifyFragment extends Fragment {
 
         ImageButton back = view.findViewById(R.id.back);
         back.setOnClickListener(v -> {
+            editDisplaySurfaceView.setTool(new ImageDrawTool());
             getFragmentManager().popBackStack();
         });
 
