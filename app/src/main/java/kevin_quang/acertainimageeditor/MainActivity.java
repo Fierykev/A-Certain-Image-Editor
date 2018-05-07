@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         int[] imageResId = {
                 R.drawable.ic_insert_photo_white_48dp,
                 R.drawable.ic_photo_filter_white_48dp,
-                R.drawable.ic_brush_white_48dp
+                R.drawable.ic_brush_white_24dp
         };
 
         for (int i = 0; i < imageResId.length; i++) {

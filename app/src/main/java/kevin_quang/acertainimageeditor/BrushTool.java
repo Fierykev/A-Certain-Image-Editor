@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -20,7 +19,6 @@ public class BrushTool extends Tool {
         float height = editDisplaySurfaceView.getBitmapHeight();
         float vWidth = editDisplaySurfaceView.getWidth();
         float vHeight = editDisplaySurfaceView.getHeight();
-        Log.d("Point", String.valueOf(width) + "," + String.valueOf(height) + " " + String.valueOf(vWidth) + "," + String.valueOf(vHeight));
         final float scale;
         if(width > vWidth || height > vHeight) {
             if(width / vWidth < height / vHeight) {
@@ -44,11 +42,9 @@ public class BrushTool extends Tool {
                     Point point = new Point();
                     point.x = (event.getX()) / scale - xOffset;
                     point.y = (event.getY()) / scale - yOffset;
-                    Log.d("Point", String.valueOf(point.x) + "," + String.valueOf(point.y));
                     points.add(point);
                     Path path = getPath();
 
-                    Bitmap bitmap = Bitmap.createBitmap(image);
                     Canvas canvas = new Canvas(image);
                     Paint paint = new Paint();
                     paint.setColor(Color.RED);
@@ -92,10 +88,11 @@ public class BrushTool extends Tool {
             if(i == 0) {
                 path.moveTo(point.x, point.y);
             } else {
-                Point prev = points.get(i - 1);
+                path.lineTo(point.x, point.y);
+                /*Point prev = points.get(i - 1);
                 path.cubicTo(prev.x + prev.dx, prev.y + prev.dy,
                              point.x - point.dx, point.y - point.dy,
-                             point.x, point.y);
+                             point.x, point.y);*/
             }
         }
         return path;

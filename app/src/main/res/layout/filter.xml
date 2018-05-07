@@ -1,55 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<HorizontalScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:id="@+id/load_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:layout_gravity="center"
-    >
-    <ImageButton
-        android:id="@+id/undo"
-        android:padding="8dp"
-        android:background="?android:selectableItemBackground"
-        android:src="@drawable/ic_undo_white_48dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    >
-    <ImageButton
-        android:id="@+id/redo"
-        android:padding="8dp"
-        android:background="?android:selectableItemBackground"
-        android:src="@drawable/ic_redo_white_48dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <ImageButton
-        android:id="@+id/resize"
-        android:padding="8dp"
-        android:background="?android:selectableItemBackground"
-        android:src="@drawable/ic_photo_size_select_large_white_48dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <ImageButton
-        android:id="@+id/shoe"
-        android:padding="8dp"
-        android:background="?android:selectableItemBackground"
-        android:src="@drawable/ic_shoe_white_48dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <ImageButton
-        android:id="@+id/rotate_left"
-        android:padding="8dp"
-        android:background="?android:selectableItemBackground"
-        android:src="@drawable/ic_rotate_left_white_48dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <ImageButton
-        android:id="@+id/rotate_right"
-        android:padding="8dp"
-        android:background="?android:selectableItemBackground"
-        android:src="@drawable/ic_rotate_right_white_48dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-</LinearLayout>
+    android:gravity="center_vertical">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/load_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        >
+        <ImageButton
+            android:id="@+id/undo"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_undo_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/redo"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_redo_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/resize"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_photo_size_select_large_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/shoe"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_shoe_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/liquify"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_liquify_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/rotate_left"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_rotate_left_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/rotate_right"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_rotate_right_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</HorizontalScrollView>

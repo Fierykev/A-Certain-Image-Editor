@@ -1,9 +1,9 @@
 package kevin_quang.acertainimageeditor;
 
+import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,11 +29,12 @@ public class FilterFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.filter, container, false);
 
-        ImageButton undo = view.findViewById(R.id.undo);
+        final ImageButton undo = view.findViewById(R.id.undo);
+        undo.setColorFilter(editDisplaySurfaceView.canUndo() ? Color.WHITE : Color.DKGRAY);
         undo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,7 +42,8 @@ public class FilterFragment extends Fragment {
             }
         });
 
-        ImageButton redo = view.findViewById(R.id.redo);
+        final ImageButton redo = view.findViewById(R.id.redo);
+        redo.setColorFilter(editDisplaySurfaceView.canRedo() ? Color.WHITE : Color.DKGRAY);
         redo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,23 +51,29 @@ public class FilterFragment extends Fragment {
             }
         });
 
+        Tool.historyUpdate = new Tool.IHistoryUpdate() {
+            @Override
+            public void updateUI() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        undo.setColorFilter(editDisplaySurfaceView.canUndo() ? Color.WHITE : Color.DKGRAY);
+                        redo.setColorFilter(editDisplaySurfaceView.canRedo() ? Color.WHITE : Color.DKGRAY);
+                    }
+                });
+            }
+        };
+
+        final Fragment that = this;
+
         ImageButton resize = view.findViewById(R.id.resize);
         resize.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // DialogFragment.show() will take care of adding the fragment
-                // in a transaction.  We also want to remove any currently showing
-                // dialog, so make our own transaction and take care of that here.
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
-
-                // Create and show the dialog.
-                DialogFragment newFragment = ScaleResizeDialog.newInstance(editDisplaySurfaceView);
-                newFragment.show(ft, "dialog");
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.filter_root, ScaleResizeFragment.newInstance(editDisplaySurfaceView))
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 

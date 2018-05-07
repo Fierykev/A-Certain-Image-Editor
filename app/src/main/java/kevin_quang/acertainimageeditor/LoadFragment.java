@@ -63,20 +63,14 @@ public class LoadFragment extends Fragment {
             public void onClick(View v) {
                 String dirname = Environment.getExternalStorageDirectory().getPath() + File.separator + getString(R.string.app_name);
                 String filename = dirname + File.separator + "share.jpg";
-                try {
-                    File file = new File(filename);
-                    file.mkdirs();
-                    if(file.exists()) {
-                        file.delete();
-                    }
-                    editDisplaySurfaceView.save(filename);
-                    Log.d("Picture", "Saved to share");
-                    fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), "Could not save file to share", Toast.LENGTH_SHORT);
-                    return;
+                File file = new File(filename);
+                file.mkdirs();
+                if(file.exists()) {
+                    file.delete();
                 }
+                editDisplaySurfaceView.save(filename);
+                Log.d("Picture", "Saved to share");
+                fileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".provider", new File(filename));
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("image/*");
                 intent.putExtra(Intent.EXTRA_STREAM, fileUri);
@@ -108,6 +102,7 @@ public class LoadFragment extends Fragment {
                 // Create and show the dialog.
                 DialogFragment newFragment = SaveDialog.newInstance(editDisplaySurfaceView);
                 newFragment.show(ft, "dialog");
+                ft.commit();
             }
         });
 

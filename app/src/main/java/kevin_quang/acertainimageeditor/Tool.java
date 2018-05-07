@@ -22,7 +22,7 @@ abstract class Tool {
     protected Bitmap image;
 
     protected static int program;
-    protected static int postionAttr, texCoordAttr, textureUnif, worldUnif;
+    protected static int positionAttr, texCoordAttr, textureUnif, worldUnif;
     protected static GLHelper.DrawData data;
     protected static int textureID;
 
@@ -31,6 +31,10 @@ abstract class Tool {
     public static final int HIST_LEN = 5;
     protected static ArrayList<Bitmap> history = new ArrayList<>();
     protected static ArrayList<Bitmap> redoHist = new ArrayList<>();
+    public interface IHistoryUpdate {
+        void updateUI();
+    }
+    public static IHistoryUpdate historyUpdate = null;
 
     public static class Args
     {
@@ -59,7 +63,7 @@ abstract class Tool {
                     "shaders/ScaleResizeTool/main.fs",
                     context.getAssets());
 
-            postionAttr = GLES30.glGetAttribLocation(program, "position");
+            positionAttr = GLES30.glGetAttribLocation(program, "position");
             texCoordAttr = GLES30.glGetAttribLocation(program, "texCoord");
             textureUnif = GLES30.glGetUniformLocation(program, "texture");
             worldUnif = GLES30.glGetUniformLocation(program, "world");
@@ -91,6 +95,9 @@ abstract class Tool {
                     history.remove(0);
 
                 history.add(bitmap.copy(bitmap.getConfig(), true));
+                if(historyUpdate != null) {
+                    historyUpdate.updateUI();
+                }
             }
         }
 
@@ -102,6 +109,14 @@ abstract class Tool {
         textureID = loadTexture(bitmap);
     }
 
+    boolean canUndo() {
+        return history.size() > 1;
+    }
+
+    boolean canRedo() {
+        return redoHist.size() > 0;
+    }
+
     void undo()
     {
         if (history.size() <= 1)
@@ -111,6 +126,9 @@ abstract class Tool {
         redoHist.add(undo);
 
         this.load(history.get(history.size() - 1), false);
+        if(historyUpdate != null) {
+            historyUpdate.updateUI();
+        }
     }
 
     void redo()
@@ -122,6 +140,9 @@ abstract class Tool {
         history.add(redo);
 
         this.load(redo, false);
+        if(historyUpdate != null) {
+            historyUpdate.updateUI();
+        }
     }
 
     void setArgs(Args args) { }
@@ -151,8 +172,8 @@ abstract class Tool {
 
         GLES30.glBindBuffer (GLES30.GL_ARRAY_BUFFER, data.vertBufferID[0]);
 
-        GLES30.glEnableVertexAttribArray(postionAttr);
-        GLES30.glVertexAttribPointer(postionAttr, 3, GLES30.GL_FLOAT, false, 4 * 5, 0);
+        GLES30.glEnableVertexAttribArray(positionAttr);
+        GLES30.glVertexAttribPointer(positionAttr, 3, GLES30.GL_FLOAT, false, 4 * 5, 0);
 
         GLES30.glEnableVertexAttribArray(texCoordAttr);
         GLES30.glVertexAttribPointer(texCoordAttr, 2, GLES30.GL_FLOAT, false, 4 * 5, 4 * 3);
@@ -166,7 +187,7 @@ abstract class Tool {
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, data.indexBufferID[0]);
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, data.numIndices, GLES30.GL_UNSIGNED_INT, 0);
 
-        GLES30.glDisableVertexAttribArray(postionAttr);
+        GLES30.glDisableVertexAttribArray(positionAttr);
         GLES30.glDisableVertexAttribArray(texCoordAttr);
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);

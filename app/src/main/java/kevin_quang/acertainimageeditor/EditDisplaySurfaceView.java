@@ -64,4 +64,6 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
     public void rotate(int degrees) {renderer.rotate(degrees);}
     public void undo() {renderer.undo();}
     public void redo() {renderer.redo();}
+    public boolean canUndo() {return renderer.canUndo();}
+    public boolean canRedo() {return renderer.canRedo();}
 }

@@ -132,4 +132,7 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     public synchronized void redo() {
         redoUpdate = true;
     }
+
+    public synchronized boolean canUndo() {return tool.canUndo();}
+    public synchronized boolean canRedo() {return tool.canRedo();}
 }

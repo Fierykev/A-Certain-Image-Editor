@@ -947,8 +947,8 @@ public class ScaleResizeTool extends Tool {
 
         GLES30.glBindBuffer (GLES30.GL_ARRAY_BUFFER, vertBufferID[0]);
 
-        GLES30.glEnableVertexAttribArray(postionAttr);
-        GLES30.glVertexAttribPointer(postionAttr, 3, GLES30.GL_FLOAT, false, 4 * 5, 0);
+        GLES30.glEnableVertexAttribArray(positionAttr);
+        GLES30.glVertexAttribPointer(positionAttr, 3, GLES30.GL_FLOAT, false, 4 * 5, 0);
 
         GLES30.glEnableVertexAttribArray(texCoordAttr);
         GLES30.glVertexAttribPointer(texCoordAttr, 2, GLES30.GL_FLOAT, false, 4 * 5, 4 * 3);
@@ -962,7 +962,7 @@ public class ScaleResizeTool extends Tool {
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, indexBufferID[0]);
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, indices.length, GLES30.GL_UNSIGNED_INT, 0);
 
-        GLES30.glDisableVertexAttribArray(postionAttr);
+        GLES30.glDisableVertexAttribArray(positionAttr);
         GLES30.glDisableVertexAttribArray(texCoordAttr);
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
