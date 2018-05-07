@@ -71,7 +71,7 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
         ImageDrawTool startUpTool = new ImageDrawTool();
         startUpTool.restore(context);
         Bitmap bMap =
-                BitmapFactory.decodeResource(getContext().getResources(), R.drawable.test);
+                BitmapFactory.decodeResource(getContext().getResources(), R.drawable.icon);
 
         renderer.setBitmap(bMap);
 
