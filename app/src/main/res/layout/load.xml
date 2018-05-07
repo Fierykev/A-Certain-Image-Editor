@@ -46,5 +46,12 @@
             android:src="@drawable/ic_share_white_48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/imgur"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_imgur_white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </HorizontalScrollView>

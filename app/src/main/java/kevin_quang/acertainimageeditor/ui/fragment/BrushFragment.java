@@ -58,7 +58,7 @@ public class BrushFragment extends Fragment {
 
         text.setOnClickListener(v -> {
             if(!Toggler.toggle(textTag)) {
-                editDisplaySurfaceView.setTool(new TextTool(getActivity()));
+                editDisplaySurfaceView.setTool(new TextTool(editDisplaySurfaceView, getActivity()));
             } else {
                 editDisplaySurfaceView.setTool(new ImageDrawTool());
             }

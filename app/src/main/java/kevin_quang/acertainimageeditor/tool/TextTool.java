@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import kevin_quang.acertainimageeditor.R;
 import kevin_quang.acertainimageeditor.ui.MainActivity;
 import kevin_quang.acertainimageeditor.ui.toggle.Toggler;
+import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
 
 public class TextTool extends Tool {
 
@@ -25,6 +26,7 @@ public class TextTool extends Tool {
     private Canvas canvas;
     private Paint paint;
     private Bitmap bitmap, render;
+    private EditDisplaySurfaceView editDisplaySurfaceView;
     enum State {
         IDLE,
         NEW,
@@ -33,8 +35,9 @@ public class TextTool extends Tool {
     private State state = State.IDLE;
     private Activity activity;
 
-    public TextTool(Activity activity) {
+    public TextTool(EditDisplaySurfaceView editDisplaySurfaceView, Activity activity) {
         this.activity = activity;
+        this.editDisplaySurfaceView = editDisplaySurfaceView;
         final View activityRootView = activity.findViewById(R.id.root);
         activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             // navigation bar height
@@ -151,6 +154,7 @@ public class TextTool extends Tool {
                     super.load(render, true);
                     text = null;
                     activity.runOnUiThread(() -> {
+                        editDisplaySurfaceView.setTool(new ImageDrawTool());
                         Toggler.toggle("brush_text");
                     });
                 }

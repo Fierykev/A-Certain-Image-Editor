@@ -1,6 +1,9 @@
 package kevin_quang.acertainimageeditor.ui.fragment;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,10 +26,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Calendar;
 
+import kevin_quang.acertainimageeditor.ImageResponse;
+import kevin_quang.acertainimageeditor.Upload;
+import kevin_quang.acertainimageeditor.UploadService;
 import kevin_quang.acertainimageeditor.ui.view.EditDisplaySurfaceView;
 import kevin_quang.acertainimageeditor.R;
 import kevin_quang.acertainimageeditor.ui.dialog.BlankDialog;
 import kevin_quang.acertainimageeditor.ui.dialog.SaveDialog;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class LoadFragment extends Fragment {
     private Uri fileUri;
@@ -105,6 +114,35 @@ public class LoadFragment extends Fragment {
             // Create and show the dialog.
             DialogFragment newFragment = SaveDialog.newInstance(editDisplaySurfaceView);
             newFragment.show(ft, "dialog");
+        });
+
+        final ImageButton imgur = view.findViewById(R.id.imgur);
+        imgur.setOnClickListener(v -> {
+            String dirname = Environment.getExternalStorageDirectory().getPath() + File.separator + getString(R.string.app_name) + File.separator + "share";
+            String filename = dirname + File.separator + "upload.jpg";
+            File file = new File(filename);
+            file.mkdirs();
+            if(file.exists()) {
+                file.delete();
+            }
+            editDisplaySurfaceView.save(filename);
+            UploadService uploadService = new UploadService();
+            Upload upload = new Upload();
+            upload.image = file;
+            uploadService.Execute(upload, new Callback<ImageResponse>() {
+                @Override
+                public void success(ImageResponse imageResponse, Response response) {
+                    Toast.makeText(getContext(), "Copied link to clipboard", Toast.LENGTH_SHORT).show();
+                    ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("Imgur Link", imageResponse.data.link);
+                    clipboard.setPrimaryClip(clip);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Toast.makeText(getContext(), "Failed to upload to imgur", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         return view;

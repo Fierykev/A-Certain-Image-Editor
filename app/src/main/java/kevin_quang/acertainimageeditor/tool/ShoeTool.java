@@ -15,6 +15,8 @@ import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 import java.util.ArrayList;
 import java.util.List;
 
+import kevin_quang.acertainimageeditor.ui.MainActivity;
+
 import static org.opencv.core.CvType.CV_32F;
 import static org.opencv.core.CvType.CV_32FC1;
 import static org.opencv.core.CvType.CV_32FC3;
@@ -46,6 +48,7 @@ public class ShoeTool extends Tool {
     @Override
     public void init(Context context) {
         super.init(context);
+        MainActivity.singleton.progress();
         tf = new TensorFlowInferenceInterface(context.getAssets(), MODEL);
     }
 
@@ -224,5 +227,6 @@ public class ShoeTool extends Tool {
 
         GLHelper.standardizeBitamp(outBmp);
         this.load(outBmp, true);
+        MainActivity.singleton.finished();
     }
 }
