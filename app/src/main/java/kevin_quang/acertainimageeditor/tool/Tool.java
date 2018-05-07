@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -278,7 +277,7 @@ public abstract class Tool {
         state.putParcelableArrayList("redo", redoHist);
     }
     public void save(Bundle state) {
-        state.putParcelable("image",image);
+        state.putParcelable("image", image);
     }
     public static void restoreHistory(Bundle state) {
         history = state.getParcelableArrayList("undo");

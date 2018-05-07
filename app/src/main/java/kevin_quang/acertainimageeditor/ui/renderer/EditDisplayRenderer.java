@@ -5,9 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
-import android.os.Bundle;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -36,6 +38,10 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     private ArrayList<GLHelper.Point<Float>> pointList =
             new ArrayList<GLHelper.Point<Float>>();
+
+    private Semaphore saveLock = new Semaphore(0);
+    private AtomicInteger requestSave = new AtomicInteger(0);
+    private AtomicReference<String> savePath = new AtomicReference<>();
 
     public synchronized void setContext(Context context)
     {
@@ -126,6 +132,14 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         // store current bitmap as bitmap
         bitmap = this.tool.image;
 
+        // request save
+        if (requestSave.get() != 0)
+        {
+            tool.save(savePath.get());
+
+            saveLock.release(requestSave.getAndSet(0));
+        }
+
         // clear frame
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
 
@@ -136,8 +150,18 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     public synchronized int getBitmapHeight() {return bitmap.getHeight();}
 
-    public synchronized void save(String path) {
-        tool.save(path);
+    public void save(String path, GLSurfaceView view) {
+        requestSave.addAndGet(1);
+        savePath.set(path);
+
+        view.requestRender();
+
+        try {
+            saveLock.acquire();
+        } catch (InterruptedException e) {
+            // TODO: deal with exception with message
+            e.printStackTrace();
+        }
     }
 
     public synchronized void rotate(int degrees) {
