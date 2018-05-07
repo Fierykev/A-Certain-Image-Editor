@@ -3,7 +3,7 @@ package kevin_quang.acertainimageeditor.tool;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.opengl.GLES30;
+import android.opengl.GLES31;
 import android.opengl.Matrix;
 import android.util.Log;
 import android.util.Pair;
@@ -99,8 +99,8 @@ public class ScaleResizeTool extends Tool {
 
         needsCompute = COMPUTE_FRAME + 1;
 
-        GLES30.glDeleteBuffers(1, vertBufferID, 0);
-        GLES30.glDeleteBuffers(1, indexBufferID, 0);
+        GLES31.glDeleteBuffers(1, vertBufferID, 0);
+        GLES31.glDeleteBuffers(1, indexBufferID, 0);
     }
 
     public void load(Bitmap bitmap, boolean storeHistory)
@@ -121,8 +121,8 @@ public class ScaleResizeTool extends Tool {
                 convertImage,
                 convertImage,
                 new Size(
-                        (float)convertImage.rows() / 4.f,
-                        (float)convertImage.cols() / 4.f
+                        (float)convertImage.rows(),
+                        (float)convertImage.cols()
                         )
         );
 
@@ -281,40 +281,40 @@ public class ScaleResizeTool extends Tool {
     private void createGLMesh()
     {
         if (vertBufferID[0] != 0)
-            GLES30.glDeleteBuffers(1, vertBufferID, 0);
+            GLES31.glDeleteBuffers(1, vertBufferID, 0);
 
         if (indexBufferID[0] != 0)
-            GLES30.glDeleteBuffers(1, indexBufferID, 0);
+            GLES31.glDeleteBuffers(1, indexBufferID, 0);
 
-        GLES30.glGenBuffers (1, vertBufferID, 0);
+        GLES31.glGenBuffers (1, vertBufferID, 0);
 
-        GLES30.glBindBuffer (GLES30.GL_ARRAY_BUFFER, vertBufferID[0]);
-        GLES30.glBufferData (GLES30.GL_ARRAY_BUFFER, verts.size(),
-                null, GLES30.GL_STATIC_DRAW );
+        GLES31.glBindBuffer (GLES31.GL_ARRAY_BUFFER, vertBufferID[0]);
+        GLES31.glBufferData (GLES31.GL_ARRAY_BUFFER, verts.size(),
+                null, GLES31.GL_STATIC_DRAW );
 
         vertexBuffer =
-                ((ByteBuffer) GLES30.glMapBufferRange (
-                        GLES30.GL_ARRAY_BUFFER, 0, verts.size(),
-                        GLES30.GL_MAP_WRITE_BIT | GLES30.GL_MAP_INVALIDATE_BUFFER_BIT)
+                ((ByteBuffer) GLES31.glMapBufferRange (
+                        GLES31.GL_ARRAY_BUFFER, 0, verts.size(),
+                        GLES31.GL_MAP_WRITE_BIT | GLES31.GL_MAP_INVALIDATE_BUFFER_BIT)
                 ).order(ByteOrder.nativeOrder()).asFloatBuffer();
         vertexBuffer.put(verts.getFloatArray()).position(0);
 
-        GLES30.glUnmapBuffer(GLES30.GL_ARRAY_BUFFER);
+        GLES31.glUnmapBuffer(GLES31.GL_ARRAY_BUFFER);
 
-        GLES30.glGenBuffers (1, indexBufferID, 0);
+        GLES31.glGenBuffers (1, indexBufferID, 0);
 
-        GLES30.glBindBuffer (GLES30.GL_ELEMENT_ARRAY_BUFFER, indexBufferID[0]);
-        GLES30.glBufferData (GLES30.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4,
-                null, GLES30.GL_STATIC_DRAW);
+        GLES31.glBindBuffer (GLES31.GL_ELEMENT_ARRAY_BUFFER, indexBufferID[0]);
+        GLES31.glBufferData (GLES31.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4,
+                null, GLES31.GL_STATIC_DRAW);
 
         indexBuffer =
-                ((ByteBuffer) GLES30.glMapBufferRange (
-                        GLES30.GL_ELEMENT_ARRAY_BUFFER, 0, indices.length * 4,
-                        GLES30.GL_MAP_WRITE_BIT | GLES30.GL_MAP_INVALIDATE_BUFFER_BIT )
+                ((ByteBuffer) GLES31.glMapBufferRange (
+                        GLES31.GL_ELEMENT_ARRAY_BUFFER, 0, indices.length * 4,
+                        GLES31.GL_MAP_WRITE_BIT | GLES31.GL_MAP_INVALIDATE_BUFFER_BIT )
                 ).order(ByteOrder.nativeOrder()).asIntBuffer();
         indexBuffer.put(indices).position(0);
 
-        GLES30.glUnmapBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER);
+        GLES31.glUnmapBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER);
     }
 
     private void createSignificanceMap(Mat image) {
@@ -902,9 +902,9 @@ public class ScaleResizeTool extends Tool {
 
     private void renderMesh()
     {
-        GLES30.glEnable(GLES30.GL_TEXTURE_2D);
+        GLES31.glEnable(GLES31.GL_TEXTURE_2D);
 
-        GLES30.glUseProgram(program);
+        GLES31.glUseProgram(program);
 
         // construct matrix
         Matrix.setIdentityM(world, 0);
@@ -938,87 +938,142 @@ public class ScaleResizeTool extends Tool {
                 -(float)desiredDim.second / 2.f,
                 0.f);
 
-        GLES30.glBindBuffer (GLES30.GL_ARRAY_BUFFER, vertBufferID[0]);
+        GLES31.glBindBuffer (GLES31.GL_ARRAY_BUFFER, vertBufferID[0]);
 
-        GLES30.glEnableVertexAttribArray(positionAttr);
-        GLES30.glVertexAttribPointer(positionAttr, 3, GLES30.GL_FLOAT, false, 4 * 5, 0);
+        GLES31.glEnableVertexAttribArray(positionAttr);
+        GLES31.glVertexAttribPointer(positionAttr, 3, GLES31.GL_FLOAT, false, 4 * 5, 0);
 
-        GLES30.glEnableVertexAttribArray(texCoordAttr);
-        GLES30.glVertexAttribPointer(texCoordAttr, 2, GLES30.GL_FLOAT, false, 4 * 5, 4 * 3);
+        GLES31.glEnableVertexAttribArray(texCoordAttr);
+        GLES31.glVertexAttribPointer(texCoordAttr, 2, GLES31.GL_FLOAT, false, 4 * 5, 4 * 3);
 
-        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureID);
-        GLES30.glUniform1ui(textureUnif, textureID);
+        GLES31.glActiveTexture(GLES31.GL_TEXTURE0);
+        GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, textureID);
+        GLES31.glUniform1ui(textureUnif, textureID);
 
-        GLES30.glUniformMatrix4fv(worldUnif, 1, false, world, 0);
+        GLES31.glUniformMatrix4fv(worldUnif, 1, false, world, 0);
 
-        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, indexBufferID[0]);
-        GLES30.glDrawElements(GLES30.GL_TRIANGLES, indices.length, GLES30.GL_UNSIGNED_INT, 0);
+        GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, indexBufferID[0]);
+        GLES31.glDrawElements(GLES31.GL_TRIANGLES, indices.length, GLES31.GL_UNSIGNED_INT, 0);
 
-        GLES30.glDisableVertexAttribArray(positionAttr);
-        GLES30.glDisableVertexAttribArray(texCoordAttr);
-        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
-        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
+        GLES31.glDisableVertexAttribArray(positionAttr);
+        GLES31.glDisableVertexAttribArray(texCoordAttr);
+        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, 0);
+        GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     private Bitmap renderToTex()
     {
         int[] frameBuffer = new int[1];
 
-        GLES30.glGenFramebuffers(1, frameBuffer, 0);
-        GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, frameBuffer[0]);
+        GLES31.glGenFramebuffers(1, frameBuffer, 0);
+        GLES31.glBindFramebuffer(GLES31.GL_FRAMEBUFFER, frameBuffer[0]);
 
         int[] renderTex = new int[1];
-        GLES30.glGenTextures(1, renderTex, 0);
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, renderTex[0]);
+        GLES31.glGenTextures(1, renderTex, 0);
 
-        GLES30.glTexImage2D(
-                GLES30.GL_TEXTURE_2D,
-                0,
-                GLES30.GL_RGBA,
+        GLES31.glBindTexture(GLES31.GL_TEXTURE_2D_MULTISAMPLE, renderTex[0]);
+
+        GLES31.glTexStorage2DMultisample(
+                GLES31.GL_TEXTURE_2D_MULTISAMPLE,
+                4,
+                GLES31.GL_RGBA8,
                 desiredDim.second,
                 desiredDim.first,
-                0,
-                GLES30.GL_RGBA,
-                GLES30.GL_UNSIGNED_BYTE,
-                null);
+                false
+        );
 
-        GLES30.glFramebufferTexture2D(
-                GLES30.GL_FRAMEBUFFER,
-                GLES30.GL_COLOR_ATTACHMENT0,
-                GLES30.GL_TEXTURE_2D,
+        GLES31.glFramebufferTexture2D(
+                GLES31.GL_FRAMEBUFFER,
+                GLES31.GL_COLOR_ATTACHMENT0,
+                GLES31.GL_TEXTURE_2D_MULTISAMPLE,
                 renderTex[0],
                 0
         );
 
-        GLES30.glDrawBuffers(1, new int[]{ GLES30.GL_COLOR_ATTACHMENT0 }, 0);
+        GLES31.glDrawBuffers(1, new int[]{ GLES31.GL_COLOR_ATTACHMENT0 }, 0);
 
-        int status = GLES30.glCheckFramebufferStatus(GLES30.GL_FRAMEBUFFER);
+        int status = GLES31.glCheckFramebufferStatus(GLES31.GL_FRAMEBUFFER);
 
-        if (status != GLES30.GL_FRAMEBUFFER_COMPLETE)
+        if (status != GLES31.GL_FRAMEBUFFER_COMPLETE)
         {
             // TODO: some error
             Log.d("FB error", "Status: " + status);
         }
 
         // setup viewport
-        GLES30.glClearColor(0, 0, 1, 1);
-        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
-        GLES30.glViewport(0, 0, desiredDim.second, desiredDim.first);
+        GLES31.glClearColor(0, 0, 1, 1);
+        GLES31.glClear(GLES31.GL_COLOR_BUFFER_BIT);
+        GLES31.glViewport(0, 0, desiredDim.second, desiredDim.first);
 
         renderMesh();
 
-        GLES30.glPixelStorei(GLES30.GL_PACK_ALIGNMENT, 1);
-        GLES30.glPixelStorei(GLES30.GL_PACK_ROW_LENGTH, desiredDim.second);
-        ByteBuffer buffer =
-                ByteBuffer.allocateDirect(
-                        desiredDim.first * desiredDim.second * 4);
-        GLES30.glReadPixels(
+        // swap to a regular buffer to read from
+        int[] frameBufferReg = new int[1];
+
+        GLES31.glGenFramebuffers(1, frameBufferReg, 0);
+        GLES31.glBindFramebuffer(GLES31.GL_FRAMEBUFFER, frameBufferReg[0]);
+
+        int[] renderTexReg = new int[1];
+        GLES31.glGenTextures(1, renderTexReg, 0);
+        GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, renderTexReg[0]);
+
+        GLES31.glTexImage2D(
+                GLES31.GL_TEXTURE_2D,
+                0,
+                GLES31.GL_RGBA,
+                desiredDim.second,
+                desiredDim.first,
+                0,
+                GLES31.GL_RGBA,
+                GLES31.GL_UNSIGNED_BYTE,
+                null);
+
+        GLES31.glFramebufferTexture2D(
+                GLES31.GL_FRAMEBUFFER,
+                GLES31.GL_COLOR_ATTACHMENT0,
+                GLES31.GL_TEXTURE_2D,
+                renderTexReg[0],
+                0
+        );
+
+        GLES31.glDrawBuffers(1, new int[]{ GLES31.GL_COLOR_ATTACHMENT0 }, 0);
+
+        status = GLES31.glCheckFramebufferStatus(GLES31.GL_FRAMEBUFFER);
+
+        if (status != GLES31.GL_FRAMEBUFFER_COMPLETE)
+        {
+            // TODO: some error
+            Log.d("FB error", "Status: " + status);
+        }
+
+        GLES31.glBindFramebuffer(
+                GLES31.GL_READ_FRAMEBUFFER,
+                frameBuffer[0]
+        );
+
+        GLES31.glBlitFramebuffer(
                 0, 0,
                 desiredDim.second,
                 desiredDim.first,
-                GLES30.GL_RGBA,
-                GLES30.GL_UNSIGNED_BYTE,
+                0, 0,
+                desiredDim.second,
+                desiredDim.first,
+                GLES31.GL_COLOR_BUFFER_BIT,
+                GLES31.GL_NEAREST);
+
+        GLES31.glBindFramebuffer(GLES31.GL_FRAMEBUFFER, frameBufferReg[0]);
+
+        GLES31.glPixelStorei(GLES31.GL_PACK_ALIGNMENT, 1);
+        GLES31.glPixelStorei(GLES31.GL_PACK_ROW_LENGTH, desiredDim.second);
+        ByteBuffer buffer =
+                ByteBuffer.allocateDirect(
+                        desiredDim.first * desiredDim.second * 4);
+        GLES31.glReadPixels(
+                0, 0,
+                desiredDim.second,
+                desiredDim.first,
+                GLES31.GL_RGBA,
+                GLES31.GL_UNSIGNED_BYTE,
                 buffer
         );
 
@@ -1030,11 +1085,27 @@ public class ScaleResizeTool extends Tool {
                 );
         bitmap.copyPixelsFromBuffer(buffer);
 
-        GLES30.glDeleteTextures(1, renderTex, 0);
-        GLES30.glDeleteFramebuffers(1, frameBuffer, 0);
+        GLES31.glDeleteTextures(1, renderTex, 0);
+        GLES31.glDeleteFramebuffers(1, frameBuffer, 0);
 
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, 0);
-        GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, 0);
+        GLES31.glDeleteTextures(1, renderTexReg, 0);
+        GLES31.glDeleteFramebuffers(1, frameBufferReg, 0);
+
+        GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, 0);
+        GLES31.glBindTexture(GLES31.GL_TEXTURE_2D_MULTISAMPLE, 0);
+        GLES31.glBindFramebuffer(GLES31.GL_FRAMEBUFFER, 0);
+
+        GLES31.glBindFramebuffer(
+                GLES31.GL_READ_FRAMEBUFFER,
+                0
+        );
+
+        GLES31.glBindFramebuffer(
+                GLES31.GL_DRAW_FRAMEBUFFER,
+                0
+        );
+
+        bitmap = GLHelper.standardizeBitamp(bitmap);
 
         return bitmap;
     }
