@@ -21,15 +21,27 @@ public class LiquifyTool extends DrawHelper {
     private int indices[];
     private GLHelper.DrawData data;
 
+    public static final int LIQUIFY = 1;
+
     private Pair<Integer, Integer> meshDim
             = new Pair<>(50, 50);
 
-    enum Mode
+    private Mode mode = null;
+
+    public enum Mode
     {
         ENLARGE,
         SHRINK,
         SMUDGE
-    };
+    }
+
+    public static class LiquifyArgs {
+        Mode mode;
+
+        public LiquifyArgs(Mode mode) {
+            this.mode = mode;
+        }
+    }
 
     @Override
     public void init(Context context) {
@@ -53,6 +65,17 @@ public class LiquifyTool extends DrawHelper {
                 new Pair<Integer, Integer>(
                         bitmap.getHeight(), bitmap.getWidth())
         );
+    }
+
+    @Override
+    public void setArgs(Args args)
+    {
+        switch (args.type)
+        {
+            case LIQUIFY:
+                mode = ((LiquifyArgs)args.arg).mode;
+                break;
+        }
     }
 
     private void renderMesh()
@@ -120,8 +143,11 @@ public class LiquifyTool extends DrawHelper {
         if (start.x != END_POINT.x
                 && start.y != END_POINT.y
                 || end.y != END_POINT.y
-                && end.y != END_POINT.y)
-            smudge(start, end);
+                && end.y != END_POINT.y) {
+            if(mode == Mode.SMUDGE) {
+                smudge(start, end);
+            }
+        }
     }
 
     @Override
@@ -129,9 +155,12 @@ public class LiquifyTool extends DrawHelper {
     {
         // enlarge / shrink
         // TODO: check MODE
-//        if (super.cursor.x != END_POINT.x
-//                && super.cursor.y != END_POINT.y)
-//            enlargeShrink(super.cursor, true);
+        if (super.cursor.x != END_POINT.x
+                && super.cursor.y != END_POINT.y) {
+            if(mode == Mode.ENLARGE || mode == Mode.SHRINK) {
+                enlargeShrink(super.cursor, mode == Mode.ENLARGE);
+            }
+        }
 
         // solidify mesh
         if (data != null)
@@ -142,8 +171,7 @@ public class LiquifyTool extends DrawHelper {
                         verts,
                         indices
                 );
-//        image = renderToTex();
-        this.load(renderToTex(), true);
+        this.load(renderToTex(), false);
     }
 
     private void createMesh(

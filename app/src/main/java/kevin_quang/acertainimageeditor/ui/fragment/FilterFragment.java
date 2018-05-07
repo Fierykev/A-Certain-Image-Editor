@@ -51,8 +51,6 @@ public class FilterFragment extends Fragment {
             redo.setColorFilter(editDisplaySurfaceView.canRedo() ? Color.WHITE : Color.DKGRAY);
         });
 
-        final Fragment that = this;
-
         ImageButton resize = view.findViewById(R.id.resize);
         resize.setOnClickListener(v -> getFragmentManager().beginTransaction()
                 .replace(R.id.filter_root, ScaleResizeFragment.newInstance(editDisplaySurfaceView))
@@ -71,10 +69,10 @@ public class FilterFragment extends Fragment {
         });
 
         ImageButton liquify = view.findViewById(R.id.liquify);
-        liquify.setOnClickListener(v -> {
-            LiquifyTool liquifyTool = new LiquifyTool();
-            editDisplaySurfaceView.setTool(liquifyTool);
-        });
+        liquify.setOnClickListener(v -> getFragmentManager().beginTransaction()
+                .replace(R.id.filter_root, LiquifyFragment.newInstance(editDisplaySurfaceView))
+                .addToBackStack(null)
+                .commit());
 
         ImageButton rotateLeft = view.findViewById(R.id.rotate_left);
         rotateLeft.setOnClickListener(v -> editDisplaySurfaceView.rotate(-90));

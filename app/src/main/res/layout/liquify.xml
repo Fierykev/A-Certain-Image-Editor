@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/load_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        >
+        <ImageButton
+            android:id="@+id/back"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_arrow_back_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ImageButton
+            android:id="@+id/shrink"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_shrink_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/grow"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_grow_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/smudge"
+            android:padding="8dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_smudge_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</HorizontalScrollView>
