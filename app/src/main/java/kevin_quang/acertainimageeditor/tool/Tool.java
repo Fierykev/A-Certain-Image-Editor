@@ -12,10 +12,7 @@ import android.view.View;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static kevin_quang.acertainimageeditor.tool.GLHelper.loadProgram;
 import static kevin_quang.acertainimageeditor.tool.GLHelper.loadTexture;
@@ -126,6 +123,11 @@ public abstract class Tool {
         // clear listener
         setTouchLambda(null);
 
+        forceTexLoad(bitmap, storeHistory);
+    }
+
+    protected synchronized void forceTexLoad(Bitmap bitmap, boolean storeHistory)
+    {
         // history buffer
         if (storeHistory)
         {
@@ -142,11 +144,6 @@ public abstract class Tool {
             }
         }
 
-        forceTexLoad(bitmap);
-    }
-
-    protected synchronized void forceTexLoad(Bitmap bitmap)
-    {
         image = bitmap.copy(bitmap.getConfig(), true);
 
         if (textureID != 0)

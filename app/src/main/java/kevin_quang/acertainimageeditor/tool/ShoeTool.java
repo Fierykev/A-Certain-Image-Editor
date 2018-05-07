@@ -15,14 +15,13 @@ import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 import java.util.ArrayList;
 import java.util.List;
 
-import kevin_quang.acertainimageeditor.tool.GLHelper;
-import kevin_quang.acertainimageeditor.tool.Tool;
-
 import static org.opencv.core.CvType.CV_32F;
 import static org.opencv.core.CvType.CV_32FC1;
 import static org.opencv.core.CvType.CV_32FC3;
 import static org.opencv.core.CvType.CV_8UC3;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
+import static org.opencv.imgproc.Imgproc.COLOR_GRAY2RGB;
+import static org.opencv.imgproc.Imgproc.COLOR_RGB2GRAY;
 import static org.opencv.imgproc.Imgproc.COLOR_RGBA2RGB;
 import static org.opencv.imgproc.Imgproc.THRESH_BINARY;
 
@@ -69,6 +68,8 @@ public class ShoeTool extends Tool {
         convertImage = origImage.clone();
         convertImage.convertTo(convertImage, CV_32F, 1.0 / 255.0);
         Imgproc.cvtColor(convertImage, convertImage, COLOR_RGBA2RGB);
+        Imgproc.cvtColor(convertImage, convertImage, COLOR_RGB2GRAY);
+        Imgproc.cvtColor(convertImage, convertImage, COLOR_GRAY2RGB);
 
         Imgproc.resize(convertImage, convertImage, new Size(CROP_SIZE, CROP_SIZE));
     }
