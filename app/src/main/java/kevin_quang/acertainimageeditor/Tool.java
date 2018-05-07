@@ -235,13 +235,6 @@ abstract class Tool {
 
     }
 
-    void processLine(
-            GLHelper.Point<Float> start,
-            GLHelper.Point<Float> end)
-    {
-        // Do nothing
-    }
-
     void setTouchLambda(TouchLambda lambda)
     {
         onTouch.setTouchMethod(lambda);

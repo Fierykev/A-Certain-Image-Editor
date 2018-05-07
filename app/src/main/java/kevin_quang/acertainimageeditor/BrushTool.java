@@ -8,6 +8,7 @@ import android.graphics.Path;
 
 public class BrushTool extends DrawHelper {
 
+    @Override
     void processPoints(Path path)
     {
         Bitmap bitmap = Bitmap.createBitmap(super.image);

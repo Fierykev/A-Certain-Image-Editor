@@ -2,7 +2,6 @@ package kevin_quang.acertainimageeditor;
 
 import android.graphics.Bitmap;
 import android.graphics.Path;
-import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 
@@ -16,6 +15,8 @@ public abstract class DrawHelper extends Tool {
     private ArrayList<
             Pair<GLHelper.Point<Float>, GLHelper.Point<Float>>> points = new ArrayList<>();
 
+    protected GLHelper.Point<Float> cursor = END_POINT;
+
     @Override
     void load(Bitmap bitmap, boolean storeHistory) {
         super.load(bitmap, storeHistory);
@@ -24,7 +25,7 @@ public abstract class DrawHelper extends Tool {
         float height = super.image.getHeight();
         float vWidth = super.screenWidth;
         float vHeight = super.screenHeight;
-        Log.d("Point", String.valueOf(width) + "," + String.valueOf(height) + " " + String.valueOf(vWidth) + "," + String.valueOf(vHeight));
+        //Log.d("Point", String.valueOf(width) + "," + String.valueOf(height) + " " + String.valueOf(vWidth) + "," + String.valueOf(vHeight));
         final float scale;
         if(width > vWidth || height > vHeight) {
             if(width / vWidth < height / vHeight) {
@@ -47,12 +48,17 @@ public abstract class DrawHelper extends Tool {
                             new GLHelper.Point<>();
                     point.x = (event.getX()) / scale - xOffset;
                     point.y = (event.getY()) / scale - yOffset;
-                    Log.d("Point", String.valueOf(point.x) + "," + String.valueOf(point.y));
+                    //Log.d("Point", String.valueOf(point.x) + "," + String.valueOf(point.y));
                     points.add(new Pair<>(point, new GLHelper.Point<Float>()));
 
                     point.add(point);
+
+                    cursor = point;
+
                     return true;
                 } else {
+                    cursor = END_POINT;
+
                     points.add(new Pair<>(END_POINT, new GLHelper.Point<Float>()));
                 }
                 return false;
@@ -60,7 +66,22 @@ public abstract class DrawHelper extends Tool {
         );
     }
 
-    abstract void processPoints(Path path);
+    synchronized void processPoints(Path path)
+    {
+
+    }
+
+    synchronized void processLine(
+            GLHelper.Point<Float> start,
+            GLHelper.Point<Float> end)
+    {
+
+    }
+
+    synchronized void finishedPointProcess()
+    {
+
+    }
 
     synchronized void processPointList()
     {
@@ -77,7 +98,16 @@ public abstract class DrawHelper extends Tool {
                     && point.first.y == END_POINT.y)
             {
                 if (!subList.isEmpty()) {
+                    // lines
+                    for(int i = 1; i < subList.size(); i++) {
+                        processLine(
+                                subList.get(i - 1).first,
+                                subList.get(i).first);
+                    }
+
+                    // strokes
                     processPoints(getPath(subList));
+
                     subList.clear();
                 }
             } else
@@ -97,6 +127,8 @@ public abstract class DrawHelper extends Tool {
             // add back last point
             points.add(0, point);
         }
+
+        finishedPointProcess();
     }
 
     @Override

@@ -79,8 +79,8 @@ public class GLHelper {
         double distance(Point p)
         {
             return Math.sqrt(
-                    (double)subNumbers(x, p.x) * (double)subNumbers(x, p.x)
-                            + (double)subNumbers(y, p.y) * (double)subNumbers(y, p.y));
+                    subNumbers(x, p.x).doubleValue() * subNumbers(x, p.x).doubleValue()
+                            + subNumbers(y, p.y).doubleValue() * subNumbers(y, p.y).doubleValue());
         }
 
         float norm()
