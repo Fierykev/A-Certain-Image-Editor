@@ -12,7 +12,7 @@ public abstract class DrawHelper extends Tool {
     public static final GLHelper.Point<Float> END_POINT =
             new GLHelper.Point<>(-1f, -1f);
 
-    private ArrayList<
+    protected ArrayList<
             Pair<GLHelper.Point<Float>, GLHelper.Point<Float>>> points = new ArrayList<>();
 
     protected GLHelper.Point<Float> cursor = END_POINT;

@@ -1,8 +1,12 @@
 package kevin_quang.acertainimageeditor.tool;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.util.Pair;
+
+import java.util.ArrayList;
 
 
 public class BrushTool extends DrawHelper {
@@ -17,7 +21,20 @@ public class BrushTool extends DrawHelper {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(1);
         canvas.drawPath(path, paint);
-        load(super.image, true);
+    }
+
+    @Override
+    synchronized void processPointList()
+    {
+        if(cursor.equals(END_POINT) && points.size() > 0) {
+            points.remove(points.size() - 1);
+            processPoints(getPath(points));
+            load(super.image, true);
+            points.clear();
+        } else {
+            processPoints(getPath(points));
+            load(super.image, false);
+        }
     }
 
 }
