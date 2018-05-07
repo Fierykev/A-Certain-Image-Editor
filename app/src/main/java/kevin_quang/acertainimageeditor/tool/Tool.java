@@ -115,7 +115,7 @@ public abstract class Tool {
 //            data.destroy();
     }
 
-    public void load(Bitmap bitmap, boolean storeHistory)
+    public synchronized void load(Bitmap bitmap, boolean storeHistory)
     {
         // clear listener
         setTouchLambda(null);
@@ -126,7 +126,7 @@ public abstract class Tool {
             if (bitmap != null) {
                 redoHist.clear();
 
-                if (history.size() == HIST_LEN)
+                if (HIST_LEN <= history.size())
                     history.remove(0);
 
                 history.add(bitmap.copy(bitmap.getConfig(), true));
@@ -136,12 +136,17 @@ public abstract class Tool {
             }
         }
 
+        forceTexLoad(bitmap);
+    }
+
+    protected synchronized void forceTexLoad(Bitmap bitmap)
+    {
         image = bitmap.copy(bitmap.getConfig(), true);
 
         if (textureID != 0)
             GLES30.glDeleteTextures(1, new int[] { textureID }, 0);
 
-        textureID = loadTexture(bitmap);
+        textureID = loadTexture(image);
     }
 
     public boolean canUndo() {
@@ -254,7 +259,7 @@ public abstract class Tool {
         }
     }
 
-    void setTouchLambda(TouchLambda lambda)
+    synchronized void setTouchLambda(TouchLambda lambda)
     {
         onTouch.setTouchMethod(lambda);
     }

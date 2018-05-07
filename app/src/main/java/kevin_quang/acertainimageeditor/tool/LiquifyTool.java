@@ -17,9 +17,11 @@ public class LiquifyTool extends DrawHelper {
     private static final float ENLARGE_FACTOR = .05f;
 
     private Pair<Integer, Integer> vertDim;
-    private GLHelper.VertexArray verts;
+    private GLHelper.VertexArray verts, origVerts;
     private int indices[];
     private GLHelper.DrawData data;
+
+    private boolean update = false;
 
     private Pair<Integer, Integer> meshDim
             = new Pair<>(50, 50);
@@ -53,6 +55,8 @@ public class LiquifyTool extends DrawHelper {
                 new Pair<Integer, Integer>(
                         bitmap.getHeight(), bitmap.getWidth())
         );
+
+        origVerts = verts.clone();
     }
 
     private void renderMesh()
@@ -120,8 +124,10 @@ public class LiquifyTool extends DrawHelper {
         if (start.x != END_POINT.x
                 && start.y != END_POINT.y
                 || end.y != END_POINT.y
-                && end.y != END_POINT.y)
+                && end.y != END_POINT.y) {
             smudge(start, end);
+            update = true;
+        }
     }
 
     @Override
@@ -131,19 +137,27 @@ public class LiquifyTool extends DrawHelper {
         // TODO: check MODE
 //        if (super.cursor.x != END_POINT.x
 //                && super.cursor.y != END_POINT.y)
+//        {
 //            enlargeShrink(super.cursor, true);
+//            update = true;
+//        }
 
         // solidify mesh
-        if (data != null)
-            data.destroy();
+        if (update) {
+            data =
+                    GLHelper.createBuffers(
+                            verts,
+                            indices
+                    );
 
-        data =
-                GLHelper.createBuffers(
-                        verts,
-                        indices
-                );
-//        image = renderToTex();
-        this.load(renderToTex(), true);
+            this.forceTexLoad(renderToTex());
+
+            // throw out deform data and reset verts
+            data.destroy();
+            verts = origVerts.clone();
+        }
+
+        update = false;
     }
 
     private void createMesh(
