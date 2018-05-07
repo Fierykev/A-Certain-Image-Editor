@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import kevin_quang.acertainimageeditor.R;
 import kevin_quang.acertainimageeditor.ui.MainActivity;
+import kevin_quang.acertainimageeditor.ui.toggle.Toggler;
 
 public class TextTool extends Tool {
 
@@ -23,7 +24,7 @@ public class TextTool extends Tool {
     private String text;
     private Canvas canvas;
     private Paint paint;
-    private Bitmap bitmap;
+    private Bitmap bitmap, render;
     enum State {
         IDLE,
         NEW,
@@ -100,10 +101,13 @@ public class TextTool extends Tool {
         float xOffset = (vWidth / scale - width)/2;
         float yOffset = (vHeight / scale - height)/2;
         super.setTouchLambda((v, event)-> {
-            if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                x = (event.getX()) / scale - xOffset;
-                y = (event.getY()) / scale - yOffset;
-                state = State.NEW;
+            if(event.getAction() != MotionEvent.ACTION_UP) {
+                if(state == State.IDLE) {
+                    x = (event.getX()) / scale - xOffset;
+                    y = (event.getY()) / scale - yOffset;
+                    state = State.NEW;
+                    Log.d("Key", "K");
+                }
                 return true;
             }
             return false;
@@ -113,30 +117,24 @@ public class TextTool extends Tool {
     public void renderText() {
         switch(state) {
             case NEW:
-                if(text != null) {
-                    if(text.equals(""))
-                        break;
-                    super.load(bitmap, true);
-                    bitmap = Bitmap.createBitmap(super.image);
-                } else {
-                    InputMethodManager inputMethodManager =
-                            (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.toggleSoftInputFromWindow(
-                            activity.findViewById(R.id.root).getApplicationWindowToken(),
-                            InputMethodManager.SHOW_FORCED, 0);
-                    text = "";
-                    bitmap = Bitmap.createBitmap(super.image);
-                    canvas = new Canvas(Bitmap.createBitmap(bitmap));
-                    paint = new Paint();
-                    paint.setColor(color);
-                    paint.setTextSize(20);
-                    paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-                }
+                InputMethodManager inputMethodManager =
+                        (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInputFromWindow(
+                        activity.findViewById(R.id.root).getApplicationWindowToken(),
+                        InputMethodManager.SHOW_FORCED, 0);
+                text = "";
+                bitmap = Bitmap.createBitmap(super.image);
+                render = Bitmap.createBitmap(super.image);
+                canvas = new Canvas(render);
+                paint = new Paint();
+                paint.setColor(color);
+                paint.setTextSize(20);
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
                 state = State.UPDATE;
                 break;
             case UPDATE:
                 Rect bounds = new Rect();
-                Bitmap render = Bitmap.createBitmap(bitmap);
+                render = Bitmap.createBitmap(bitmap);
                 canvas = new Canvas(render);
                 paint.getTextBounds(text, 0, text.length(), bounds);
                 canvas.drawRect(new Rect((int)x + bounds.right + 2, (int)y + bounds.top,
@@ -146,8 +144,15 @@ public class TextTool extends Tool {
                 break;
             case IDLE:
                 if(text != null) {
-                    super.load(bitmap, true);
+                    Log.d("Key","I");
+                    render = Bitmap.createBitmap(bitmap);
+                    canvas = new Canvas(render);
+                    canvas.drawText(text, x, y, paint);
+                    super.load(render, true);
                     text = null;
+                    activity.runOnUiThread(() -> {
+                        Toggler.toggle("brush_text");
+                    });
                 }
                 break;
         }

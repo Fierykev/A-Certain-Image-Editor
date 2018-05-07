@@ -123,7 +123,7 @@ public class LoadFragment extends Fragment {
                 photo = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(fileUri), null, null);
                 if (requestCode == CAMERA_REQUEST) {
                     Matrix mat = new Matrix();
-                    mat.postRotate(-90);
+                    mat.postRotate(90);
                     photo = Bitmap.createBitmap(Bitmap.createScaledBitmap(photo, photo.getWidth(), photo.getHeight(), true), 0, 0, photo.getWidth(), photo.getHeight(), mat, true);
                 }
             } catch (FileNotFoundException e) {
@@ -132,6 +132,13 @@ public class LoadFragment extends Fragment {
             }
             if (photo != null) {
                 Log.d("Picture", "Setting picture");
+                if(photo.getWidth() > 1920 || photo.getHeight() > 1080) {
+                    if(photo.getWidth() / 1920.0f > photo.getHeight() / 1080.0f) {
+                        photo = Bitmap.createScaledBitmap(photo, 1920, (int)(photo.getHeight() * 1920.0f / photo.getWidth()), false);
+                    } else {
+                        photo = Bitmap.createScaledBitmap(photo, (int)(photo.getWidth() * 1020.0f / photo.getHeight()), 1020, false);
+                    }
+                }
                 editDisplaySurfaceView.setBitmap(photo);
             }
         }

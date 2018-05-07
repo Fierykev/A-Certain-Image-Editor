@@ -53,6 +53,10 @@ public class BlankDialog extends DialogFragment {
 
             int width = Integer.parseInt(widthString);
             int height = Integer.parseInt(heightString);
+            if (width > 1920 || height > 1080) {
+                Toast.makeText(getContext(), "Max Image Size 1920x1080", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
             bitmap.eraseColor(Color.WHITE);

@@ -48,27 +48,6 @@
             android:backgroundTint="#FFF"
             android:textColorHint="#FFFFFF"/>
         <ImageButton
-            android:id="@+id/brush"
-            android:padding="8dp"
-            android:background="?android:selectableItemBackground"
-            android:src="@drawable/ic_brush_white_48dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ImageButton
-            android:id="@+id/erase"
-            android:padding="8dp"
-            android:background="?android:selectableItemBackground"
-            android:src="@drawable/ic_erase_white_48dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ImageButton
-            android:id="@+id/settings"
-            android:padding="8dp"
-            android:background="?android:selectableItemBackground"
-            android:src="@drawable/ic_settings_white_48dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ImageButton
             android:id="@+id/done"
             android:padding="8dp"
             android:background="?android:selectableItemBackground"

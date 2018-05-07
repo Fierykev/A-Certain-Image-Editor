@@ -20,9 +20,6 @@ import kevin_quang.acertainimageeditor.tool.Tool;
 public class ScaleResizeFragment extends Fragment {
 
     private EditDisplaySurfaceView editDisplaySurfaceView;
-    private ImageButton brush, erase;
-    private String brushTag = "resize_brush";
-    private String eraseTag = "resize_erase";
 
     public static ScaleResizeFragment newInstance(
             EditDisplaySurfaceView editDisplaySurfaceView
@@ -56,25 +53,6 @@ public class ScaleResizeFragment extends Fragment {
         ImageButton back = view.findViewById(R.id.back);
         back.setOnClickListener(v -> getFragmentManager().popBackStack());
 
-        brush = view.findViewById(R.id.brush);
-        Toggler.add(brushTag, brush);
-        erase = view.findViewById(R.id.erase);
-        Toggler.add(eraseTag, erase);
-        brush.setOnClickListener(v -> {
-            if(Toggler.toggle(brushTag)) {
-                // TODO: Brush disabled
-            } else {
-                // TODO: Brush enabled
-            }
-        });
-        erase.setOnClickListener(v -> {
-            if(Toggler.toggle(eraseTag)) {
-                // TODO: Eraser disabled
-            } else {
-                // TODO: Eraser enabled
-            }
-        });
-
         final EditText widthField = view.findViewById(R.id.width);
         widthField.setBackgroundColor(0x55FFFFFF);
         widthField.setHint(String.valueOf(srcWidth));
@@ -102,26 +80,16 @@ public class ScaleResizeFragment extends Fragment {
                 Toast.makeText(getContext(), "Width/Height cannot be negative", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            if(width > 1920 || height > 1080) {
+                Toast.makeText(getContext(), "Max Image Size 1920x1080", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if(srcWidth == width && srcHeight == height) {
                 Toast.makeText(getContext(), "Specified size same as current size", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            /*
-            String meshWidthText = meshWidthField.getText().toString();
-            String meshHeightText = meshHeightField.getText().toString();
-            if(meshWidthText.length() == 0 || meshHeightText.length() == 0) return;
-            int meshWidth = Integer.parseInt(meshWidthText);
-            int meshHeight = Integer.parseInt(meshHeightText);
-
-            if(meshWidth <= 0 || meshWidth <= 0
-                    || meshWidth > srcWidth || meshHeight > srcHeight) return;
-
-            String iterationsText = iterationsField.getText().toString();
-            if(iterationsText.length() == 0) return;
-            int iterations = Integer.parseInt(iterationsText);
-            if(iterations <= 0) return;
-            */
 
             editDisplaySurfaceView.setTool(
                     new ScaleResizeTool()
@@ -139,7 +107,5 @@ public class ScaleResizeFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toggler.remove(brushTag);
-        Toggler.remove(eraseTag);
     }
 }
