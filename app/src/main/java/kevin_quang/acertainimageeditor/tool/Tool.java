@@ -12,10 +12,7 @@ import android.view.View;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static kevin_quang.acertainimageeditor.tool.GLHelper.loadProgram;
 import static kevin_quang.acertainimageeditor.tool.GLHelper.loadTexture;
@@ -26,14 +23,14 @@ import static kevin_quang.acertainimageeditor.tool.GLHelper.loadTexture;
 
 public abstract class Tool {
 
-    public static int screenWidth, screenHeight;
+    public static int screenWidth = 0, screenHeight = 0;
 
-    public Bitmap image;
+    public Bitmap image = null;
 
-    protected static int program;
-    protected static int positionAttr, texCoordAttr, textureUnif, worldUnif;
-    protected static GLHelper.DrawData data;
-    protected static int textureID;
+    protected static int program = 0;
+    protected static int positionAttr = 0, texCoordAttr = 0, textureUnif = 0, worldUnif = 0;
+    protected static GLHelper.DrawData data = null;
+    protected static int textureID = 0;
 
     protected float world[] = new float[16];
 
@@ -93,21 +90,36 @@ public abstract class Tool {
     public void init(Context context)
     {
         if (program == 0) {
-            program = loadProgram(
-                    "shaders/ScaleResizeTool/main.vs",
-                    "shaders/ScaleResizeTool/main.fs",
-                    context.getAssets());
-
-            positionAttr = GLES30.glGetAttribLocation(program, "position");
-            texCoordAttr = GLES30.glGetAttribLocation(program, "texCoord");
-            textureUnif = GLES30.glGetUniformLocation(program, "texture");
-            worldUnif = GLES30.glGetUniformLocation(program, "world");
-
-            GLHelper.VertexArray verts = new GLHelper.VertexArray(4);
-            verts.add(new GLHelper.Plane().verts);
-
-            data = GLHelper.createBuffers(verts, new GLHelper.Plane().indices);
+            forceLoadProgram(context);
         }
+    }
+
+    private void forceLoadProgram(Context context)
+    {
+        program = loadProgram(
+                "shaders/ScaleResizeTool/main.vs",
+                "shaders/ScaleResizeTool/main.fs",
+                context.getAssets());
+
+        positionAttr = GLES30.glGetAttribLocation(program, "position");
+        texCoordAttr = GLES30.glGetAttribLocation(program, "texCoord");
+        textureUnif = GLES30.glGetUniformLocation(program, "texture");
+        worldUnif = GLES30.glGetUniformLocation(program, "world");
+
+        GLHelper.VertexArray verts = new GLHelper.VertexArray(4);
+        verts.add(new GLHelper.Plane().verts);
+
+        data = GLHelper.createBuffers(verts, new GLHelper.Plane().indices);
+    }
+
+    public void restore(Context context)
+    {
+        program = 0;
+
+        textureID = 0;
+
+        history.clear();
+        redoHist.clear();
     }
 
     public void destroy()
@@ -126,6 +138,11 @@ public abstract class Tool {
         // clear listener
         setTouchLambda(null);
 
+        forceTexLoad(bitmap, storeHistory);
+    }
+
+    protected synchronized void forceTexLoad(Bitmap bitmap, boolean storeHistory)
+    {
         // history buffer
         if (storeHistory)
         {
@@ -142,11 +159,6 @@ public abstract class Tool {
             }
         }
 
-        forceTexLoad(bitmap);
-    }
-
-    protected synchronized void forceTexLoad(Bitmap bitmap)
-    {
         image = bitmap.copy(bitmap.getConfig(), true);
 
         if (textureID != 0)

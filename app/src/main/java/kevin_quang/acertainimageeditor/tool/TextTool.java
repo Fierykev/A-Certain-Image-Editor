@@ -140,7 +140,7 @@ public class TextTool extends Tool {
                 canvas.drawRect(new Rect((int)x + bounds.right + 2, (int)y + bounds.top,
                         (int)x + bounds.right + 3, (int)y + bounds.bottom), paint);
                 canvas.drawText(text, x, y, paint);
-                super.forceTexLoad(render);
+                super.forceTexLoad(render, false);
                 break;
             case IDLE:
                 if(text != null) {

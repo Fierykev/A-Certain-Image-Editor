@@ -119,15 +119,16 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < imageResId.length; i++) {
             tabLayout.getTabAt(i).setIcon(imageResId[i]);
         }
+        /*
         if(savedInstanceState != null) {
             editDisplaySurfaceView.restore(savedInstanceState);
-        }
+        }*/
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
-        editDisplaySurfaceView.save(outState);
+        //editDisplaySurfaceView.save(outState);
     }
 
     public void setKeyListener(KeyListener keyListener) {

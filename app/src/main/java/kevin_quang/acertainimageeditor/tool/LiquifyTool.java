@@ -53,12 +53,13 @@ public class LiquifyTool extends DrawHelper {
     public void destroy() {
         super.destroy();
 
-        this.forceTexLoad(renderToTex());
+        this.forceTexLoad(renderToTex(), true);
 
         if (data != null)
             data.destroy();
     }
 
+    @Override
     public void save(String path)
     {
         save(path, renderToTex());
@@ -227,8 +228,6 @@ public class LiquifyTool extends DrawHelper {
                             verts,
                             indices
                     );
-
-//            this.forceTexLoad(renderToTex());
         }
         update = false;
     }
