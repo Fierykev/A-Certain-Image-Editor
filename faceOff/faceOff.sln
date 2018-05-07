@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2005
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "faceOff", "faceOff\faceOff.pyproj", "{7EB2A00A-AEC9-4972-83B4-8EFA575F6C9F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7EB2A00A-AEC9-4972-83B4-8EFA575F6C9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EB2A00A-AEC9-4972-83B4-8EFA575F6C9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9A990A6-BBA8-4DEE-8E32-913A0780D845}
+	EndGlobalSection
+EndGlobal
