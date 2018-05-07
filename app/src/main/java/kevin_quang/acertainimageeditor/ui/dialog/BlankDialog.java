@@ -53,6 +53,12 @@ public class BlankDialog extends DialogFragment {
 
             int width = Integer.parseInt(widthString);
             int height = Integer.parseInt(heightString);
+
+            if(width < 50 || height < 50) {
+                Toast.makeText(getContext(), "Min Image Size 50x50", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (width > 1920 || height > 1080) {
                 Toast.makeText(getContext(), "Max Image Size 1920x1080", Toast.LENGTH_SHORT).show();
                 return;

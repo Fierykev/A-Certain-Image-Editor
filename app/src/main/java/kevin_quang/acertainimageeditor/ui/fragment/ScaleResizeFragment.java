@@ -76,7 +76,7 @@ public class ScaleResizeFragment extends Fragment {
             if(heightText.length() != 0) {
                 height = Integer.parseInt(heightText);
             }
-            if(width <= 50 || height <= 50) {
+            if(width < 50 || height < 50) {
                 Toast.makeText(getContext(), "Min Image Size 50x50", Toast.LENGTH_SHORT).show();
                 return;
             }
