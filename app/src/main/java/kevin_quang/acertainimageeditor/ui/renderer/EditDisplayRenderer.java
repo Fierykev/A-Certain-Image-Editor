@@ -3,7 +3,7 @@ package kevin_quang.acertainimageeditor.ui.renderer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.opengl.GLES30;
+import android.opengl.GLES31;
 import android.opengl.GLSurfaceView;
 
 import java.util.ArrayList;
@@ -69,13 +69,13 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
     @Override
     public synchronized void onSurfaceCreated(GL10 unused, EGLConfig eglConfig) {
         // background
-        GLES30.glClearColor(0.f, 0.f, 0.f, 1.f);
+        GLES31.glClearColor(0.f, 0.f, 0.f, 1.f);
     }
 
     @Override
     public synchronized void onSurfaceChanged(GL10 unused, int width, int height) {
         // set viewport
-        GLES30.glViewport(0, 0, width, height);
+        GLES31.glViewport(0, 0, width, height);
         aspectRatio = (float)width / (float)height;
 
         this.width = width;
@@ -141,7 +141,7 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
         }
 
         // clear frame
-        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
+        GLES31.glClear(GLES31.GL_COLOR_BUFFER_BIT);
 
         tool.onDraw(aspectRatio, width, height);
     }

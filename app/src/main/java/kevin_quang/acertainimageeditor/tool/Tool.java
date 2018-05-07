@@ -3,7 +3,7 @@ package kevin_quang.acertainimageeditor.tool;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.opengl.GLES30;
+import android.opengl.GLES31;
 import android.opengl.Matrix;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -101,10 +101,10 @@ public abstract class Tool {
                 "shaders/ScaleResizeTool/main.fs",
                 context.getAssets());
 
-        positionAttr = GLES30.glGetAttribLocation(program, "position");
-        texCoordAttr = GLES30.glGetAttribLocation(program, "texCoord");
-        textureUnif = GLES30.glGetUniformLocation(program, "texture");
-        worldUnif = GLES30.glGetUniformLocation(program, "world");
+        positionAttr = GLES31.glGetAttribLocation(program, "position");
+        texCoordAttr = GLES31.glGetAttribLocation(program, "texCoord");
+        textureUnif = GLES31.glGetUniformLocation(program, "texture");
+        worldUnif = GLES31.glGetUniformLocation(program, "world");
 
         GLHelper.VertexArray verts = new GLHelper.VertexArray(4);
         verts.add(new GLHelper.Plane().verts);
@@ -124,10 +124,10 @@ public abstract class Tool {
 
     public void destroy()
     {
-//        GLES30.glDeleteProgram(program);
+//        GLES31.glDeleteProgram(program);
 
 //        if (textureID != 0)
-//            GLES30.glDeleteTextures(1, new int[] { textureID }, 0);
+//            GLES31.glDeleteTextures(1, new int[] { textureID }, 0);
 
 //        if (data != null)
 //            data.destroy();
@@ -162,7 +162,7 @@ public abstract class Tool {
         image = bitmap.copy(bitmap.getConfig(), true);
 
         if (textureID != 0)
-            GLES30.glDeleteTextures(1, new int[] { textureID }, 0);
+            GLES31.glDeleteTextures(1, new int[] { textureID }, 0);
 
         textureID = loadTexture(image);
     }
@@ -208,11 +208,11 @@ public abstract class Tool {
     public void onDraw(float aspectRatio, int width, int height)
     {
         renderLock.lock();
-        GLES30.glClearColor(0.f, 0.f, 0.f, 1.f);
-        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
-        GLES30.glViewport(0, 0, width, height);
+        GLES31.glClearColor(0.f, 0.f, 0.f, 1.f);
+        GLES31.glClear(GLES31.GL_COLOR_BUFFER_BIT);
+        GLES31.glViewport(0, 0, width, height);
 
-        GLES30.glUseProgram(program);
+        GLES31.glUseProgram(program);
 
         // construct matrix
         Matrix.setIdentityM(world, 0);
@@ -229,27 +229,27 @@ public abstract class Tool {
                 hS,
                 1.f);
 
-        GLES30.glBindBuffer (GLES30.GL_ARRAY_BUFFER, data.vertBufferID[0]);
+        GLES31.glBindBuffer (GLES31.GL_ARRAY_BUFFER, data.vertBufferID[0]);
 
-        GLES30.glEnableVertexAttribArray(positionAttr);
-        GLES30.glVertexAttribPointer(positionAttr, 3, GLES30.GL_FLOAT, false, 4 * 5, 0);
+        GLES31.glEnableVertexAttribArray(positionAttr);
+        GLES31.glVertexAttribPointer(positionAttr, 3, GLES31.GL_FLOAT, false, 4 * 5, 0);
 
-        GLES30.glEnableVertexAttribArray(texCoordAttr);
-        GLES30.glVertexAttribPointer(texCoordAttr, 2, GLES30.GL_FLOAT, false, 4 * 5, 4 * 3);
+        GLES31.glEnableVertexAttribArray(texCoordAttr);
+        GLES31.glVertexAttribPointer(texCoordAttr, 2, GLES31.GL_FLOAT, false, 4 * 5, 4 * 3);
 
-        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureID);
-        GLES30.glUniform1ui(textureUnif, textureID);
+        GLES31.glActiveTexture(GLES31.GL_TEXTURE0);
+        GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, textureID);
+        GLES31.glUniform1ui(textureUnif, textureID);
 
-        GLES30.glUniformMatrix4fv(worldUnif, 1, false, world, 0);
+        GLES31.glUniformMatrix4fv(worldUnif, 1, false, world, 0);
 
-        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, data.indexBufferID[0]);
-        GLES30.glDrawElements(GLES30.GL_TRIANGLES, data.numIndices, GLES30.GL_UNSIGNED_INT, 0);
+        GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, data.indexBufferID[0]);
+        GLES31.glDrawElements(GLES31.GL_TRIANGLES, data.numIndices, GLES31.GL_UNSIGNED_INT, 0);
 
-        GLES30.glDisableVertexAttribArray(positionAttr);
-        GLES30.glDisableVertexAttribArray(texCoordAttr);
-        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
-        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
+        GLES31.glDisableVertexAttribArray(positionAttr);
+        GLES31.glDisableVertexAttribArray(texCoordAttr);
+        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, 0);
+        GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, 0);
         renderLock.unlock();
     }
 

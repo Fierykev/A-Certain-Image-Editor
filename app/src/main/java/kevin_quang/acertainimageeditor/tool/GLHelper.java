@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.opengl.GLES30;
+import android.opengl.GLES31;
 import android.opengl.GLUtils;
 import android.util.Log;
 
@@ -272,10 +272,10 @@ public class GLHelper {
         void destroy()
         {
             if (vertBufferID[0] != 0)
-                GLES30.glDeleteBuffers(1, vertBufferID, 0);
+                GLES31.glDeleteBuffers(1, vertBufferID, 0);
 
             if (indexBufferID[0] != 0)
-                GLES30.glDeleteBuffers(1, indexBufferID, 0);
+                GLES31.glDeleteBuffers(1, indexBufferID, 0);
         }
     }
 
@@ -313,14 +313,14 @@ public class GLHelper {
 
     public static int loadShader(String shader, int type) {
         int[] compile = new int[1];
-        int shaderID = GLES30.glCreateShader(type);
-        GLES30.glShaderSource(shaderID, shader);
-        GLES30.glCompileShader(shaderID);
-        GLES30.glGetShaderiv(shaderID, GLES30.GL_COMPILE_STATUS, compile, 0);
+        int shaderID = GLES31.glCreateShader(type);
+        GLES31.glShaderSource(shaderID, shader);
+        GLES31.glCompileShader(shaderID);
+        GLES31.glGetShaderiv(shaderID, GLES31.GL_COMPILE_STATUS, compile, 0);
 
         if (compile[0] == 0)
         {
-            Log.d("Shader loading failed", "Error:\n" + GLES30.glGetShaderInfoLog(shaderID));
+            Log.d("Shader loading failed", "Error:\n" + GLES31.glGetShaderInfoLog(shaderID));
             return 0;
         }
 
@@ -334,7 +334,7 @@ public class GLHelper {
     }
 
     public static int loadProgram(String vertexShaderFile, String fragmentShaderFile) {
-        int vertexShaderProgram = loadShader(vertexShaderFile, GLES30.GL_VERTEX_SHADER);
+        int vertexShaderProgram = loadShader(vertexShaderFile, GLES31.GL_VERTEX_SHADER);
 
         if (vertexShaderProgram == 0)
         {
@@ -342,7 +342,7 @@ public class GLHelper {
             return 0;
         }
 
-        int fragmentShaderProgram = loadShader(fragmentShaderFile, GLES30.GL_FRAGMENT_SHADER);
+        int fragmentShaderProgram = loadShader(fragmentShaderFile, GLES31.GL_FRAGMENT_SHADER);
         if (fragmentShaderProgram == 0)
         {
             Log.d("Loading Program", "FS Failure");
@@ -350,22 +350,22 @@ public class GLHelper {
         }
 
         int programID;
-        programID = GLES30.glCreateProgram();
-        GLES30.glAttachShader(programID, vertexShaderProgram);
-        GLES30.glAttachShader(programID, fragmentShaderProgram);
+        programID = GLES31.glCreateProgram();
+        GLES31.glAttachShader(programID, vertexShaderProgram);
+        GLES31.glAttachShader(programID, fragmentShaderProgram);
 
-        GLES30.glLinkProgram(programID);
+        GLES31.glLinkProgram(programID);
 
         int link[] = new int[1];
-        GLES30.glGetProgramiv(programID, GLES30.GL_LINK_STATUS,  link, 0);
+        GLES31.glGetProgramiv(programID, GLES31.GL_LINK_STATUS,  link, 0);
         if (link[0] <= 0)
         {
             Log.d("Loading Program", "Link Failed");
             return 0;
         }
 
-        GLES30.glDeleteShader(vertexShaderProgram);
-        GLES30.glDeleteShader(fragmentShaderProgram);
+        GLES31.glDeleteShader(vertexShaderProgram);
+        GLES31.glDeleteShader(fragmentShaderProgram);
 
         return programID;
     }
@@ -395,14 +395,14 @@ public class GLHelper {
     {
         int texture[] = new int[1];
 
-        GLES30.glGenTextures(1, texture, 0);
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, texture[0]);
+        GLES31.glGenTextures(1, texture, 0);
+        GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, texture[0]);
 
-        GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0);
-        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
-        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
-        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
-        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
+        GLUtils.texImage2D(GLES31.GL_TEXTURE_2D, 0, bitmap, 0);
+        GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_MIN_FILTER, GLES31.GL_LINEAR);
+        GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_MAG_FILTER, GLES31.GL_LINEAR);
+        GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_WRAP_S, GLES31.GL_CLAMP_TO_EDGE);
+        GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_WRAP_T, GLES31.GL_CLAMP_TO_EDGE);
 
         return texture[0];
     }
@@ -412,41 +412,41 @@ public class GLHelper {
         DrawData data = new DrawData();
 
         data.vertBufferID = new int[1];
-        GLES30.glGenBuffers(1, data.vertBufferID, 0);
+        GLES31.glGenBuffers(1, data.vertBufferID, 0);
 
-        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, data.vertBufferID[0]);
-        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, verts.size(),
-                null, GLES30.GL_STATIC_DRAW );
+        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, data.vertBufferID[0]);
+        GLES31.glBufferData(GLES31.GL_ARRAY_BUFFER, verts.size(),
+                null, GLES31.GL_STATIC_DRAW );
 
         data.vertexBuffer =
-                ((ByteBuffer) GLES30.glMapBufferRange (
-                        GLES30.GL_ARRAY_BUFFER, 0, verts.size(),
-                        GLES30.GL_MAP_WRITE_BIT | GLES30.GL_MAP_INVALIDATE_BUFFER_BIT)
+                ((ByteBuffer) GLES31.glMapBufferRange (
+                        GLES31.GL_ARRAY_BUFFER, 0, verts.size(),
+                        GLES31.GL_MAP_WRITE_BIT | GLES31.GL_MAP_INVALIDATE_BUFFER_BIT)
                 ).order(ByteOrder.nativeOrder()).asFloatBuffer();
         data.vertexBuffer.put(verts.getFloatArray()).position(0);
 
-        GLES30.glUnmapBuffer(GLES30.GL_ARRAY_BUFFER);
+        GLES31.glUnmapBuffer(GLES31.GL_ARRAY_BUFFER);
 
         data.indexBufferID = new int[1];
-        GLES30.glGenBuffers(1, data.indexBufferID, 0);
+        GLES31.glGenBuffers(1, data.indexBufferID, 0);
 
-        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, data.indexBufferID[0]);
-        GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4,
-                null, GLES30.GL_STATIC_DRAW);
+        GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, data.indexBufferID[0]);
+        GLES31.glBufferData(GLES31.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4,
+                null, GLES31.GL_STATIC_DRAW);
 
         data.indexBuffer =
-                ((ByteBuffer) GLES30.glMapBufferRange (
-                        GLES30.GL_ELEMENT_ARRAY_BUFFER, 0, indices.length * 4,
-                        GLES30.GL_MAP_WRITE_BIT | GLES30.GL_MAP_INVALIDATE_BUFFER_BIT )
+                ((ByteBuffer) GLES31.glMapBufferRange (
+                        GLES31.GL_ELEMENT_ARRAY_BUFFER, 0, indices.length * 4,
+                        GLES31.GL_MAP_WRITE_BIT | GLES31.GL_MAP_INVALIDATE_BUFFER_BIT )
                 ).order(ByteOrder.nativeOrder()).asIntBuffer();
         data.indexBuffer.put(indices).position(0);
 
-        GLES30.glUnmapBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER);
+        GLES31.glUnmapBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER);
 
         data.numIndices = indices.length;
 
-        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
-        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
+        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, 0);
+        GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, 0);
 
         return data;
     }
