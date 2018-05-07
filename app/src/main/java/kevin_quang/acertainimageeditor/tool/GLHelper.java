@@ -412,10 +412,10 @@ public class GLHelper {
         DrawData data = new DrawData();
 
         data.vertBufferID = new int[1];
-        GLES30.glGenBuffers (1, data.vertBufferID, 0);
+        GLES30.glGenBuffers(1, data.vertBufferID, 0);
 
-        GLES30.glBindBuffer (GLES30.GL_ARRAY_BUFFER, data.vertBufferID[0]);
-        GLES30.glBufferData (GLES30.GL_ARRAY_BUFFER, verts.size(),
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, data.vertBufferID[0]);
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, verts.size(),
                 null, GLES30.GL_STATIC_DRAW );
 
         data.vertexBuffer =
@@ -428,10 +428,10 @@ public class GLHelper {
         GLES30.glUnmapBuffer(GLES30.GL_ARRAY_BUFFER);
 
         data.indexBufferID = new int[1];
-        GLES30.glGenBuffers (1, data.indexBufferID, 0);
+        GLES30.glGenBuffers(1, data.indexBufferID, 0);
 
-        GLES30.glBindBuffer (GLES30.GL_ELEMENT_ARRAY_BUFFER, data.indexBufferID[0]);
-        GLES30.glBufferData (GLES30.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4,
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, data.indexBufferID[0]);
+        GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4,
                 null, GLES30.GL_STATIC_DRAW);
 
         data.indexBuffer =
@@ -444,6 +444,9 @@ public class GLHelper {
         GLES30.glUnmapBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER);
 
         data.numIndices = indices.length;
+
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
 
         return data;
     }

@@ -17,11 +17,12 @@ public class LiquifyTool extends DrawHelper {
     private static final float ENLARGE_FACTOR = .05f;
 
     private Pair<Integer, Integer> vertDim;
-    private GLHelper.VertexArray verts;
+    private GLHelper.VertexArray verts, origVerts;
     private int indices[];
     private GLHelper.DrawData data;
 
     public static final int LIQUIFY = 1;
+    private boolean update = false;
 
     private Pair<Integer, Integer> meshDim
             = new Pair<>(50, 50);
@@ -65,6 +66,8 @@ public class LiquifyTool extends DrawHelper {
                 new Pair<Integer, Integer>(
                         bitmap.getHeight(), bitmap.getWidth())
         );
+
+        origVerts = verts.clone();
     }
 
     @Override
@@ -146,6 +149,7 @@ public class LiquifyTool extends DrawHelper {
                 && end.y != END_POINT.y) {
             if(mode == Mode.SMUDGE) {
                 smudge(start, end);
+                update = true;
             }
         }
     }
@@ -159,19 +163,25 @@ public class LiquifyTool extends DrawHelper {
                 && super.cursor.y != END_POINT.y) {
             if(mode == Mode.ENLARGE || mode == Mode.SHRINK) {
                 enlargeShrink(super.cursor, mode == Mode.ENLARGE);
+                update = true;
             }
         }
 
         // solidify mesh
-        if (data != null)
-            data.destroy();
+        if (update) {
+            data =
+                    GLHelper.createBuffers(
+                            verts,
+                            indices
+                    );
 
-        data =
-                GLHelper.createBuffers(
-                        verts,
-                        indices
-                );
-        this.load(renderToTex(), false);
+            this.forceTexLoad(renderToTex());
+
+            // throw out deform data and reset verts
+            data.destroy();
+            verts = origVerts.clone();
+        }
+        update = false;
     }
 
     private void createMesh(

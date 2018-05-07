@@ -39,8 +39,8 @@ public abstract class DrawHelper extends Tool {
                 scale = vHeight / height;
             }
         }
-        final float xOffset = (vWidth / scale - width)/2;
-        final float yOffset = (vHeight / scale - height)/2;
+        float xOffset = (vWidth / scale - width)/2;
+        float yOffset = (vHeight / scale - height)/2;
         super.setTouchLambda((v, event)-> {
                 if(event.getAction() != MotionEvent.ACTION_UP) {
                     GLHelper.Point<Float> point =
