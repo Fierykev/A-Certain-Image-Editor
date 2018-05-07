@@ -68,15 +68,14 @@ public class EditDisplaySurfaceView extends GLSurfaceView {
         // set listener to tool
         setOnTouchListener(Tool.onTouch);
 
-        ImageDrawTool tmp = new ImageDrawTool();
-
-        // TODO: revert
-        //LiquifyTool tmp = new LiquifyTool();
-        Bitmap bMap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.test);
+        ImageDrawTool startUpTool = new ImageDrawTool();
+        startUpTool.restore(context);
+        Bitmap bMap =
+                BitmapFactory.decodeResource(getContext().getResources(), R.drawable.test);
 
         renderer.setBitmap(bMap);
 
-        setTool(tmp);
+        setTool(startUpTool);
 
         setRenderer(renderer);
     }
