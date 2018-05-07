@@ -133,7 +133,14 @@ public class LiquifyTool extends Tool {
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-
+    @Override
+    void processLine(
+            GLHelper.Point<Float> start,
+            GLHelper.Point<Float> end)
+    {
+        super.processLine(start, end);
+        enlargeShrink(start, end, true);
+    }
 
     private void createMesh(
             Pair<Integer, Integer> meshDim,
@@ -216,15 +223,15 @@ public class LiquifyTool extends Tool {
     }
 
     private void enlargeShrink(
-            GLHelper.Point<Integer> start,
-            GLHelper.Point<Integer> end,
+            GLHelper.Point<Float> start,
+            GLHelper.Point<Float> end,
             boolean enlarge
     )
     {
-        GLHelper.Point<Integer> xBound =
-                new GLHelper.Point<Integer>(0, super.image.getWidth());
-        GLHelper.Point<Integer> yBound =
-                new GLHelper.Point<Integer>(0, super.image.getHeight());
+        GLHelper.Point<Float> xBound =
+                new GLHelper.Point<Float>(0.f, (float)super.image.getWidth());
+        GLHelper.Point<Float> yBound =
+                new GLHelper.Point<Float>(0.f, (float)super.image.getHeight());
 
         float cross =
                 Math.min(

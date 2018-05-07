@@ -1,6 +1,5 @@
 package kevin_quang.acertainimageeditor;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -37,7 +36,7 @@ public class BrushFragment extends Fragment {
         brush.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BrushTool brushTool = new BrushTool(editDisplaySurfaceView);
+                BrushTool brushTool = new BrushTool();
                 editDisplaySurfaceView.setTool(brushTool);
             }
         });

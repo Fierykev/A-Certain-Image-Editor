@@ -16,10 +16,6 @@ import javax.microedition.khronos.opengles.GL10;
  */
 
 public class EditDisplayRenderer implements GLSurfaceView.Renderer {
-
-    public static final GLHelper.Point<Float> END_POINT =
-            new GLHelper.Point<>(-1f, -1f);
-
     private float aspectRatio = 1.f;
     private Tool.Args args;
     private Tool tool;
@@ -84,19 +80,12 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
             if (this.tool != null)
                 this.tool.destroy();
 
+            this.tool.screenWidth = width;
+            this.tool.screenHeight = height;
+
             this.tool.init(context);
             this.tool.load(bitmap, false);
             toolInit = false;
-        }
-
-        // pass point changes
-        if (2 <= pointList.size()) {
-            while (2 <= pointList.size()) {
-                GLHelper.Point<Float> start = pointList.remove(0);;
-                GLHelper.Point<Float> end = pointList.get(0);
-
-                this.tool.processLine(start, end);
-            }
         }
 
         // check for tool update
@@ -154,10 +143,5 @@ public class EditDisplayRenderer implements GLSurfaceView.Renderer {
 
     public synchronized void redo() {
         redoUpdate = true;
-    }
-
-    public synchronized void addPoint(GLHelper.Point<Float> point)
-    {
-        pointList.add(point);
     }
 }
